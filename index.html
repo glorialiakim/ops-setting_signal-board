@@ -561,7 +561,7 @@ async function renderDashActivity(){
   let h='';snap.forEach(d=>{const l=d.data();const t=l.createdAt?new Date(l.createdAt.seconds*1000).toLocaleString('ko-KR'):'';
   const org=orgsC.find(o=>o.id===l.orgId);const item=ALL.find(i=>i.id===l.itemId);
   const typeLabel={response:"응답",review:"검토",bulk_import:"엑셀 업로드"}[l.type]||l.type;
-  const valLabel={yes:"O",no:"X",partial:"△",confirmed:"✅ 확정",rejected:"❌ 반려"}[l.value]||l.value;
+  const valLabel={yes:"O",no:"X",partial:"△",confirmed:"✅ 확정",rejected:"💬 추가 의견"}[l.value]||l.value;
   h+=`<div class="log-item"><div class="log-time">${t}</div><div class="log-text"><span class="log-badge" style="background:#ede9fe;color:#5b21b6">${_h(org?.name||'')}</span><span class="log-badge" style="background:#e0f2fe;color:#0369a1">${_h(l.userName)}</span><span class="log-badge" style="background:#fef3c7;color:#92400e">${typeLabel}</span>${item?`<strong>${_h(item.name)}</strong> → `:''}<strong>${valLabel}</strong></div></div>`;});
   document.getElementById('dashActivity').innerHTML=h||'<div class="no-results">아직 활동 로그가 없습니다.</div>';}catch(e){document.getElementById('dashActivity').innerHTML='<div class="no-results">로그를 불러올 수 없습니다.</div>';}
 }
@@ -641,7 +641,7 @@ async function renderChecklist(){
   let tabs=`<button class="cl-tab ${allOn?'on':''}" style="${allOn?'background:#971B2F;color:#fff;border-color:#971B2F':''}" onclick="ST.sec='all';renderChecklist()">📊 전체 ${allPct}%</button>`;
   tabs+=SECTIONS.map(s=>{const p=calcSec(ST.oid,s.id);const on=s.id===ST.sec;return`<button class="cl-tab ${on?'on':''}" style="${on?`background:${s.color};color:#fff;border-color:${s.color}`:''}" onclick="ST.sec='${s.id}';renderChecklist()">${s.emoji} ${s.label} ${p}%</button>`;}).join('');
   document.getElementById('clTabs').innerHTML=tabs;
-  const sOpts=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"pending",l:"검토대기"},{v:"confirmed",l:"확정"},{v:"rejected",l:"반려"}];
+  const sOpts=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"pending",l:"검토대기"},{v:"confirmed",l:"확정"},{v:"rejected",l:"추가의견"}];
   document.getElementById('fgStatus').innerHTML=sOpts.map(f=>`<button class="f-btn ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderCLBody()">${f.l}</button>`).join('');
   document.getElementById('fgImp').innerHTML=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"}].map(f=>`<button class="f-btn ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderCLBody()">${f.l}</button>`).join('');
   document.getElementById('fgWho').innerHTML=[{v:"all",l:"전체"},{v:"hq",l:"본사"},{v:"local",l:"현지"},{v:"both",l:"공통"}].map(f=>`<button class="f-btn ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderCLBody()">${f.l}</button>`).join('');
@@ -678,7 +678,7 @@ function renderCLBody(){
         <div class="item-top"><div class="item-name">${nm}</div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>
         <div class="status-row">
           <span class="status-label">법인 응답:</span> <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span>
-          <span class="status-label" style="margin-left:10px">HQ 검토:</span> <span class="st-badge ${rv||'none'}">${{confirmed:"✅ 확정",rejected:"❌ 반려"}[rv]||"—"}</span>
+          <span class="status-label" style="margin-left:10px">HQ 검토:</span> <span class="st-badge ${rv||'none'}">${{confirmed:"✅ 확정",rejected:"💬 추가 의견"}[rv]||"—"}</span>
         </div>
         <div class="detail-toggle" onclick="document.getElementById('det_${it.id}')?.classList.toggle('open')">▸ 목적 · 방법 · 달성기준</div>
         <div class="detail-box" id="det_${it.id}">
@@ -699,7 +699,7 @@ function renderCLBody(){
         h+=`<div class="review-btns">
           <span style="font-size:10px;font-weight:700;color:#64748b;margin-right:6px">HQ 검토:</span>
           <button class="rb confirm ${rv==="confirmed"?"on":""}" onclick="setRv(${it.id},'confirmed')">✅ 확정</button>
-          <button class="rb reject ${rv==="rejected"?"on":""}" onclick="setRv(${it.id},'rejected')">❌ 반려</button>
+          <button class="rb reject ${rv==="rejected"?"on":""}" onclick="setRv(${it.id},'rejected')">💬 추가 의견</button>
         </div>`;
       }
       // 메모
@@ -742,7 +742,7 @@ function renderResult(){
   const todos=ALL.filter(i=>getReview(ST.oid,i.id)!=="confirmed");
   let h=`<div style="font-size:14px;font-weight:800;margin:16px 0 10px">📋 미확정 항목 (${todos.length}개)</div>`;
   if(!todos.length)h+=`<div class="no-results">🎉 모든 항목 확정!</div>`;
-  else{SECTIONS.forEach(sec=>{const its=todos.filter(i=>i.sec===sec.id);if(!its.length)return;h+=`<div style="margin-bottom:14px"><div style="padding:6px 10px;border-radius:8px;background:${sec.color};color:#fff;font-size:11px;font-weight:800;margin-bottom:6px">${sec.emoji} ${sec.label} <span style="opacity:.7;margin-left:auto">${its.length}개</span></div>${its.map(it=>{const resp=getResp(ST.oid,it.id),rv=getReview(ST.oid,it.id);return`<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-size:11px;font-weight:700">${_h(it.name)}</div><div style="font-size:10px;margin-top:2px">응답: <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span> 검토: <span class="st-badge ${rv||'none'}">${{confirmed:"✅",rejected:"❌"}[rv]||"—"}</span></div></div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span></div>`;}).join('')}</div>`;});}
+  else{SECTIONS.forEach(sec=>{const its=todos.filter(i=>i.sec===sec.id);if(!its.length)return;h+=`<div style="margin-bottom:14px"><div style="padding:6px 10px;border-radius:8px;background:${sec.color};color:#fff;font-size:11px;font-weight:800;margin-bottom:6px">${sec.emoji} ${sec.label} <span style="opacity:.7;margin-left:auto">${its.length}개</span></div>${its.map(it=>{const resp=getResp(ST.oid,it.id),rv=getReview(ST.oid,it.id);return`<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-size:11px;font-weight:700">${_h(it.name)}</div><div style="font-size:10px;margin-top:2px">응답: <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span> 검토: <span class="st-badge ${rv||'none'}">${{confirmed:"✅",rejected:"💬"}[rv]||"—"}</span></div></div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span></div>`;}).join('')}</div>`;});}
   document.getElementById('resultTodo').innerHTML=h;
 }
 
@@ -772,7 +772,7 @@ function exportCSV(){
   const impMap={H:"상",M:"중",L:"하"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);
   const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","메모"];const rows=[];
   tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);
-  rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"반려"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});
+  rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});
   const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};
   const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();
