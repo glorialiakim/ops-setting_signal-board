@@ -453,8 +453,10 @@ async function logActivity(oid,iid,type,value){
   try{await db.collection("activityLog").add({orgId:oid,itemId:iid,type,value,uid:CU.uid,userName:CU.name,orgName:CU.orgName,createdAt:TS()});}catch(e){}
 }
 async function loadItemComments(oid){
-  try{const snap=await db.collection("comments").where("orgId","==",oid).orderBy("createdAt","desc").limit(100).get();
-  commC=[];snap.forEach(d=>{commC.push({id:d.id,...d.data()});});}catch(e){commC=[];}
+  try{const snap=await db.collection("comments").where("orgId","==",oid).get();
+  commC=[];snap.forEach(d=>{commC.push({id:d.id,...d.data()});});
+  commC.sort((a,b)=>{const ta=a.createdAt?.seconds||0,tb=b.createdAt?.seconds||0;return tb-ta;});
+  }catch(e){console.error("Comments load error:",e);commC=[];}
 }
 function getItemComments(iid){return commC.filter(c=>c.itemId===iid);}
 
@@ -567,9 +569,11 @@ async function renderDashActivity(){
 }
 
 async function renderDashComments(){
-  try{const snap=await db.collection("comments").orderBy("createdAt","desc").limit(30).get();
-  let h='';snap.forEach(d=>{const c=d.data();const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';
-  const org=orgsC.find(o=>o.id===c.orgId);const item=ALL.find(i=>i.id===c.itemId);
+  try{const snap=await db.collection("comments").get();
+  const all=[];snap.forEach(d=>{all.push({id:d.id,...d.data()});});
+  all.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  const recent=all.slice(0,30);
+  let h='';recent.forEach(c=>{const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';  const org=orgsC.find(o=>o.id===c.orgId);const item=ALL.find(i=>i.id===c.itemId);
   h+=`<div class="log-item"><div class="log-time">${t}</div><div class="log-text"><span class="log-badge" style="background:#ede9fe;color:#5b21b6">${_h(org?.name||'')}</span><span class="log-badge" style="background:#e0f2fe;color:#0369a1">${_h(c.authorName)}</span>${item?`<span class="log-badge" style="background:#f1f5f9;color:#475569">#${item.id} ${_h(item.name).substring(0,20)}...</span>`:''}</div><div style="font-size:12px;color:#374151;margin-top:4px;padding:6px 8px;background:#f8fafc;border-radius:6px">${_h(c.text)}</div></div>`;});
   document.getElementById('dashComments').innerHTML=h||'<div class="no-results">아직 코멘트가 없습니다.</div>';}catch(e){document.getElementById('dashComments').innerHTML='<div class="no-results">코멘트를 불러올 수 없습니다.</div>';}
 }
