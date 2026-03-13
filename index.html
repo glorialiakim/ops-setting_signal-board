@@ -579,7 +579,7 @@ function downloadTemplate(){
   const wb=XLSX.utils.book_new();const org=orgsC.find(o=>o.id===ST.oid);const orgName=org?.name||"법인";
   const impMap={H:"상",M:"중",L:"하"},whoMap={local:"현지",both:"공통",hq:"본사"};
   const filtered=ALL.filter(i=>i.who!=="hq");
-  const rows=[["Track","Section","ID","Importance","Owner","Item",orgName,"메모","Why","How","Done Criteria"]];
+  const rows=[["Track","Section","ID","Importance","Owner","Item",orgName+" (O/△/X)","메모","Why","How","Done Criteria"]];
   filtered.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);
   rows.push([trk.label,sec.label,it.id,impMap[it.imp],whoMap[it.who],it.name,"","",it.why,it.how,it.done]);});
   const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:22},{wch:16},{wch:4},{wch:10},{wch:6},{wch:45},{wch:14},{wch:30},{wch:40},{wch:40},{wch:45}];
