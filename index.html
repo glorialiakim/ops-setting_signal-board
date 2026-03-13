@@ -579,10 +579,10 @@ function downloadTemplate(){
   const wb=XLSX.utils.book_new();const org=orgsC.find(o=>o.id===ST.oid);const orgName=org?.name||"법인";
   const impMap={H:"상",M:"중",L:"하"},whoMap={local:"현지",both:"공통",hq:"본사"};
   const filtered=ALL.filter(i=>i.who!=="hq");
-  const rows=[["Track","Section","ID","Importance","Owner","Item","소속명","Why","How","Done Criteria","상태 (O/X/△)","메모"]];
+  const rows=[["Track","Section","ID","Importance","Owner","Item",orgName,"메모","Why","How","Done Criteria"]];
   filtered.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);
-  rows.push([trk.label,sec.label,it.id,impMap[it.imp],whoMap[it.who],it.name,orgName,it.why,it.how,it.done,"",""]);});
-  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:22},{wch:16},{wch:4},{wch:10},{wch:6},{wch:45},{wch:18},{wch:40},{wch:40},{wch:45},{wch:14},{wch:30}];
+  rows.push([trk.label,sec.label,it.id,impMap[it.imp],whoMap[it.who],it.name,"","",it.why,it.how,it.done]);});
+  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:22},{wch:16},{wch:4},{wch:10},{wch:6},{wch:45},{wch:14},{wch:30},{wch:40},{wch:40},{wch:45}];
   XLSX.utils.book_append_sheet(wb,ws,"체크리스트");XLSX.writeFile(wb,`${orgName}_체크리스트_템플릿.xlsx`);
 }
 async function handleImport(ev){
@@ -590,15 +590,42 @@ async function handleImport(ev){
   if(!canEdit(ST.oid)){rEl.className='import-result show error';rEl.textContent='편집 권한이 없습니다.';ev.target.value='';return;}
   try{const d=await file.arrayBuffer();const wb=XLSX.read(d);const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{header:1});
   if(rows.length<2){rEl.className='import-result show error';rEl.textContent='데이터가 없습니다.';ev.target.value='';return;}
-  const hdr=rows[0].map(h=>(h||"").toString().trim());const stCol=hdr.findIndex(h=>h.includes("상태"));const idCol=hdr.findIndex(h=>h.includes("ID"));const nameCol=hdr.findIndex(h=>h.includes("Item"));const memoCol=hdr.findIndex(h=>h.includes("메모"));
-  if(stCol===-1){rEl.className='import-result show error';rEl.textContent='"상태" 열을 찾을 수 없습니다.';ev.target.value='';return;}
-  const sMap={"충족":"yes","미충족":"no","부분":"partial","o":"yes","x":"no","△":"partial","yes":"yes","no":"no","partial":"partial"};
+  const hdr=rows[0].map(h=>(h||"").toString().trim());
+  // Find columns: ID is at index with "ID", status is col 6 (G), memo is col 7 (H)
+  const idCol=hdr.findIndex(h=>h==="ID");
+  const nameCol=hdr.findIndex(h=>h==="Item"||h.includes("Item"));
+  // G열 = 법인명 헤더 (index 6), H열 = 메모 (index 7)
+  const stCol=6;
+  const memoCol=7;
+  const sMap={"o":"yes","O":"yes","x":"no","X":"yes"===false||true?"no":"no","△":"partial","충족":"yes","미충족":"no","부분":"partial"};
+  // Fix: proper mapping
+  const statusMap=function(raw){
+    const t=raw.trim();
+    if(t==="O"||t==="o"||t==="충족")return"yes";
+    if(t==="X"||t==="x"||t==="미충족")return"no";
+    if(t==="△"||t==="부분")return"partial";
+    return null;
+  };
   let ok=0,skip=0;const bulk={},bMemo={};
-  for(let i=1;i<rows.length;i++){const r=rows[i];if(!r||!r.length)continue;const raw=(r[stCol]||"").toString().trim();const st=sMap[raw.toLowerCase()]||sMap[raw];
-  if(!st){skip++;continue;}let item=null;if(idCol>=0&&r[idCol])item=ALL.find(a=>a.id===parseInt(r[idCol]));
-  if(!item&&nameCol>=0&&r[nameCol]){const rn=(r[nameCol]||"").toString().trim();item=ALL.find(a=>a.name.includes(rn)||rn.includes(a.name));}
-  if(item){bulk[item.id]=st;if(memoCol>=0&&r[memoCol])bMemo[item.id]=(r[memoCol]||"").toString().trim();ok++;}else{skip++;}}
-  if(ok>0){await saveBulkResp(ST.oid,bulk);if(Object.keys(bMemo).length>0){if(!memosC[ST.oid])memosC[ST.oid]={};Object.assign(memosC[ST.oid],bMemo);await db.collection("memos").doc(ST.oid).set(memosC[ST.oid]);}}
+  for(let i=1;i<rows.length;i++){const r=rows[i];if(!r||!r.length)continue;
+    const rawSt=(r[stCol]||"").toString();const st=statusMap(rawSt);
+    if(!st){skip++;continue;}
+    let item=null;
+    if(idCol>=0&&r[idCol])item=ALL.find(a=>a.id===parseInt(r[idCol]));
+    if(!item&&nameCol>=0&&r[nameCol]){const rn=(r[nameCol]||"").toString().trim();item=ALL.find(a=>a.name.includes(rn)||rn.includes(a.name));}
+    if(item){
+      bulk[item.id]=st;
+      const memoRaw=(r[memoCol]||"").toString().trim();
+      if(memoRaw){
+        // 기존 메모에 괄호로 이어붙임
+        const existing=getMemo(ST.oid,item.id);
+        bMemo[item.id]=existing?existing+" ("+memoRaw+")":"("+memoRaw+")";
+      }
+      ok++;
+    }else{skip++;}
+  }
+  if(ok>0){await saveBulkResp(ST.oid,bulk);
+    if(Object.keys(bMemo).length>0){if(!memosC[ST.oid])memosC[ST.oid]={};Object.assign(memosC[ST.oid],bMemo);await db.collection("memos").doc(ST.oid).set(memosC[ST.oid]);}}
   rEl.className=`import-result show ${ok>0?'success':'error'}`;rEl.textContent=`✅ ${ok}개 항목 반영${skip>0?` / ⚠️ ${skip}개 건너뜀`:''}`;renderChecklist();
   }catch(e){rEl.className='import-result show error';rEl.textContent='오류: '+e.message;}ev.target.value='';
 }
