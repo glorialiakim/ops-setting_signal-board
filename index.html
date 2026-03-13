@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>글로벌 CS 운영 함께 단계 올리기</title>
+<style>
+:root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4444;
+--tA:#6366f1;--tB:#f59e0b;
+--s1:#8b5cf6;--s2:#6366f1;--s3:#0ea5e9;--s4:#10b981;--s5:#f59e0b;--s6:#ec4899;--s7:#f97316;--s8:#14b8a6;--s9:#64748b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}
+header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-shadow:0 4px 20px rgba(151,27,47,.3)}
+.hi{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.logo h1{font-size:15px;font-weight:800;color:#fff}
+.logo p{font-size:10px;color:rgba(255,255,255,.6);font-weight:600;margin-top:1px}
+.nav{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.nav-btn{padding:6px 13px;border-radius:18px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:.15s}
+.nav-btn:hover,.nav-btn.on{background:rgba(255,255,255,.25)}
+.user-info{color:rgba(255,255,255,.8);font-size:10px;font-weight:600}
+.page{display:none;max-width:1200px;margin:0 auto;padding:20px 14px}
+.page.active{display:block}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:8px 16px;border-radius:18px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn.green{background:#22c55e;color:#fff}.btn.ghost{background:#fff;border:1px solid var(--line);color:#555}
+.btn.red{background:var(--red);color:#fff}.btn.blue{background:#3b82f6;color:#fff}
+.btn.sm{padding:5px 12px;font-size:11px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* AUTH */
+.auth-wrap{max-width:400px;margin:60px auto}
+.auth-card{background:#fff;border-radius:22px;padding:36px;border:1px solid var(--line);box-shadow:0 4px 24px rgba(0,0,0,.07);text-align:center}
+.auth-title{font-size:22px;font-weight:800;margin:12px 0 6px}
+.auth-sub{font-size:12px;color:#64748b;font-weight:600;margin-bottom:24px;line-height:1.6}
+.fi{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:13px;font-family:inherit;outline:none;margin-bottom:10px}
+.fi:focus{border-color:var(--ok);box-shadow:0 0 0 3px rgba(34,197,94,.1)}
+.fi-select{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:13px;font-family:inherit;outline:none;margin-bottom:10px;background:#fff}
+.auth-toggle{font-size:12px;color:#3b82f6;font-weight:700;cursor:pointer;margin-top:12px;display:inline-block}
+.auth-toggle:hover{text-decoration:underline}
+.auth-error{font-size:11px;color:var(--no);font-weight:700;margin-top:8px;display:none}
+.auth-error.show{display:block}
+.role-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:800}
+.role-badge.admin{background:#ede9fe;color:#5b21b6}
+.role-badge.user{background:#e0f2fe;color:#0369a1}
+
+/* HOME / DASHBOARD */
+.gstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.gs{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid var(--line)}
+.gs-l{font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px}
+.gs-v{font-size:24px;font-weight:800;color:var(--red);margin-top:3px}
+.gs-s{font-size:10px;color:#94a3b8;font-weight:600;margin-top:1px}
+.org-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.org-card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:18px;position:relative;overflow:hidden;transition:.2s}
+.org-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--tA),var(--tB))}
+.org-card:hover{border-color:#971b2f44;box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.org-name{font-size:15px;font-weight:800;margin-bottom:10px}
+.track-row{display:flex;gap:10px;margin-bottom:8px}
+.track-box{flex:1;background:#f8fafc;border-radius:10px;padding:10px;text-align:center;border:1px solid var(--line)}
+.track-label{font-size:9px;font-weight:700;color:#64748b;margin-bottom:3px}
+.track-pct{font-size:20px;font-weight:800}
+.track-bar{height:4px;background:#f1f5f9;border-radius:99px;overflow:hidden;margin-top:4px}
+.track-fill{height:100%;border-radius:99px}
+.who-summary{display:flex;gap:6px;margin-bottom:10px}
+.who-sum-box{flex:1;text-align:center;padding:6px;border-radius:8px;border:1px solid var(--line);background:#fff}
+.who-sum-label{font-size:8px;font-weight:700;color:#94a3b8}
+.who-sum-pct{font-size:14px;font-weight:800}
+
+/* ADMIN DASHBOARD */
+.dash-section{margin-bottom:24px}
+.dash-title{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.heatmap-grid{display:grid;gap:2px}
+.heatmap-cell{border-radius:4px;padding:4px;text-align:center;font-size:9px;font-weight:700;min-height:32px;display:flex;align-items:center;justify-content:center}
+.weak-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.weak-bar{height:6px;background:#f1f5f9;border-radius:99px;flex:1;overflow:hidden}
+.weak-fill{height:100%;border-radius:99px}
+
+/* CHECKLIST PAGE */
+.cl-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.cl-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.cl-tab{padding:6px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:.13s}
+.cl-tab.on{color:#fff}
+.search-filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.search-box{flex:1;min-width:200px;position:relative}
+.search-box input{width:100%;padding:9px 14px 9px 34px;border:1.5px solid var(--line);border-radius:12px;font-size:12px;font-family:inherit;outline:none;background:#fff}
+.search-box input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px}
+.filter-wrap{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.filter-group{display:flex;gap:4px;flex-wrap:wrap}
+.filter-group-label{font-size:9px;font-weight:700;color:#94a3b8;margin-bottom:2px;display:block}
+.f-btn{padding:5px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:10px;font-weight:700;cursor:pointer;transition:.13s}
+.f-btn.on{background:#101820;color:#fff;border-color:#101820}
+.f-btn.who-hq.on{background:#6366f1;border-color:#6366f1;color:#fff}
+.f-btn.who-local.on{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
+.f-btn.who-both.on{background:#f59e0b;border-color:#f59e0b;color:#fff}
+.search-result-info{font-size:11px;color:#64748b;font-weight:600;margin-bottom:10px;padding:6px 10px;background:#fff;border-radius:8px;border:1px solid var(--line);display:none}
+.search-result-info.show{display:block}
+.highlight{background:#fef08a;border-radius:2px;padding:0 1px}
+
+/* ITEM CARD */
+.sec-block{margin-bottom:20px}
+.sec-hd{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;margin-bottom:8px}
+.sec-hd-label{font-size:12px;font-weight:800;color:#fff}
+.sec-hd-cnt{font-size:10px;font-weight:700;color:rgba(255,255,255,.75);margin-left:auto}
+.item-card{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;margin-bottom:7px;transition:.2s}
+.item-card.done{border-color:#86efac;background:#f0fdf4}
+.item-card.flagged{border-color:#fca5a5;background:#fff8f8}
+.item-card.partial-st{border-color:#fcd34d;background:#fffbeb}
+.item-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.item-name{font-size:13px;font-weight:800;color:#1e293b;line-height:1.5;flex:1;min-width:200px}
+.imp-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;flex-shrink:0}
+.imp-badge.H{background:#fee2e2;color:#991b1b}.imp-badge.M{background:#fef3c7;color:#92400e}.imp-badge.L{background:#f1f5f9;color:#475569}
+.who-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;flex-shrink:0}
+.who-tag.hq{background:#ede9fe;color:#5b21b6}.who-tag.local{background:#e0f2fe;color:#0369a1}.who-tag.both{background:#fef3c7;color:#92400e}
+.detail-toggle{font-size:11px;font-weight:700;color:#3b82f6;cursor:pointer;user-select:none;margin-bottom:6px;display:inline-block}
+.detail-toggle:hover{color:#1d4ed8;text-decoration:underline}
+.detail-box{display:none;margin-bottom:10px}
+.detail-box.open{display:block}
+.detail-section{margin-bottom:8px}
+.detail-label{font-size:10px;font-weight:800;color:#64748b;margin-bottom:3px}
+.detail-text{font-size:11px;color:#374151;line-height:1.6;background:#f8fafc;border-radius:8px;padding:8px 10px;border-left:3px solid var(--line)}
+.detail-text.why{border-left-color:#ef4444}
+.detail-text.how{border-left-color:#3b82f6}
+.detail-text.done-criteria{border-left-color:#22c55e}
+.item-btns{display:flex;gap:5px}
+.ib{flex:1;padding:7px;border-radius:10px;border:2px solid var(--line);background:#fff;font-size:11px;font-weight:800;cursor:pointer;text-align:center;transition:.15s}
+.ib.yes{border-color:#86efac;color:#16a34a}.ib.yes.on{background:var(--ok);color:#fff;border-color:var(--ok)}
+.ib.no{border-color:#fca5a5;color:#dc2626}.ib.no.on{background:var(--no);color:#fff;border-color:var(--no)}
+.ib.partial{border-color:#fcd34d;color:#92400e}.ib.partial.on{background:#f59e0b;color:#fff;border-color:#f59e0b}
+.ib:disabled{opacity:.4;cursor:not-allowed}
+.memo-row{margin-top:6px}
+.memo-tog{font-size:10px;font-weight:700;color:#94a3b8;cursor:pointer}
+.memo-box{display:none;margin-top:5px}
+.memo-box.open{display:block}
+.memo-area{width:100%;height:48px;border:1px solid #e2e8f0;border-radius:8px;padding:7px;resize:none;font-size:11px;font-family:inherit;outline:none}
+.memo-save{margin-top:3px;padding:4px 10px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;float:right}
+
+/* RESULT */
+.result-hero{background:#fff;border-radius:18px;border:1px solid var(--line);padding:22px;margin-bottom:14px;text-align:center}
+.rg-pct{font-size:40px;font-weight:800;color:var(--red);margin:6px 0}
+.track-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.ts-box{border-radius:14px;padding:16px;text-align:center;border:2px solid var(--line)}
+.ts-box.tA{border-color:var(--tA);background:#f5f3ff}
+.ts-box.tB{border-color:var(--tB);background:#fffbeb}
+.ts-label{font-size:11px;font-weight:800;margin-bottom:4px}
+.ts-pct{font-size:28px;font-weight:800}
+.who-result-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+.who-result-box{border-radius:12px;padding:12px;text-align:center;border:1px solid var(--line);background:#fff}
+.who-result-label{font-size:10px;font-weight:700;margin-bottom:2px}
+.who-result-pct{font-size:22px;font-weight:800}
+.who-result-detail{font-size:9px;color:#94a3b8;font-weight:600;margin-top:2px}
+.sec-minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin-top:12px}
+.sec-mini{background:#f8fafc;border-radius:10px;padding:8px;text-align:center;border:1px solid var(--line)}
+.sec-mini-pct{font-size:15px;font-weight:800}
+.sec-mini-lbl{font-size:8px;color:#64748b;font-weight:700;margin-top:2px}
+
+/* COMPARE */
+.cmp-tbl{width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;border:1px solid var(--line);overflow:hidden;background:#fff}
+.cmp-tbl th,.cmp-tbl td{padding:8px 10px;font-size:11px;border-bottom:1px solid var(--line)}
+.cmp-tbl th{background:#f8fafc;font-weight:800;color:#64748b}
+.cmp-tbl tr:last-child td{border-bottom:none}
+.heat{border-radius:8px;padding:3px 8px;font-weight:800;font-size:10px;display:inline-block}
+
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px}
+.mov.open{display:flex}
+.modal{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:15px;font-weight:800;margin-bottom:12px}
+.fg{margin-bottom:10px}
+.fl{font-size:11px;font-weight:700;color:#374151;margin-bottom:3px;display:block}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.no-results{text-align:center;padding:32px;color:#94a3b8;font-weight:700;font-size:13px;background:#fff;border-radius:14px;border:1px solid var(--line)}
+.loading{text-align:center;padding:40px;color:#94a3b8;font-weight:700;font-size:13px}
+.readonly-badge{display:inline-block;padding:2px 8px;border-radius:6px;background:#f1f5f9;color:#94a3b8;font-size:9px;font-weight:700;margin-left:6px}
+</style>
+</head>
+<body>
+
+<header>
+<div class="hi">
+<div class="logo"><h1>🌱 글로벌 CS 운영 함께 단계 올리기</h1><p id="headerSub">로그인이 필요합니다</p></div>
+<div class="nav" id="mainNav" style="display:none">
+<button class="nav-btn" id="nav-home" onclick="go('home')">Overview</button>
+<button class="nav-btn" id="nav-dashboard" onclick="go('dashboard')" style="display:none">📊 Dashboard</button>
+<button class="nav-btn" id="nav-compare" onclick="go('compare')">Compare</button>
+<button class="nav-btn" onclick="exportCSV()">CSV</button>
+<span class="user-info" id="userInfoSpan"></span>
+<button class="nav-btn" onclick="doLogout()">로그아웃</button>
+</div>
+</div>
+</header>
+
+<!-- AUTH PAGE -->
+<div class="page active" id="page-auth">
+<div class="auth-wrap"><div class="auth-card">
+<div style="font-size:48px">🌏</div>
+<div class="auth-title" id="authTitle">로그인</div>
+<div class="auth-sub">회사 이메일로 로그인하세요</div>
+<input class="fi" id="authEmail" placeholder="이메일" type="email"/>
+<input class="fi" id="authPw" placeholder="비밀번호 (6자 이상)" type="password"/>
+<div id="signupFields" style="display:none">
+<input class="fi" id="authName" placeholder="이름"/>
+<input class="fi" id="authOrg" placeholder="소속 법인명 (예: InBody Japan)"/>
+</div>
+<div class="auth-error" id="authError"></div>
+<button class="btn red" style="width:100%;justify-content:center;padding:13px;font-size:14px" id="authBtn" onclick="doAuth()">로그인</button>
+<div class="auth-toggle" id="authToggle" onclick="toggleAuthMode()">계정이 없으신가요? 회원가입</div>
+</div></div>
+</div>
+
+<!-- HOME -->
+<div class="page" id="page-home">
+<div class="gstats" id="gstats"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+<div style="font-size:15px;font-weight:800">법인 현황</div>
+<button class="btn green sm" id="addOrgBtn" onclick="openAdd()">＋ 법인 추가</button>
+</div>
+<div class="org-grid" id="orgGrid"></div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div class="page" id="page-dashboard">
+<div style="font-size:18px;font-weight:800;margin-bottom:16px">📊 본사 대시보드</div>
+<div id="dashContent"></div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="page" id="page-checklist">
+<div class="cl-top">
+<button class="btn ghost sm" onclick="go('home')">← 목록</button>
+<span id="clOrg" style="font-size:13px;font-weight:800"></span>
+<span id="clReadonly"></span>
+<button class="btn blue sm" onclick="go('result')">결과 보기 →</button>
+</div>
+<div class="cl-tabs" id="clTabs"></div>
+<div class="search-filter-bar">
+<div class="search-box"><input id="searchInput" placeholder="항목명, 목적, 방법으로 검색..." oninput="onSearch()"/></div>
+</div>
+<div class="filter-wrap">
+<div><span class="filter-group-label">상태</span><div class="filter-group" id="fgStatus"></div></div>
+<div><span class="filter-group-label">중요도</span><div class="filter-group" id="fgImp"></div></div>
+<div><span class="filter-group-label">담당</span><div class="filter-group" id="fgWho"></div></div>
+</div>
+<div class="search-result-info" id="searchInfo"></div>
+<div id="clBody"></div>
+</div>
+
+<!-- RESULT -->
+<div class="page" id="page-result">
+<div style="max-width:860px;margin:0 auto">
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+<button class="btn ghost sm" onclick="go('home')">← 목록</button>
+<button class="btn ghost sm" onclick="go('checklist')">← 체크리스트</button>
+</div>
+<div class="result-hero" id="resultHero"></div>
+<div id="resultTodo"></div>
+</div>
+</div>
+
+<!-- COMPARE -->
+<div class="page" id="page-compare">
+<div style="font-size:15px;font-weight:800;margin-bottom:14px">법인 비교</div>
+<div id="cmpWrap"></div>
+</div>
+
+<!-- ADD ORG MODAL -->
+<div class="mov" id="addModal">
+<div class="modal">
+<h3>새 법인 추가</h3>
+<div class="fg"><label class="fl">법인명</label><input class="fi" id="addName" placeholder="예: InBody Germany"/></div>
+<div class="mf">
+<button class="btn ghost sm" onclick="closeAdd()">취소</button>
+<button class="btn green sm" onclick="confirmAdd()">추가</button>
+</div>
+</div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ══════════════════════════════════════
+   🔧 여기에 본인 Firebase 설정값을 넣으세요
+   ══════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAnrQKqg_NWgewQLMSorN4wV0Tniw_T2UE",
+  authDomain: "ops-checklist-58c96.firebaseapp.com",
+  projectId: "ops-checklist-58c96",
+  storageBucket: "ops-checklist-58c96.firebasestorage.app",
+  messagingSenderId: "216430360210",
+  appId: "Y1:216430360210:web:81f5ac63648cd62995584b"
+};
+
+/* Admin 이메일 목록 - 여기에 본사 관리자 이메일을 추가하세요 */
+const ADMIN_EMAILS = [
+  "glorialiakim@inbody.com"
+  // "another-admin@example.com",
+];
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* ══ CHECKLIST DATA ══ */
+const TRACKS=[
+{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#6366f1"},
+{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#f59e0b"}
+];
+const SECTIONS=[
+{id:"a1",track:"tA",label:"인증·인허가",emoji:"🛂",color:"#8b5cf6"},
+{id:"a2",track:"tA",label:"품질·규제 체계",emoji:"🔬",color:"#6366f1"},
+{id:"a3",track:"tA",label:"조직·인프라",emoji:"⚙️",color:"#0ea5e9"},
+{id:"a4",track:"tA",label:"법률·컴플라이언스",emoji:"⚖️",color:"#10b981"},
+{id:"a5",track:"tA",label:"거버넌스·정책 관리",emoji:"📋",color:"#64748b"},
+{id:"b1",track:"tB",label:"영업·수주",emoji:"💼",color:"#f59e0b"},
+{id:"b2",track:"tB",label:"공급망·출고",emoji:"📦",color:"#ec4899"},
+{id:"b3",track:"tB",label:"설치·고객경험",emoji:"🔧",color:"#f97316"},
+{id:"b4",track:"tB",label:"CS·사후서비스",emoji:"🛠️",color:"#14b8a6"},
+{id:"b5",track:"tB",label:"회계·수금",emoji:"💰",color:"#e11d48"},
+];
+
+const ALL=[
+{id:1,sec:"a1",imp:"H",who:"hq",name:"제품 판매를 위한 HW 의료기기 인증 확보",why:"현지 인증 없이는 통관·판매 자체가 불가능하며, 국가별로 2년 이상 소요되기도 함",how:"법인 설립 전부터 대상 국가의 인증 요건을 조사하고 착수. HQ가 주도하되 현지 RA 파트너와 협업",done:"①대상 제품 전체의 인증이 발급됨 ②인증서 사본이 HQ 마스터 리스트에 등록됨 ③인증 범위에 판매 예정 품목이 모두 포함됨"},
+{id:2,sec:"a1",imp:"H",who:"hq",name:"SW(앱·펌웨어) 인증 또는 신고 의무 이행",why:"HW 인증만으로 끝나지 않는 국가가 많으며, SW 미신고 시 통관 단계에서 제지당하는 사례 빈번",how:"HW 인증과 별도로 SW 관련 규제를 조사. 의료기기 SW 분류(SaMD 등) 해당 여부 확인",done:"①SW 규제 해당 여부가 문서로 검토됨 ②해당 시 인증/신고가 완료됨 ③통관 시 필요한 SW 관련 서류가 준비됨"},
+{id:3,sec:"a1",imp:"H",who:"hq",name:"전파·계측기 등 추가 인증 요건 대응",why:"의료기기 인증 외에 전파법, 계측기법 등 별도 인증이 필요한 국가가 있어 누락 시 판매 중단",how:"대상 국가의 의료기기 외 관련 법규를 사전 조사. 필요 시 별도 인증 착수",done:"①추가 인증 요건 조사 결과가 문서화됨 ②필요한 추가 인증이 모두 취득됨"},
+{id:4,sec:"a1",imp:"H",who:"hq",name:"인증 유효기간 관리 및 갱신 체계 운영",why:"인증 만료 시 판매 즉시 중단. 만료일 관리 누락은 사업 연속성에 직접적 위협",how:"HQ 마스터 리스트에 국가별 인증 만료일·담당자를 등록하고, 갱신 시작 시점에 자동 알림 설정",done:"①전체 인증의 만료일이 마스터 리스트에 등록됨 ②갱신 알림 체계가 운영 중 ③최근 1년 내 만료로 인한 판매 중단 사례가 없음"},
+{id:5,sec:"a1",imp:"H",who:"hq",name:"HS코드 정확 지정 및 문서화",why:"HS코드 오류 시 관세 과다 납부 또는 통관 거부가 직결됨",how:"HQ에서 제품·액세서리별 기준 HS코드를 먼저 정의하고, 법인이 현지 세관에 확인 후 조정",done:"①제품·액세서리별 HS코드 리스트가 문서화됨 ②현지 세관 확인을 거친 최종 코드가 적용됨"},
+{id:6,sec:"a1",imp:"H",who:"local",name:"관세·세금 감면 제도 활용",why:"의료기기 관련 감면 제도를 놓치면 불필요한 비용이 지속 발생",how:"현지 세무사, 한인회, 업계 네트워크를 통해 적용 가능한 감면 제도를 조사",done:"①적용 가능한 감면 제도가 조사·문서화됨 ②실제 통관 시 감면이 적용되고 있음"},
+{id:7,sec:"a2",imp:"H",who:"local",name:"현지 법규 기반 품질 조직 구성",why:"의료기기 판매국에서는 법적으로 품질책임자 지정, 품질 매뉴얼 보유 등을 요구하는 경우가 많음",how:"현지 의료기기 법규가 요구하는 품질 조직 요건을 조사하고, 필요한 역할을 지정",done:"①현지 법규가 요구하는 품질 조직 요건이 문서화됨 ②법적 필수 역할이 지정됨 ③관할 기관 신고/등록이 완료됨"},
+{id:8,sec:"a2",imp:"H",who:"local",name:"시판 후 감시(PMS) 체계 구축",why:"대부분의 국가에서 의료기기 시판 후 안전성 모니터링을 법적으로 의무화",how:"현지 규제기관의 PMS 요건을 파악하고, 부작용/불만 접수→평가→보고 프로세스를 정의",done:"①PMS 절차서가 문서화됨 ②부작용 보고 경로가 정의됨 ③최근 1년 내 보고 의무 위반 사례 없음"},
+{id:9,sec:"a2",imp:"H",who:"both",name:"현지 QA 프로세스 운영",why:"HQ에서 인증을 받아도 현지에서 실제 품질관리가 안 되면 불량 대응 지연",how:"현지 법규에 맞는 불만처리 절차, CAPA 프로세스, 리콜 대응 절차를 수립",done:"①불만처리 절차서가 현지 법규에 맞게 작성됨 ②CAPA 프로세스가 정의되어 운영 중 ③리콜 발생 시 대응 절차가 문서화됨"},
+{id:10,sec:"a2",imp:"M",who:"both",name:"반복 불량의 체계적 집계 및 HQ 환류",why:"현지에서 발생하는 반복 불량이 HQ에 전달되지 않으면 설계 개선 기회를 놓침",how:"불량을 모델·부품·납품일 기준으로 분석 가능한 구조로 기록",done:"①불량 데이터가 모델·부품 단위로 집계 가능 ②월 1회 이상 HQ에 품질 리포트 공유"},
+{id:11,sec:"a3",imp:"H",who:"local",name:"법인 기능별 책임자 지정 및 백업 체계",why:"책임자 미지정 시 의사결정 지연. 1인 의존 구조는 부재 시 업무 마비",how:"기능별 책임자를 지정. 초기에는 겸직 허용하되 백업자를 반드시 지정",done:"①기능별 책임자·백업자가 문서화됨 ②조직도가 최신 상태로 유지됨"},
+{id:12,sec:"a3",imp:"H",who:"local",name:"운영에 필요한 금융 인프라 구축",why:"현지 통화 결제·수금·송금이 원활하지 않으면 영업 활동 자체에 지장",how:"현지 상황에 맞게 필요한 은행 계좌를 개설",done:"①일상 운영에 필요한 은행 계좌가 개설·운영 중 ②HQ↔법인 송금 프로세스가 정의됨"},
+{id:13,sec:"a3",imp:"H",who:"hq",name:"법인 필수 시스템(CRM/ERP/CS) 최소 기준 수립",why:"법인별 시스템 수준 편차가 크면 데이터 연결 불가",how:"HQ에서 각 부서별 사용 시스템의 최소 보유 기능 기준을 정의",done:"①시스템별 최소 기능 기준이 문서화됨 ②법인이 기준에 부합하는 시스템을 운영 중"},
+{id:14,sec:"a3",imp:"H",who:"both",name:"CS 부품 보관 및 데모·자재 공간 확보",why:"CS 부품·데모 장비·반품 혼재 보관 시 오출고·재고 오류 발생",how:"CS 부품, 데모, 판매용, 반품을 물리적으로 Zone 분리하고 라벨링",done:"①보관 공간이 용도별로 Zone 분리됨 ②라벨링이 적용됨 ③데모와 판매용 장비가 시스템상으로도 구분됨"},
+{id:15,sec:"a3",imp:"H",who:"hq",name:"CS 부품 마스터 리스트 및 Safety Stock 기준 제공",why:"모델별 핵심 부품과 권장 재고 수량이 없으면 CS 대응 지연 발생",how:"HQ에서 모델별 핵심 부품 리스트 + 권장 Safety Stock 수량 기준을 정의하여 제공",done:"①모델별 핵심 부품 리스트가 존재 ②자재별 Min/Max 및 재주문 트리거가 설정됨"},
+{id:16,sec:"a3",imp:"H",who:"hq",name:"SN 기반 자산 추적 구조 설계",why:"SN이 고객 정보와 매핑되지 않으면 CS·보증·품질 데이터가 모두 단절됨",how:"출고 단계에서 SN이 고객 정보와 매핑되는 구조를 설계",done:"①SN-고객 매핑 구조가 설계됨 ②입고 시 SN 등록이 필수 절차로 운영됨 ③CS 티켓에 SN이 필수 입력됨"},
+{id:17,sec:"a3",imp:"M",who:"both",name:"입사·퇴사 시 계정·권한 관리 절차",why:"퇴사자 권한 미회수 시 보안 리스크",how:"입퇴사 체크리스트를 만들고 계정 생성/회수 절차를 정의",done:"①입퇴사 체크리스트가 존재 ②퇴사 시 계정 회수가 24시간 내 처리됨"},
+{id:18,sec:"a3",imp:"M",who:"both",name:"데모 장비 관리 및 이력 추적",why:"데모 장비 관리 부재 시 분실·파손 미감지",how:"데모 장비를 판매용과 구분 관리하고, 대여·이동·전시 이력을 기록",done:"①데모 장비가 판매용과 구분 관리됨 ②이동/대여 이력이 기록됨 ③정기 점검 기준이 있음"},
+{id:19,sec:"a4",imp:"H",who:"both",name:"고객 개인정보 국외이전 법규 준수",why:"개인정보 국외이전 관련 법규 위반 시 과징금·영업 정지",how:"현지 개인정보보호법의 국외이전 요건을 조사",done:"①국외이전 관련 법적 요건이 검토·문서화됨 ②필요한 동의/계약 조치가 이행됨"},
+{id:20,sec:"a4",imp:"H",who:"hq",name:"클라우드/서버 데이터 보관 법규 준수",why:"일부 국가는 자국 내 데이터 보관을 의무화",how:"CRM/ERP 등 클라우드 서버 위치가 현지 법규에 부합하는지 확인",done:"①서버 위치가 현지 법규 요건을 충족 ②데이터 보관 의무가 운영에 반영됨"},
+{id:21,sec:"a4",imp:"H",who:"both",name:"IOR(수입자) 명확 지정",why:"수입자 불명확 시 통관 지연, 세금 책임 소재 혼선",how:"계약서상 IOR를 명확히 지정",done:"①IOR가 계약서에 명시됨 ②통관 서류에 IOR 정보가 정확히 반영됨"},
+{id:22,sec:"a4",imp:"M",who:"both",name:"통관 프로세스 및 필수 서류 체계화",why:"서류 누락은 즉시 통관 지연",how:"국가별 통관 필수 서류 체크리스트를 작성하고 SOP화",done:"①통관 서류 체크리스트가 존재 ②라벨링 요건이 출고 프로세스에 반영됨"},
+{id:23,sec:"a5",imp:"H",who:"hq",name:"글로벌 가격 승인 매트릭스 수립",why:"할인 기준이 없으면 법인마다 다른 기준으로 운영",how:"할인율/금액별 승인 레벨을 정의",done:"①할인 승인 매트릭스가 문서화됨 ②승인 로그가 시스템에 기록됨"},
+{id:24,sec:"a5",imp:"H",who:"hq",name:"FOC 승인 기준 및 로그 관리",why:"FOC 기준 없이 법인 재량에 맡기면 비용 통제 불가",how:"제품군·금액 구간별 FOC 승인 레벨을 정의",done:"①FOC 승인 레벨이 금액 구간별로 정의됨 ②승인 로그가 기록됨"},
+{id:25,sec:"a5",imp:"H",who:"hq",name:"현지 법인 재량권 한도 문서화",why:"한도 미정의 시 매번 HQ에 문의하거나 임의 처리 반복",how:"항목별로 현지 법인이 자체 판단할 수 있는 금액/범위를 명시",done:"①항목별 재량권 한도가 문서화됨 ②법인이 한도 내에서 자체 운영 중"},
+{id:26,sec:"a5",imp:"H",who:"hq",name:"글로벌 표준 계약서 템플릿 운영",why:"법인이 임의로 계약서를 만들면 필수 조항 누락 위험",how:"HQ 법무 검토 완료 버전을 표준으로 배포",done:"①표준 계약서 템플릿이 HQ에서 배포됨 ②현지 계약이 템플릿 기반으로 체결됨"},
+{id:27,sec:"a5",imp:"H",who:"hq",name:"정책 변경 시 HQ 사전 승인 체계",why:"수리비·보증·할인 등 정책을 현지에서 임의 변경하면 글로벌 일관성 훼손",how:"HQ 승인 필요 항목과 현지 자체 변경 가능 항목을 구분",done:"①승인 필요 항목이 정의됨 ②정책 변경 이력이 버전 관리됨"},
+{id:28,sec:"a5",imp:"M",who:"both",name:"PO 승인 이력 및 감사 추적",why:"미승인 PO 추적 불가 시 감사 대응 불가",how:"PO 승인 이력을 시스템에 기록",done:"①PO 승인 이력이 시스템에 기록됨"},
+{id:29,sec:"a5",imp:"L",who:"both",name:"주요 업무 SOP 유지 및 정기 감사",why:"SOP 미관리 시 담당자 변경 때마다 기준 혼선",how:"핵심 SOP만이라도 문서 오너를 지정하고 최신 상태 유지",done:"①핵심 SOP에 오너가 지정됨 ②반기 1회 이상 지표 점검이 수행됨"},
+{id:30,sec:"a5",imp:"L",who:"hq",name:"신규 법인 온보딩 가이드",why:"초기 혼선으로 세팅 지연",how:"체크리스트·연락처·시스템 접속 방법 등을 1페이지 요약본으로 제공",done:"①온보딩 가이드 문서가 존재"},
+{id:31,sec:"b1",imp:"H",who:"local",name:"영업 리드의 단일 시스템 통합 관리",why:"리드가 분산되면 파이프라인 가시성 저하",how:"모든 영업 문의를 하나의 CRM으로 통합",done:"①모든 리드가 단일 CRM에 기록됨 ②리드 소스가 필수 입력됨"},
+{id:32,sec:"b1",imp:"H",who:"both",name:"할인 승인의 글로벌 매트릭스 기반 운영",why:"승인 로그 없으면 사후 책임 소재 불명확",how:"가격 매트릭스 기준으로 할인 승인을 처리하고 로그를 기록",done:"①할인이 매트릭스 기준으로 처리됨 ②승인 로그가 기록됨"},
+{id:33,sec:"b1",imp:"H",who:"local",name:"표준 계약서 기반 계약 체결",why:"임의 계약서 사용 시 필수 조항 누락 위험",how:"글로벌 표준 계약서 템플릿을 기반으로 계약 체결",done:"①계약이 HQ 템플릿 기반으로 체결됨 ②필수 조항이 포함됨"},
+{id:34,sec:"b1",imp:"M",who:"local",name:"영업 단계 정의 및 파이프라인 관리",why:"단계 정의 없으면 진행률 왜곡",how:"영업 단계를 정의하고 단계별 필수 입력 항목을 설정",done:"①영업 단계가 정의됨 ②CRM에 단계별 파이프라인이 운영됨"},
+{id:35,sec:"b1",imp:"M",who:"local",name:"문의 응답 시간(SLA) 관리",why:"응답 지연 시 수주율 저하",how:"첫 응답 시간 기준을 정하고 모니터링",done:"①응답 SLA가 정의됨 ②SLA 준수율이 모니터링됨"},
+{id:36,sec:"b1",imp:"M",who:"local",name:"견적·주문서 표준화 및 버전 관리",why:"구버전 견적서 사용 시 재작업 발생",how:"견적서·주문서 양식을 표준화하고 버전 관리",done:"①표준 양식이 사용됨 ②버전 관리가 이루어짐"},
+{id:37,sec:"b2",imp:"H",who:"both",name:"PO 발행 기준 및 Forecast 체계 운영",why:"초기에는 과잉·과소 주문 실수가 많음",how:"PO 발행 기준, Forecast 주기·책임자를 명확히 정의",done:"①PO 발행 기준이 정의됨 ②Forecast 주기·책임자가 명확함"},
+{id:38,sec:"b2",imp:"H",who:"local",name:"재고 상태의 시스템 구분 관리",why:"상태 미구분 시 오출고 발생",how:"재고 상태를 시스템상 구분하고 상태별 허용 액션을 정의",done:"①재고 상태가 시스템상 구분됨 ②상태별 허용 액션이 정의됨"},
+{id:39,sec:"b2",imp:"M",who:"local",name:"입고 시 SN 등록 및 출하 전 Pre-test",why:"SN 미등록 시 CS·보증 데이터 단절",how:"입고 시 SN 스캔 등록을 필수화",done:"①입고 시 SN 등록이 필수 ②Pre-test SOP가 문서화됨"},
+{id:40,sec:"b2",imp:"M",who:"local",name:"포장·출하 기준 및 배송 추적",why:"포장 기준 미비 시 파손",how:"포장 기준, 출하 사진 보관 규칙 정의",done:"①포장 기준이 정해짐 ②Tracking 번호가 시스템에 등록됨"},
+{id:41,sec:"b2",imp:"M",who:"local",name:"반품 처리 및 재고 실사",why:"반품 Disposition 기준 없으면 재고 왜곡",how:"반품 시 필수 정보 및 상태 분류 기준 정의",done:"①반품 Disposition 기준이 있음 ②월 1회 이상 재고 실사 수행"},
+{id:42,sec:"b3",imp:"H",who:"local",name:"설치 담당 주체 및 책임 범위 명확화",why:"설치 주체 불명확 시 현장에서 책임 공방",how:"자사 엔지니어·파트너·고객 중 설치 주체를 명확히 정의",done:"①설치 주체가 정의·문서화됨 ②계약서에 설치 책임이 반영됨"},
+{id:43,sec:"b3",imp:"H",who:"local",name:"설치 완료 보고 및 SN-고객 매핑",why:"설치 보고서 미제출 시 완료 여부 불명확",how:"설치 완료 보고서를 필수화하고, SN-고객 매핑 완료를 게이트 조건으로 설정",done:"①설치 보고서가 필수 항목으로 운영됨 ②SN-고객 매핑이 설치 시점에 완료됨"},
+{id:44,sec:"b3",imp:"H",who:"hq",name:"Warranty Start 기준 통일",why:"기준 혼재 시 고객 분쟁 발생",how:"Warranty Start 기준을 하나로 통일하고 글로벌 정책으로 명문화",done:"①Warranty Start 기준이 글로벌 단일 기준으로 정의됨"},
+{id:45,sec:"b3",imp:"M",who:"local",name:"설치 전 고객 사전 안내 및 교육 체계",why:"현장 도착 후 환경 미비 발견 시 재방문",how:"설치 전 체크리스트를 고객에게 사전 안내",done:"①설치 전 안내가 고객에게 전달됨 ②교육 자료가 표준화됨 ③교육 완료 여부가 기록됨"},
+{id:46,sec:"b3",imp:"M",who:"local",name:"설치 후 고객 이탈 방지를 위한 사후관리 체계",why:"설치 초기 불만이 방치되면 재구매율 하락",how:"설치 후 일정 주기로 고객 상태를 확인하는 프로세스를 운영",done:"①사후관리 주기와 방식이 정의됨 ②최근 3개월 설치 건의 80% 이상에 기록 존재"},
+{id:47,sec:"b3",imp:"M",who:"both",name:"초기 불량 기준 정의 및 별도 관리",why:"초기 불량을 일반 CS와 동일하게 처리하면 품질 이슈 감지 지연",how:"초기 불량 기준을 정의하고 별도 추적",done:"①초기 불량 기준이 정의됨 ②초기 불량이 별도 추적됨"},
+{id:48,sec:"b4",imp:"H",who:"both",name:"CS 문의의 단일 시스템 통합 접수",why:"채널 분산 시 누락 발생",how:"모든 CS 문의가 하나의 시스템으로 통합 접수되도록 설정",done:"①모든 CS 문의가 단일 시스템으로 접수됨"},
+{id:49,sec:"b4",imp:"H",who:"hq",name:"CS 티켓의 SN 필수 입력 강제화",why:"SN 없으면 보증 추적 불가",how:"시스템 설정으로 SN 미입력 시 티켓 종료 불가",done:"①SN 미입력 시 티켓 종료 불가 설정됨 ②SN 확인 불가 케이스 대응 방법이 정의됨"},
+{id:50,sec:"b4",imp:"H",who:"both",name:"유상/무상 수리 기준 명확화",why:"기준 없으면 담당자마다 다르게 처리",how:"보증 여부·고객 과실 기준을 명확히 문서화",done:"①유무상 기준이 문서화됨 ②비용 계산 기준이 정의됨"},
+{id:51,sec:"b4",imp:"H",who:"local",name:"수리 자재 사용의 재고 반영",why:"자재 사용 미입력 시 재고 왜곡 누적",how:"티켓 종료 전 자재 차감 입력을 의무화",done:"①자재 사용이 재고에 반영됨 ②티켓 종료 전 자재 입력이 필수"},
+{id:52,sec:"b4",imp:"M",who:"both",name:"원격 진단 우선 체계 및 HQ 기술 연계",why:"모든 건을 현장 방문 처리하면 비용·시간 과다",how:"현장 출장 전 원격 1차 해결 시도",done:"①원격 지원 환경이 구축됨 ②HQ 기술 연계 루트가 정의됨"},
+{id:53,sec:"b4",imp:"M",who:"local",name:"티켓 우선순위 및 종료 조건 관리",why:"우선순위 미정의 시 중요 건 누락",how:"티켓 유형·우선순위 기준 정의",done:"①우선순위 기준이 정의됨 ②종료 조건이 명확함"},
+{id:54,sec:"b4",imp:"L",who:"local",name:"반복 이슈의 지식화 및 CS 정기 리뷰",why:"같은 문제를 매번 처음부터 해결하면 비효율",how:"반복 이슈를 FAQ/기술문서로 정리",done:"①반복 이슈가 문서로 정리됨 ②월 1회 이상 CS 리뷰 수행됨"},
+{id:55,sec:"b5",imp:"H",who:"hq",name:"매출 인식 기준 단일화",why:"기준이 케이스마다 다르면 회계 혼선",how:"매출 인식 기준을 하나로 통일하고 문서화",done:"①매출 인식 기준이 문서화됨 ②글로벌 단일 기준으로 운영됨"},
+{id:56,sec:"b5",imp:"H",who:"local",name:"인보이스 발행 적시성 확보",why:"발행 지연 = 수금 지연",how:"인보이스 발행 시점·담당자를 명확히 하고 SLA를 설정",done:"①발행 시점과 담당자가 정의됨 ②SLA가 설정됨"},
+{id:57,sec:"b5",imp:"M",who:"both",name:"수금 상태 공유 및 미수금 관리",why:"수금 정보 단절 시 미수금 고객에게 추가 출고 등 문제 발생",how:"수금 상태를 관련 부서와 공유",done:"①수금 상태가 관련 부서와 공유됨 ②미수금이 연체 구간별로 관리됨"},
+{id:58,sec:"b5",imp:"M",who:"both",name:"HQ-법인 간 정기 리뷰 운영",why:"피드백 루프 단절 시 문제 누적",how:"월 1회 CS·영업 리뷰를 고정 운영",done:"①월간 리뷰가 정기적으로 운영됨"},
+{id:59,sec:"b5",imp:"M",who:"both",name:"세금·환율 적용 기준 표준화",why:"오류 시 인보이스 재발행, 고객 불만",how:"세금·환율 로직을 문서화하고 시스템에 반영",done:"①세금·환율 적용 기준이 문서화됨"},
+{id:60,sec:"b5",imp:"M",who:"both",name:"COD 결제 기준 및 유상 수리 결제 연계",why:"결제 확인 전 출고 시 미수금 리스크",how:"COD 기준을 명확히 정의",done:"①COD 기준이 정의됨 ②유상 수리 결제→출고 프로세스가 운영됨"},
+];
+
+/* ══ STATE ══ */
+let currentUser=null; // {uid, email, role, orgName, orgId}
+let orgsCache=[];      // [{id, name, createdBy}]
+let responsesCache={}; // {orgId: {itemId: "yes"|"no"|"partial"}}
+let memosCache={};     // {orgId: {itemId: "memo text"}}
+const ST={page:"auth",oid:null,sec:null,fStatus:"all",fImp:"all",fWho:"all",search:""};
+
+/* ══ HELPERS ══ */
+function _h(s){return(s??"").toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function whoLabel(w){return{hq:"본사",local:"현지",both:"공통"}[w]||w;}
+function heat(p){if(p>=80)return"background:#d1fae5;color:#065f46";if(p>=50)return"background:#fef3c7;color:#92400e";return"background:#fee2e2;color:#991b1b";}
+const GROWTH=[{min:0,max:19,icon:"🌱",label:"씨앗"},{min:20,max:39,icon:"🌿",label:"새싹"},{min:40,max:59,icon:"🌳",label:"나무"},{min:60,max:79,icon:"🍃",label:"잎무성"},{min:80,max:100,icon:"🍎",label:"열매"}];
+function getG(p){return GROWTH.find(g=>p>=g.min&&p<=g.max)||GROWTH[0];}
+function isAdmin(){return currentUser&&currentUser.role==="admin";}
+function canEdit(orgId){if(isAdmin())return true;const org=orgsCache.find(o=>o.id===orgId);return org&&org.createdBy===currentUser?.uid;}
+
+function getSt(oid,iid){return(responsesCache[oid]||{})[iid]||"";}
+function getMemo(oid,iid){return(memosCache[oid]||{})[iid]||"";}
+
+function calcOrg(oid){let d=0;ALL.forEach(i=>{if(getSt(oid,i.id)==="yes")d++;});return{total:ALL.length,done:d,pct:ALL.length?Math.round(d*100/ALL.length):0};}
+function calcSec(oid,sid){const its=ALL.filter(i=>i.sec===sid);return its.length?Math.round(its.filter(i=>getSt(oid,i.id)==="yes").length*100/its.length):0;}
+function calcTrack(oid,tid){const its=ALL.filter(i=>{const s=SECTIONS.find(x=>x.id===i.sec);return s&&s.track===tid;});return its.length?Math.round(its.filter(i=>getSt(oid,i.id)==="yes").length*100/its.length):0;}
+function calcWhoExact(oid,who){const its=ALL.filter(i=>i.who===who);const d=its.filter(i=>getSt(oid,i.id)==="yes").length;return{total:its.length,done:d,pct:its.length?Math.round(d*100/its.length):0};}
+
+/* ══ FIREBASE DATA ══ */
+async function loadAllData(){
+  try{
+    const orgSnap=await db.collection("orgs").get();
+    orgsCache=[];
+    orgSnap.forEach(doc=>{orgsCache.push({id:doc.id,...doc.data()});});
+    responsesCache={};memosCache={};
+    for(const org of orgsCache){
+      try{
+        const rDoc=await db.collection("responses").doc(org.id).get();
+        if(rDoc.exists)responsesCache[org.id]=rDoc.data();
+        const mDoc=await db.collection("memos").doc(org.id).get();
+        if(mDoc.exists)memosCache[org.id]=mDoc.data();
+      }catch(e){}
+    }
+  }catch(e){console.error("Load error:",e);}
+}
+
+async function saveResponse(orgId,itemId,value){
+  if(!responsesCache[orgId])responsesCache[orgId]={};
+  responsesCache[orgId][itemId]=value;
+  try{await db.collection("responses").doc(orgId).set(responsesCache[orgId]);}catch(e){console.error(e);}
+}
+
+async function saveMemoToDb(orgId,itemId,text){
+  if(!memosCache[orgId])memosCache[orgId]={};
+  memosCache[orgId][itemId]=text;
+  try{await db.collection("memos").doc(orgId).set(memosCache[orgId]);}catch(e){console.error(e);}
+}
+
+/* ══ AUTH ══ */
+let authMode="login";
+function toggleAuthMode(){
+  authMode=authMode==="login"?"signup":"login";
+  document.getElementById('authTitle').textContent=authMode==="login"?"로그인":"회원가입";
+  document.getElementById('authBtn').textContent=authMode==="login"?"로그인":"회원가입";
+  document.getElementById('authToggle').textContent=authMode==="login"?"계정이 없으신가요? 회원가입":"이미 계정이 있으신가요? 로그인";
+  document.getElementById('signupFields').style.display=authMode==="signup"?"block":"none";
+  document.getElementById('authError').className='auth-error';
+}
+
+function showAuthError(msg){
+  const el=document.getElementById('authError');
+  el.textContent=msg;el.className='auth-error show';
+}
+
+async function doAuth(){
+  const email=document.getElementById('authEmail').value.trim();
+  const pw=document.getElementById('authPw').value;
+  if(!email||!pw)return showAuthError("이메일과 비밀번호를 입력하세요.");
+  try{
+    if(authMode==="signup"){
+      const name=document.getElementById('authName').value.trim();
+      const orgName=document.getElementById('authOrg').value.trim();
+      if(!name||!orgName)return showAuthError("이름과 법인명을 입력하세요.");
+      const cred=await auth.createUserWithEmailAndPassword(email,pw);
+      const role=ADMIN_EMAILS.includes(email)?"admin":"user";
+      await db.collection("users").doc(cred.user.uid).set({email,name,orgName,role,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    }else{
+      await auth.signInWithEmailAndPassword(email,pw);
+    }
+  }catch(e){
+    const msgs={"auth/email-already-in-use":"이미 사용 중인 이메일입니다.","auth/invalid-email":"유효하지 않은 이메일입니다.","auth/weak-password":"비밀번호가 너무 짧습니다 (6자 이상).","auth/user-not-found":"등록되지 않은 이메일입니다.","auth/wrong-password":"비밀번호가 틀렸습니다.","auth/invalid-credential":"이메일 또는 비밀번호가 틀렸습니다."};
+    showAuthError(msgs[e.code]||e.message);
+  }
+}
+
+function doLogout(){auth.signOut();}
+
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    try{
+      const uDoc=await db.collection("users").doc(user.uid).get();
+      if(!uDoc.exists){auth.signOut();return;}
+      const ud=uDoc.data();
+      const role=ADMIN_EMAILS.includes(ud.email)?"admin":(ud.role||"user");
+      currentUser={uid:user.uid,email:ud.email,name:ud.name,orgName:ud.orgName,role};
+      document.getElementById('headerSub').textContent=`${ud.name} (${ud.orgName}) · ${role==="admin"?"본사 관리자":"법인 사용자"}`;
+      document.getElementById('userInfoSpan').innerHTML=`${_h(ud.email)} <span class="role-badge ${role}">${role==="admin"?"Admin":"User"}</span>`;
+      document.getElementById('mainNav').style.display='flex';
+      if(isAdmin())document.getElementById('nav-dashboard').style.display='';
+      await loadAllData();
+      // Auto-create org for new user
+      if(role!=="admin"&&!orgsCache.find(o=>o.createdBy===user.uid)){
+        const ref=await db.collection("orgs").add({name:ud.orgName,createdBy:user.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        orgsCache.push({id:ref.id,name:ud.orgName,createdBy:user.uid});
+      }
+      go('home');
+    }catch(e){console.error(e);}
+  }else{
+    currentUser=null;
+    document.getElementById('mainNav').style.display='none';
+    document.getElementById('headerSub').textContent='로그인이 필요합니다';
+    go('auth');
+  }
+});
+
+/* ══ NAV ══ */
+function go(p){
+  ST.page=p;
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  const el=document.getElementById('page-'+p);if(el)el.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  const n=document.getElementById('nav-'+p);if(n)n.classList.add('on');
+  if(p==='home')renderHome();
+  if(p==='dashboard')renderDashboard();
+  if(p==='checklist')renderChecklist();
+  if(p==='result')renderResult();
+  if(p==='compare')renderCompare();
+}
+
+/* ══ HOME ══ */
+function renderHome(){
+  const myOrgs=isAdmin()?orgsCache:orgsCache.filter(o=>o.createdBy===currentUser?.uid);
+  const avg=myOrgs.length?Math.round(myOrgs.reduce((a,o)=>a+calcOrg(o.id).pct,0)/myOrgs.length):0;
+  const g=getG(avg);
+  document.getElementById('gstats').innerHTML=`
+    <div class="gs"><div class="gs-l">${isAdmin()?'전체':'내'} 법인</div><div class="gs-v">${myOrgs.length}</div></div>
+    <div class="gs"><div class="gs-l">평균 완료율</div><div class="gs-v">${avg}%</div><div class="gs-s">${g.icon} ${g.label}</div></div>
+    <div class="gs"><div class="gs-l">총 점검 항목</div><div class="gs-v">${ALL.length}</div></div>`;
+  document.getElementById('addOrgBtn').style.display=isAdmin()?'':'none';
+  document.getElementById('orgGrid').innerHTML=myOrgs.map(o=>{
+    const ov=calcOrg(o.id),g=getG(ov.pct);
+    const tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");
+    const wHq=calcWhoExact(o.id,"hq"),wLo=calcWhoExact(o.id,"local"),wBo=calcWhoExact(o.id,"both");
+    return`<div class="org-card">
+      <div class="org-name">${_h(o.name)} <span style="font-size:11px;color:#94a3b8">${g.icon} ${g.label} ${ov.pct}%</span></div>
+      <div class="track-row">
+        <div class="track-box"><div class="track-label" style="color:var(--tA)">A. 조직기반</div><div class="track-pct" style="color:var(--tA)">${tA}%</div><div class="track-bar"><div class="track-fill" style="width:${tA}%;background:var(--tA)"></div></div></div>
+        <div class="track-box"><div class="track-label" style="color:var(--tB)">B. 판매사이클</div><div class="track-pct" style="color:var(--tB)">${tB}%</div><div class="track-bar"><div class="track-fill" style="width:${tB}%;background:var(--tB)"></div></div></div>
+      </div>
+      <div class="who-summary">
+        <div class="who-sum-box"><div class="who-sum-label" style="color:#6366f1">🏢 본사</div><div class="who-sum-pct" style="color:#6366f1">${wHq.pct}%</div></div>
+        <div class="who-sum-box"><div class="who-sum-label" style="color:#0ea5e9">📍 현지</div><div class="who-sum-pct" style="color:#0ea5e9">${wLo.pct}%</div></div>
+        <div class="who-sum-box"><div class="who-sum-label" style="color:#f59e0b">🤝 공통</div><div class="who-sum-pct" style="color:#f59e0b">${wBo.pct}%</div></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn red sm" style="flex:1;justify-content:center" onclick="openOrg('${o.id}')">체크리스트 →</button>
+        ${isAdmin()?`<button class="btn ghost sm" onclick="delOrg('${o.id}')">삭제</button>`:""}
+      </div>
+    </div>`;
+  }).join('')||'<div class="no-results">등록된 법인이 없습니다.</div>';
+}
+
+function openOrg(oid){ST.oid=oid;ST.sec=SECTIONS[0].id;ST.fStatus="all";ST.fImp="all";ST.fWho="all";ST.search="";go('checklist');}
+
+async function delOrg(oid){
+  if(!confirm('삭제할까요?'))return;
+  try{
+    await db.collection("orgs").doc(oid).delete();
+    await db.collection("responses").doc(oid).delete();
+    await db.collection("memos").doc(oid).delete();
+    orgsCache=orgsCache.filter(o=>o.id!==oid);
+    delete responsesCache[oid];delete memosCache[oid];
+    renderHome();
+  }catch(e){alert("삭제 실패: "+e.message);}
+}
+
+/* ══ ADMIN DASHBOARD ══ */
+function renderDashboard(){
+  if(!isAdmin())return;
+  let html="";
+  // Global stats
+  const totalOrgs=orgsCache.length;
+  const avgPct=totalOrgs?Math.round(orgsCache.reduce((a,o)=>a+calcOrg(o.id).pct,0)/totalOrgs):0;
+  const avgTA=totalOrgs?Math.round(orgsCache.reduce((a,o)=>a+calcTrack(o.id,"tA"),0)/totalOrgs):0;
+  const avgTB=totalOrgs?Math.round(orgsCache.reduce((a,o)=>a+calcTrack(o.id,"tB"),0)/totalOrgs):0;
+
+  html+=`<div class="gstats">
+    <div class="gs"><div class="gs-l">전체 법인 수</div><div class="gs-v">${totalOrgs}</div></div>
+    <div class="gs"><div class="gs-l">평균 완료율</div><div class="gs-v">${avgPct}%</div><div class="gs-s">${getG(avgPct).icon} ${getG(avgPct).label}</div></div>
+    <div class="gs"><div class="gs-l">A. 조직기반 평균</div><div class="gs-v" style="color:var(--tA)">${avgTA}%</div></div>
+    <div class="gs"><div class="gs-l">B. 판매사이클 평균</div><div class="gs-v" style="color:var(--tB)">${avgTB}%</div></div>
+  </div>`;
+
+  // Heatmap: orgs × sections
+  if(totalOrgs>0){
+    html+=`<div class="dash-section"><div class="dash-title">🗺️ 법인 × 섹션 히트맵</div>`;
+    const cols=SECTIONS.length+1;
+    html+=`<div style="overflow-x:auto"><div class="heatmap-grid" style="grid-template-columns:120px repeat(${SECTIONS.length},1fr)">`;
+    html+=`<div class="heatmap-cell" style="background:#f8fafc;font-weight:800;font-size:8px">법인</div>`;
+    SECTIONS.forEach(s=>{html+=`<div class="heatmap-cell" style="background:#f8fafc;font-size:8px;font-weight:700">${s.emoji}</div>`;});
+    orgsCache.forEach(o=>{
+      html+=`<div class="heatmap-cell" style="background:#f8fafc;font-size:9px;font-weight:700;text-align:left;padding-left:8px">${_h(o.name)}</div>`;
+      SECTIONS.forEach(s=>{
+        const p=calcSec(o.id,s.id);
+        html+=`<div class="heatmap-cell" style="${heat(p)}">${p}%</div>`;
+      });
+    });
+    html+=`</div></div></div>`;
+  }
+
+  // Weakest items across all orgs
+  html+=`<div class="dash-section"><div class="dash-title">⚠️ 전체 법인 공통 취약 항목 (충족률 낮은 순)</div>`;
+  if(totalOrgs>0){
+    const itemStats=ALL.map(it=>{
+      const yesCount=orgsCache.filter(o=>getSt(o.id,it.id)==="yes").length;
+      return{...it,pct:Math.round(yesCount*100/totalOrgs),yesCount};
+    }).sort((a,b)=>a.pct-b.pct);
+    const worst=itemStats.slice(0,10);
+    worst.forEach(it=>{
+      const sec=SECTIONS.find(s=>s.id===it.sec);
+      html+=`<div class="weak-item">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:700">${sec.emoji} ${_h(it.name)}</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:2px">${it.yesCount}/${totalOrgs} 법인 충족</div>
+        </div>
+        <div style="width:80px"><div class="weak-bar"><div class="weak-fill" style="width:${it.pct}%;background:${it.pct>=50?'#f59e0b':'#ef4444'}"></div></div></div>
+        <span class="heat" style="${heat(it.pct)};min-width:40px;text-align:center">${it.pct}%</span>
+      </div>`;
+    });
+  }else{html+=`<div class="no-results">데이터가 없습니다.</div>`;}
+  html+=`</div>`;
+
+  // Per-org ranking
+  html+=`<div class="dash-section"><div class="dash-title">🏆 법인 완료율 순위</div>`;
+  if(totalOrgs>0){
+    const ranked=[...orgsCache].sort((a,b)=>calcOrg(b.id).pct-calcOrg(a.id).pct);
+    ranked.forEach((o,i)=>{
+      const ov=calcOrg(o.id),g=getG(ov.pct);
+      html+=`<div class="weak-item">
+        <div style="font-size:16px;font-weight:800;color:${i<3?'var(--red)':'#94a3b8'};width:28px;text-align:center">${i+1}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:700">${g.icon} ${_h(o.name)}</div></div>
+        <div style="width:100px"><div class="weak-bar"><div class="weak-fill" style="width:${ov.pct}%;background:var(--tA)"></div></div></div>
+        <span class="heat" style="${heat(ov.pct)};min-width:50px;text-align:center">${ov.pct}%</span>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  document.getElementById('dashContent').innerHTML=html;
+}
+
+/* ══ CHECKLIST ══ */
+function renderChecklist(){
+  const org=orgsCache.find(o=>o.id===ST.oid);
+  document.getElementById('clOrg').textContent=org?.name||'';
+  const editable=canEdit(ST.oid);
+  document.getElementById('clReadonly').innerHTML=editable?'':`<span class="readonly-badge">읽기 전용</span>`;
+  const si=document.getElementById('searchInput');if(si)si.value=ST.search;
+
+  const allPct=calcOrg(ST.oid).pct;
+  const allOn=ST.sec==="all";
+  let tabsHtml=`<button class="cl-tab ${allOn?'on':''}" style="${allOn?'background:#971B2F;color:#fff;border-color:#971B2F':''}" onclick="ST.sec='all';renderChecklist()">📊 전체 ${allPct}%</button>`;
+  tabsHtml+=SECTIONS.map(s=>{const p=calcSec(ST.oid,s.id);const on=s.id===ST.sec;return`<button class="cl-tab ${on?'on':''}" style="${on?`background:${s.color};color:#fff;border-color:${s.color}`:''}" onclick="ST.sec='${s.id}';renderChecklist()">${s.emoji} ${s.label} ${p}%</button>`;}).join('');
+  document.getElementById('clTabs').innerHTML=tabsHtml;
+
+  const statusOpts=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"yes",l:"충족"},{v:"no",l:"미충족"},{v:"partial",l:"부분"}];
+  document.getElementById('fgStatus').innerHTML=statusOpts.map(f=>`<button class="f-btn ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderChecklistBody()">${f.l}</button>`).join('');
+  const impOpts=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"}];
+  document.getElementById('fgImp').innerHTML=impOpts.map(f=>`<button class="f-btn ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderChecklistBody()">${f.l}</button>`).join('');
+  const whoOpts=[{v:"all",l:"전체",c:""},{v:"hq",l:"🏢 본사",c:"who-hq"},{v:"local",l:"📍 현지",c:"who-local"},{v:"both",l:"🤝 공통",c:"who-both"}];
+  document.getElementById('fgWho').innerHTML=whoOpts.map(f=>`<button class="f-btn ${f.c} ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderChecklistBody()">${f.l}</button>`).join('');
+  renderChecklistBody();
+}
+
+function onSearch(){ST.search=document.getElementById('searchInput').value.trim().toLowerCase();renderChecklistBody();}
+function matchSearch(it,q){if(!q)return true;const hay=(it.name+' '+it.why+' '+it.how+' '+it.done).toLowerCase();return q.split(/\s+/).every(w=>hay.includes(w));}
+function highlightText(text,query){if(!query)return _h(text);const escaped=_h(text);const words=query.split(/\s+/).filter(Boolean);if(!words.length)return escaped;let result=escaped;words.forEach(w=>{const re=new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');result=result.replace(re,'<span class="highlight">$1</span>');});return result;}
+
+function renderChecklistBody(){
+  const q=ST.search;const isSearchMode=!!q;const editable=canEdit(ST.oid);
+  let items=isSearchMode?ALL.filter(i=>matchSearch(i,q)):ST.sec==="all"?[...ALL]:ALL.filter(i=>i.sec===ST.sec);
+  if(ST.fStatus==="todo")items=items.filter(i=>getSt(ST.oid,i.id)!=="yes");
+  else if(ST.fStatus!=="all")items=items.filter(i=>getSt(ST.oid,i.id)===ST.fStatus);
+  if(ST.fImp!=="all")items=items.filter(i=>i.imp===ST.fImp);
+  if(ST.fWho!=="all")items=items.filter(i=>i.who===ST.fWho);
+
+  const infoEl=document.getElementById('searchInfo');
+  if(isSearchMode){infoEl.className='search-result-info show';infoEl.innerHTML=`🔍 "${_h(q)}" 검색 결과: <strong>${items.length}</strong>개 <button class="f-btn" style="margin-left:8px" onclick="ST.search='';document.getElementById('searchInput').value='';renderChecklistBody()">초기화</button>`;}
+  else{infoEl.className='search-result-info';}
+  if(!items.length){document.getElementById('clBody').innerHTML=`<div class="no-results">${isSearchMode?'검색 결과가 없습니다.':'해당 조건의 항목이 없습니다.'}</div>`;return;}
+
+  const secGroups=isSearchMode||ST.sec==="all"?SECTIONS.filter(s=>items.some(i=>i.sec===s.id)):[SECTIONS.find(s=>s.id===ST.sec)].filter(Boolean);
+  let html="";
+  secGroups.forEach(sec=>{
+    const secItems=items.filter(i=>i.sec===sec.id);if(!secItems.length)return;
+    const trk=TRACKS.find(t=>t.id===sec.track);
+    html+=`<div class="sec-block"><div class="sec-hd" style="background:${sec.color}"><span style="font-size:16px">${sec.emoji}</span><span class="sec-hd-label">${trk.short} > ${sec.label}</span><span class="sec-hd-cnt">${secItems.length}개 · 충족 ${secItems.filter(i=>getSt(ST.oid,i.id)==="yes").length}</span></div>`;
+    secItems.forEach(it=>{
+      const s=getSt(ST.oid,it.id);const memo=getMemo(ST.oid,it.id);const nameHtml=isSearchMode?highlightText(it.name,q):_h(it.name);
+      const dis=editable?"":" disabled";
+      html+=`<div class="item-card ${s==="yes"?"done":s==="no"?"flagged":s==="partial"?"partial-st":""}" id="item_${it.id}">
+        <div class="item-top"><div class="item-name">${nameHtml}</div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>
+        <div class="detail-toggle" onclick="toggleDetail(${it.id})">▸ 목적 · 방법 · 달성기준 보기</div>
+        <div class="detail-box" id="det_${it.id}">
+          <div class="detail-section"><div class="detail-label">🔴 목적 (Why)</div><div class="detail-text why">${isSearchMode?highlightText(it.why,q):_h(it.why)}</div></div>
+          <div class="detail-section"><div class="detail-label">🔵 방법 (How)</div><div class="detail-text how">${isSearchMode?highlightText(it.how,q):_h(it.how)}</div></div>
+          <div class="detail-section"><div class="detail-label">🟢 달성 기준 (Done)</div><div class="detail-text done-criteria">${isSearchMode?highlightText(it.done,q):_h(it.done)}</div></div>
+        </div>
+        <div class="item-btns">
+          <button class="ib yes ${s==="yes"?"on":""}"${dis} onclick="setItem(${it.id},'yes')">✓ 충족</button>
+          <button class="ib partial ${s==="partial"?"on":""}"${dis} onclick="setItem(${it.id},'partial')">△ 부분</button>
+          <button class="ib no ${s==="no"?"on":""}"${dis} onclick="setItem(${it.id},'no')">✗ 미충족</button>
+        </div>
+        <div class="memo-row">
+          <span class="memo-tog" onclick="toggleMemo(${it.id})">📝 메모 ${memo?"(작성됨)":"추가"}</span>
+          <div class="memo-box" id="mb_${it.id}">
+            <textarea class="memo-area" id="mt_${it.id}" placeholder="현황, 담당자, 기한 등"${editable?"":"readonly"}>${_h(memo)}</textarea>
+            ${editable?`<button class="memo-save" onclick="saveMemo(${it.id})">저장</button><div style="clear:both"></div>`:""}
+          </div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById('clBody').innerHTML=html;
+}
+
+async function setItem(iid,v){await saveResponse(ST.oid,iid,v);renderChecklistBody();}
+function toggleDetail(iid){document.getElementById('det_'+iid)?.classList.toggle('open');}
+function toggleMemo(iid){document.getElementById('mb_'+iid)?.classList.toggle('open');}
+async function saveMemo(iid){const el=document.getElementById('mt_'+iid);if(el)await saveMemoToDb(ST.oid,iid,el.value);}
+
+/* ══ RESULT ══ */
+function renderResult(){
+  const org=orgsCache.find(o=>o.id===ST.oid);
+  const ov=calcOrg(ST.oid),g=getG(ov.pct);
+  const tA=calcTrack(ST.oid,"tA"),tB=calcTrack(ST.oid,"tB");
+  const wHq=calcWhoExact(ST.oid,"hq"),wLo=calcWhoExact(ST.oid,"local"),wBo=calcWhoExact(ST.oid,"both");
+  const secMinis=SECTIONS.map(s=>`<div class="sec-mini"><div class="sec-mini-pct" style="color:${s.color}">${calcSec(ST.oid,s.id)}%</div><div class="sec-mini-lbl">${s.emoji} ${s.label}</div></div>`).join('');
+  document.getElementById('resultHero').innerHTML=`
+    <div style="font-size:48px">${g.icon}</div><div class="rg-pct">${ov.pct}%</div>
+    <div style="font-size:12px;color:#64748b;font-weight:600">${_h(org?.name)} · ${ALL.length}개 항목 · ${g.label}</div>
+    <div class="track-summary"><div class="ts-box tA"><div class="ts-label" style="color:var(--tA)">A. 조직 운영 기반</div><div class="ts-pct" style="color:var(--tA)">${tA}%</div></div><div class="ts-box tB"><div class="ts-label" style="color:var(--tB)">B. 제품 판매 사이클</div><div class="ts-pct" style="color:var(--tB)">${tB}%</div></div></div>
+    <div class="who-result-row">
+      <div class="who-result-box"><div class="who-result-label" style="color:#6366f1">🏢 본사</div><div class="who-result-pct" style="color:#6366f1">${wHq.pct}%</div><div class="who-result-detail">${wHq.done}/${wHq.total}</div></div>
+      <div class="who-result-box"><div class="who-result-label" style="color:#0ea5e9">📍 현지</div><div class="who-result-pct" style="color:#0ea5e9">${wLo.pct}%</div><div class="who-result-detail">${wLo.done}/${wLo.total}</div></div>
+      <div class="who-result-box"><div class="who-result-label" style="color:#f59e0b">🤝 공통</div><div class="who-result-pct" style="color:#f59e0b">${wBo.pct}%</div><div class="who-result-detail">${wBo.done}/${wBo.total}</div></div>
+    </div>
+    <div class="sec-minis">${secMinis}</div>`;
+  const todos=ALL.filter(i=>getSt(ST.oid,i.id)!=="yes");
+  let html=`<div style="font-size:14px;font-weight:800;margin:16px 0 10px">📋 미충족/미응답 (${todos.length}개)</div>`;
+  if(!todos.length)html+=`<div class="no-results">🎉 모든 항목 충족!</div>`;
+  else{SECTIONS.forEach(sec=>{const its=todos.filter(i=>i.sec===sec.id);if(!its.length)return;html+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:6px 10px;border-radius:8px;background:${sec.color};color:#fff;font-size:11px;font-weight:800">${sec.emoji} ${sec.label} <span style="opacity:.7;margin-left:auto">${its.length}개</span></div>${its.map(it=>{const s=getSt(ST.oid,it.id);return`<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-size:11px;font-weight:700">${_h(it.name)}</div><div style="font-size:10px;color:${s==="no"?"var(--no)":s==="partial"?"#f59e0b":"#94a3b8"};font-weight:700;margin-top:2px">${s==="no"?"✗ 미충족":s==="partial"?"△ 부분":"— 미응답"}</div></div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>`;}).join('')}</div>`;});}
+  document.getElementById('resultTodo').innerHTML=html;
+}
+
+/* ══ COMPARE ══ */
+function renderCompare(){
+  if(orgsCache.length<1){document.getElementById('cmpWrap').innerHTML=`<div class="no-results">비교할 법인이 없습니다.</div>`;return;}
+  const showDetail=isAdmin();
+  let html=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>법인</th><th>전체</th><th>A.조직</th><th>B.판매</th>`;
+  if(showDetail){html+=`<th>🏢본사</th><th>📍현지</th><th>🤝공통</th>`;SECTIONS.forEach(s=>{html+=`<th style="color:${s.color}">${s.emoji}</th>`;});}
+  html+=`</tr></thead><tbody>`;
+  const sorted=[...orgsCache].sort((a,b)=>calcOrg(b.id).pct-calcOrg(a.id).pct);
+  sorted.forEach(o=>{
+    const ov=calcOrg(o.id),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");
+    html+=`<tr><td style="font-weight:800">${_h(o.name)}</td>
+      <td><span class="heat" style="${heat(ov.pct)}">${ov.pct}%</span></td>
+      <td><span class="heat" style="${heat(tA)}">${tA}%</span></td>
+      <td><span class="heat" style="${heat(tB)}">${tB}%</span></td>`;
+    if(showDetail){
+      const wHq=calcWhoExact(o.id,"hq"),wLo=calcWhoExact(o.id,"local"),wBo=calcWhoExact(o.id,"both");
+      html+=`<td><span class="heat" style="${heat(wHq.pct)}">${wHq.pct}%</span></td>
+        <td><span class="heat" style="${heat(wLo.pct)}">${wLo.pct}%</span></td>
+        <td><span class="heat" style="${heat(wBo.pct)}">${wBo.pct}%</span></td>`;
+      SECTIONS.forEach(s=>{const p=calcSec(o.id,s.id);html+=`<td><span class="heat" style="${heat(p)}">${p}%</span></td>`;});
+    }
+    html+=`</tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  document.getElementById('cmpWrap').innerHTML=html;
+}
+
+/* ══ ADD ORG ══ */
+function openAdd(){document.getElementById('addModal').classList.add('open');document.getElementById('addName').focus();}
+function closeAdd(){document.getElementById('addModal').classList.remove('open');}
+async function confirmAdd(){
+  const name=document.getElementById('addName').value.trim();
+  if(!name)return alert('법인명을 입력하세요.');
+  if(orgsCache.some(o=>o.name===name))return alert('같은 이름이 있습니다.');
+  try{
+    const ref=await db.collection("orgs").add({name,createdBy:currentUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    orgsCache.push({id:ref.id,name,createdBy:currentUser.uid});
+    document.getElementById('addName').value='';closeAdd();renderHome();
+  }catch(e){alert("추가 실패: "+e.message);}
+}
+
+/* ══ EXPORT ══ */
+function exportCSV(){
+  const impMap={H:"상",M:"중",L:"하"};
+  const targetOrgs=isAdmin()?orgsCache:orgsCache.filter(o=>o.createdBy===currentUser?.uid);
+  const h=["법인","Track","섹션","중요도","담당","항목명","목적","방법","달성기준","상태","메모"];
+  const rows=[];
+  targetOrgs.forEach(o=>{ALL.forEach(it=>{
+    const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);
+    rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,it.why,it.how,it.done,getSt(o.id,it.id),getMemo(o.id,it.id)]);
+  });});
+  const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};
+  const csv=[h.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+  a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);a.click();a.remove();
+}
+</script>
+</body>
+</html>
