@@ -215,11 +215,27 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <div style="font-size:48px">🌏</div>
 <div class="auth-title" id="authTitle">로그인</div>
 <div class="auth-sub">회사 이메일로 로그인하세요</div>
-<input class="fi" id="authEmail" placeholder="이메일" type="email"/>
-<input class="fi" id="authPw" placeholder="비밀번호 (6자 이상)" type="password"/>
+<input class="fi" id="authEmail" placeholder="Email" type="email"/>
+<input class="fi" id="authPw" placeholder="Password" type="password"/>
 <div id="signupFields" style="display:none">
 <input class="fi" id="authName" placeholder="이름"/>
-<input class="fi" id="authOrg" placeholder="소속 법인명 (예: InBody Japan)"/>
+<select class="fi-select fi" id="authOrgSelect" onchange="toggleOtherOrg()">
+<option value="">소속 법인을 선택하세요</option>
+<option value="InBody USA">InBody USA</option>
+<option value="InBody EU">InBody EU</option>
+<option value="InBody Oceania">InBody Oceania</option>
+<option value="InBody UK">InBody UK</option>
+<option value="InBody Japan">InBody Japan</option>
+<option value="InBody China">InBody China</option>
+<option value="InBody Türkiye">InBody Türkiye</option>
+<option value="InBody Asia">InBody Asia</option>
+<option value="InBody Mexico">InBody Mexico</option>
+<option value="InBody India">InBody India</option>
+<option value="InBody Vietnam">InBody Vietnam</option>
+<option value="InBody New York">InBody New York</option>
+<option value="__other__">Other (직접 입력)</option>
+</select>
+<input class="fi" id="authOrgOther" placeholder="법인명을 직접 입력하세요" style="display:none"/>
 </div>
 <div class="auth-error" id="authError"></div>
 <button class="btn red" style="width:100%;justify-content:center;padding:13px;font-size:14px" id="authBtn" onclick="doAuth()">로그인</button>
@@ -275,7 +291,7 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <div class="comments-title">💬 법인 코멘트</div>
 <div id="commentsList"></div>
 <div class="comment-input-row">
-<input class="comment-input" id="commentInput" placeholder="코멘트를 남겨주세요!" onkeydown="if(event.key==='Enter')addComment()"/>
+<input class="comment-input" id="commentInput" placeholder="코멘트를 남겨주세요..." onkeydown="if(event.key==='Enter')addComment()"/>
 <button class="btn blue sm" onclick="addComment()">등록</button>
 </div>
 </div>
@@ -499,6 +515,17 @@ function toggleAuthMode(){
   document.getElementById('authError').className='auth-error';
 }
 function showAuthError(msg){const el=document.getElementById('authError');el.textContent=msg;el.className='auth-error show';}
+function toggleOtherOrg(){
+  const sel=document.getElementById('authOrgSelect');
+  const other=document.getElementById('authOrgOther');
+  other.style.display=sel.value==='__other__'?'block':'none';
+  if(sel.value!=='__other__')other.value='';
+}
+function getSelectedOrg(){
+  const sel=document.getElementById('authOrgSelect');
+  if(sel.value==='__other__')return document.getElementById('authOrgOther').value.trim();
+  return sel.value;
+}
 
 async function doAuth(){
   const email=document.getElementById('authEmail').value.trim();
@@ -506,8 +533,9 @@ async function doAuth(){
   if(!email||!pw)return showAuthError("이메일과 비밀번호를 입력하세요.");
   try{
     if(authMode==="signup"){
+      if(!email.endsWith("@inbody.com"))return showAuthError("@inbody.com 이메일만 가입할 수 있습니다.");
       const name=document.getElementById('authName').value.trim();
-      const orgName=document.getElementById('authOrg').value.trim();
+      const orgName=getSelectedOrg();
       if(!name||!orgName)return showAuthError("이름과 법인명을 입력하세요.");
       const cred=await auth.createUserWithEmailAndPassword(email,pw);
       const role=ADMIN_EMAILS.includes(email)?"admin":"user";
@@ -646,16 +674,20 @@ function renderDashboard(){
 /* ══ EXCEL TEMPLATE & IMPORT ══ */
 function downloadTemplate(){
   const wb=XLSX.utils.book_new();
-  const rows=[["번호","Track","섹션","중요도","담당","항목명","상태 (충족/미충족/부분)","메모"]];
-  ALL.forEach(it=>{
+  const orgName=orgsCache.find(o=>o.id===ST.oid)?.name||"법인";
+  const impMap={H:"상",M:"중",L:"하"};
+  const whoMap={local:"현지",both:"공통",hq:"본사"};
+  // HQ 항목 제외, 현지+공통만
+  const filtered=ALL.filter(it=>it.who==="local"||it.who==="both");
+  const rows=[["Track","Section","ID","Importance","Owner",`Item (${orgName})`,"Why","How","Done Criteria","상태 (충족/미충족/부분)","메모"]];
+  filtered.forEach(it=>{
     const sec=SECTIONS.find(s=>s.id===it.sec);
     const trk=TRACKS.find(t=>t.id===sec.track);
-    rows.push([it.id,trk.short,sec.label,{H:"상",M:"중",L:"하"}[it.imp],whoLabel(it.who),it.name,"",""]);
+    rows.push([trk.label,sec.label,it.id,impMap[it.imp],whoMap[it.who],it.name,it.why,it.how,it.done,"",""]);
   });
   const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:5},{wch:12},{wch:16},{wch:6},{wch:6},{wch:50},{wch:20},{wch:30}];
+  ws['!cols']=[{wch:22},{wch:16},{wch:4},{wch:10},{wch:6},{wch:45},{wch:40},{wch:40},{wch:45},{wch:22},{wch:30}];
   XLSX.utils.book_append_sheet(wb,ws,"체크리스트");
-  const orgName=orgsCache.find(o=>o.id===ST.oid)?.name||"법인";
   XLSX.writeFile(wb,`${orgName}_체크리스트_템플릿.xlsx`);
 }
 
