@@ -6,10 +6,9 @@
 <title>글로벌 CS 운영 함께 단계 올리기</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4444;
---tA:#6366f1;--tB:#f59e0b}
+:root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4444;--tA:#6366f1;--tB:#f59e0b}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}
+body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:13px}
 header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-shadow:0 4px 20px rgba(151,27,47,.3)}
 .hi{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .logo h1{font-size:15px;font-weight:800;color:#fff}
@@ -27,7 +26,6 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .btn.sm{padding:5px 12px;font-size:11px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
-/* AUTH */
 .auth-wrap{max-width:400px;margin:60px auto}
 .auth-card{background:#fff;border-radius:22px;padding:36px;border:1px solid var(--line);box-shadow:0 4px 24px rgba(0,0,0,.07);text-align:center}
 .auth-title{font-size:22px;font-weight:800;margin:12px 0 6px}
@@ -42,7 +40,6 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .role-badge.admin{background:#ede9fe;color:#5b21b6}
 .role-badge.user{background:#e0f2fe;color:#0369a1}
 
-/* HOME */
 .gstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
 .gs{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid var(--line)}
 .gs-l{font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px}
@@ -64,16 +61,18 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .who-sum-label{font-size:8px;font-weight:700;color:#94a3b8}
 .who-sum-pct{font-size:14px;font-weight:800}
 
-/* DASHBOARD */
 .dash-section{margin-bottom:24px}
-.dash-title{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.dash-title{font-size:15px;font-weight:800;margin-bottom:12px}
 .heatmap-grid{display:grid;gap:2px}
 .heatmap-cell{border-radius:4px;padding:4px;text-align:center;font-size:9px;font-weight:700;min-height:32px;display:flex;align-items:center;justify-content:center}
 .weak-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .weak-bar{height:6px;background:#f1f5f9;border-radius:99px;flex:1;overflow:hidden}
 .weak-fill{height:100%;border-radius:99px}
+.log-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:6px}
+.log-time{font-size:9px;color:#94a3b8;font-weight:600}
+.log-text{font-size:11px;color:#374151;margin-top:2px}
+.log-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-right:4px}
 
-/* CHECKLIST */
 .cl-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .cl-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
 .cl-tab{padding:6px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:.13s}
@@ -81,59 +80,72 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .search-filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .search-box{flex:1;min-width:200px;position:relative}
 .search-box input{width:100%;padding:9px 14px 9px 34px;border:1.5px solid var(--line);border-radius:12px;font-size:12px;font-family:inherit;outline:none;background:#fff}
-.search-box input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.search-box input:focus{border-color:#3b82f6}
 .search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px}
 .filter-wrap{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .filter-group{display:flex;gap:4px;flex-wrap:wrap}
 .filter-group-label{font-size:9px;font-weight:700;color:#94a3b8;margin-bottom:2px;display:block}
 .f-btn{padding:5px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:10px;font-weight:700;cursor:pointer;transition:.13s}
 .f-btn.on{background:#101820;color:#fff;border-color:#101820}
-.f-btn.who-hq.on{background:#6366f1;border-color:#6366f1;color:#fff}
-.f-btn.who-local.on{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
-.f-btn.who-both.on{background:#f59e0b;border-color:#f59e0b;color:#fff}
 .search-result-info{font-size:11px;color:#64748b;font-weight:600;margin-bottom:10px;padding:6px 10px;background:#fff;border-radius:8px;border:1px solid var(--line);display:none}
 .search-result-info.show{display:block}
 .highlight{background:#fef08a;border-radius:2px;padding:0 1px}
 
-/* ITEM CARD */
 .sec-block{margin-bottom:20px}
 .sec-hd{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;margin-bottom:8px}
 .sec-hd-label{font-size:12px;font-weight:800;color:#fff}
 .sec-hd-cnt{font-size:10px;font-weight:700;color:rgba(255,255,255,.75);margin-left:auto}
 .item-card{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;margin-bottom:7px;transition:.2s}
-.item-card.done{border-color:#86efac;background:#f0fdf4}
-.item-card.flagged{border-color:#fca5a5;background:#fff8f8}
-.item-card.partial-st{border-color:#fcd34d;background:#fffbeb}
+.item-card.confirmed{border-color:#86efac;background:#f0fdf4}
+.item-card.pending{border-color:#fcd34d;background:#fffbeb}
+.item-card.rejected{border-color:#fca5a5;background:#fff8f8}
 .item-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .item-name{font-size:13px;font-weight:800;color:#1e293b;line-height:1.5;flex:1;min-width:200px}
 .imp-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;flex-shrink:0}
 .imp-badge.H{background:#fee2e2;color:#991b1b}.imp-badge.M{background:#fef3c7;color:#92400e}.imp-badge.L{background:#f1f5f9;color:#475569}
 .who-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;flex-shrink:0}
 .who-tag.hq{background:#ede9fe;color:#5b21b6}.who-tag.local{background:#e0f2fe;color:#0369a1}.who-tag.both{background:#fef3c7;color:#92400e}
+.status-row{display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap}
+.status-label{font-size:10px;font-weight:700;color:#64748b}
+.st-badge{padding:3px 10px;border-radius:8px;font-size:11px;font-weight:800}
+.st-badge.yes{background:#d1fae5;color:#065f46}.st-badge.no{background:#fee2e2;color:#991b1b}.st-badge.partial{background:#fef3c7;color:#92400e}.st-badge.none{background:#f1f5f9;color:#94a3b8}
+.st-badge.confirmed{background:#22c55e;color:#fff}.st-badge.pending{background:#f59e0b;color:#fff}.st-badge.rejected{background:#ef4444;color:#fff}
 .detail-toggle{font-size:11px;font-weight:700;color:#3b82f6;cursor:pointer;user-select:none;margin-bottom:6px;display:inline-block}
-.detail-toggle:hover{color:#1d4ed8;text-decoration:underline}
+.detail-toggle:hover{text-decoration:underline}
 .detail-box{display:none;margin-bottom:10px}
 .detail-box.open{display:block}
 .detail-section{margin-bottom:8px}
 .detail-label{font-size:10px;font-weight:800;color:#64748b;margin-bottom:3px}
 .detail-text{font-size:11px;color:#374151;line-height:1.6;background:#f8fafc;border-radius:8px;padding:8px 10px;border-left:3px solid var(--line)}
-.detail-text.why{border-left-color:#ef4444}
-.detail-text.how{border-left-color:#3b82f6}
-.detail-text.done-criteria{border-left-color:#22c55e}
+.detail-text.why{border-left-color:#ef4444}.detail-text.how{border-left-color:#3b82f6}.detail-text.done-criteria{border-left-color:#22c55e}
 .item-btns{display:flex;gap:5px}
-.ib{flex:1;padding:7px;border-radius:10px;border:2px solid var(--line);background:#fff;font-size:11px;font-weight:800;cursor:pointer;text-align:center;transition:.15s}
+.ib{flex:1;padding:7px;border-radius:10px;border:2px solid var(--line);background:#fff;font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:.15s}
 .ib.yes{border-color:#86efac;color:#16a34a}.ib.yes.on{background:var(--ok);color:#fff;border-color:var(--ok)}
 .ib.no{border-color:#fca5a5;color:#dc2626}.ib.no.on{background:var(--no);color:#fff;border-color:var(--no)}
 .ib.partial{border-color:#fcd34d;color:#92400e}.ib.partial.on{background:#f59e0b;color:#fff;border-color:#f59e0b}
 .ib:disabled{opacity:.4;cursor:not-allowed}
+.review-btns{display:flex;gap:5px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
+.rb{padding:5px 12px;border-radius:8px;border:2px solid var(--line);background:#fff;font-size:10px;font-weight:800;cursor:pointer;transition:.15s}
+.rb.confirm{border-color:#22c55e;color:#16a34a}.rb.confirm.on{background:#22c55e;color:#fff}
+.rb.reject{border-color:#ef4444;color:#dc2626}.rb.reject.on{background:#ef4444;color:#fff}
 .memo-row{margin-top:6px}
 .memo-tog{font-size:10px;font-weight:700;color:#94a3b8;cursor:pointer}
 .memo-box{display:none;margin-top:5px}
 .memo-box.open{display:block}
 .memo-area{width:100%;height:48px;border:1px solid #e2e8f0;border-radius:8px;padding:7px;resize:none;font-size:11px;font-family:inherit;outline:none}
 .memo-save{margin-top:3px;padding:4px 10px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;float:right}
+.item-comments{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.ic-toggle{font-size:10px;font-weight:700;color:#8b5cf6;cursor:pointer}
+.ic-list{display:none;margin-top:6px}
+.ic-list.open{display:block}
+.ic-item{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:4px}
+.ic-meta{font-size:9px;color:#94a3b8;font-weight:600;margin-bottom:2px}
+.ic-text{font-size:11px;color:#374151;line-height:1.5}
+.ic-input-row{display:flex;gap:6px;margin-top:6px}
+.ic-input{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-family:inherit;outline:none}
+.ic-del{font-size:9px;color:#94a3b8;cursor:pointer;font-weight:700;float:right}
+.ic-del:hover{color:#ef4444}
 
-/* RESULT */
 .result-hero{background:#fff;border-radius:18px;border:1px solid var(--line);padding:22px;margin-bottom:14px;text-align:center}
 .rg-pct{font-size:40px;font-weight:800;color:var(--red);margin:6px 0}
 .track-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
@@ -152,36 +164,17 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .sec-mini-pct{font-size:15px;font-weight:800}
 .sec-mini-lbl{font-size:8px;color:#64748b;font-weight:700;margin-top:2px}
 
-/* COMPARE */
 .cmp-tbl{width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;border:1px solid var(--line);overflow:hidden;background:#fff}
 .cmp-tbl th,.cmp-tbl td{padding:8px 10px;font-size:11px;border-bottom:1px solid var(--line)}
 .cmp-tbl th{background:#f8fafc;font-weight:800;color:#64748b}
 .cmp-tbl tr:last-child td{border-bottom:none}
 .heat{border-radius:8px;padding:3px 8px;font-weight:800;font-size:10px;display:inline-block}
 
-/* COMMENTS */
-.comments-section{margin-top:20px;background:#fff;border-radius:14px;border:1px solid var(--line);padding:16px}
-.comments-title{font-size:13px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.comment-item{padding:10px;border-radius:10px;background:#f8fafc;margin-bottom:8px;border:1px solid var(--line)}
-.comment-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.comment-author{font-size:11px;font-weight:700;color:#1e293b}
-.comment-time{font-size:9px;color:#94a3b8;font-weight:600}
-.comment-text{font-size:12px;color:#374151;line-height:1.6}
-.comment-input-row{display:flex;gap:8px;margin-top:10px}
-.comment-input{flex:1;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:12px;font-family:inherit;outline:none}
-.comment-input:focus{border-color:#3b82f6}
-.comment-delete{font-size:9px;color:#94a3b8;cursor:pointer;font-weight:700}
-.comment-delete:hover{color:#ef4444}
-
-/* IMPORT */
-.import-section{background:#fff;border-radius:14px;border:2px dashed var(--line);padding:20px;text-align:center;margin-bottom:14px}
-.import-section:hover{border-color:#3b82f6}
 .import-result{margin-top:12px;padding:12px;border-radius:10px;font-size:12px;font-weight:600;display:none}
 .import-result.show{display:block}
 .import-result.success{background:#f0fdf4;color:#16a34a;border:1px solid #86efac}
 .import-result.error{background:#fff8f8;color:#dc2626;border:1px solid #fca5a5}
 
-/* MODAL */
 .mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px}
 .mov.open{display:flex}
 .modal{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto}
@@ -191,10 +184,13 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .mf{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 .no-results{text-align:center;padding:32px;color:#94a3b8;font-weight:700;font-size:13px;background:#fff;border-radius:14px;border:1px solid var(--line)}
 .readonly-badge{display:inline-block;padding:2px 8px;border-radius:6px;background:#f1f5f9;color:#94a3b8;font-size:9px;font-weight:700;margin-left:6px}
+.tab-content{display:none}.tab-content.active{display:block}
+.dash-tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap}
+.dash-tab{padding:6px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.dash-tab.on{background:var(--red);color:#fff;border-color:var(--red)}
 </style>
 </head>
 <body>
-
 <header>
 <div class="hi">
 <div class="logo"><h1>🌱 글로벌 CS 운영 함께 단계 올리기</h1><p id="headerSub">로그인이 필요합니다</p></div>
@@ -209,7 +205,6 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 </div>
 </header>
 
-<!-- AUTH -->
 <div class="page active" id="page-auth">
 <div class="auth-wrap"><div class="auth-card">
 <div style="font-size:48px">🌏</div>
@@ -219,20 +214,12 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <input class="fi" id="authPw" placeholder="Password" type="password"/>
 <div id="signupFields" style="display:none">
 <input class="fi" id="authName" placeholder="이름"/>
-<select class="fi-select fi" id="authOrgSelect" onchange="toggleOtherOrg()">
+<select class="fi" id="authOrgSelect" onchange="toggleOtherOrg()">
 <option value="">소속 법인을 선택하세요</option>
-<option value="InBody USA">InBody USA</option>
-<option value="InBody EU">InBody EU</option>
-<option value="InBody Oceania">InBody Oceania</option>
-<option value="InBody UK">InBody UK</option>
-<option value="InBody Japan">InBody Japan</option>
-<option value="InBody China">InBody China</option>
-<option value="InBody Türkiye">InBody Türkiye</option>
-<option value="InBody Asia">InBody Asia</option>
-<option value="InBody Mexico">InBody Mexico</option>
-<option value="InBody India">InBody India</option>
-<option value="InBody Vietnam">InBody Vietnam</option>
-<option value="InBody New York">InBody New York</option>
+<option>InBody USA</option><option>InBody EU</option><option>InBody Oceania</option>
+<option>InBody UK</option><option>InBody Japan</option><option>InBody China</option>
+<option>InBody Türkiye</option><option>InBody Asia</option><option>InBody Mexico</option>
+<option>InBody India</option><option>InBody Vietnam</option><option>InBody New York</option>
 <option value="__other__">Other (직접 입력)</option>
 </select>
 <input class="fi" id="authOrgOther" placeholder="법인명을 직접 입력하세요" style="display:none"/>
@@ -243,42 +230,42 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 </div></div>
 </div>
 
-<!-- HOME -->
 <div class="page" id="page-home">
 <div class="gstats" id="gstats"></div>
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
 <div style="font-size:15px;font-weight:800">법인 현황</div>
-<div style="display:flex;gap:6px;flex-wrap:wrap">
 <button class="btn green sm" id="addOrgBtn" onclick="openAdd()" style="display:none">＋ 법인 추가</button>
-</div>
 </div>
 <div class="org-grid" id="orgGrid"></div>
 </div>
 
-<!-- DASHBOARD -->
 <div class="page" id="page-dashboard">
 <div style="font-size:18px;font-weight:800;margin-bottom:16px">📊 본사 대시보드</div>
-<div id="dashContent"></div>
+<div class="dash-tabs">
+<button class="dash-tab on" onclick="switchDash('overview',this)">전체 현황</button>
+<button class="dash-tab" onclick="switchDash('activity',this)">📝 업데이트 로그</button>
+<button class="dash-tab" onclick="switchDash('comments',this)">💬 최근 코멘트</button>
+</div>
+<div id="dashOverview" class="tab-content active"></div>
+<div id="dashActivity" class="tab-content"></div>
+<div id="dashComments" class="tab-content"></div>
 </div>
 
-<!-- CHECKLIST -->
 <div class="page" id="page-checklist">
 <div class="cl-top">
 <button class="btn ghost sm" onclick="go('home')">← 목록</button>
 <span id="clOrg" style="font-size:13px;font-weight:800"></span>
 <span id="clReadonly"></span>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
-<button class="btn orange sm" id="btnTemplate" onclick="downloadTemplate()">📥 템플릿 다운로드</button>
-<button class="btn purple sm" id="btnImport" onclick="document.getElementById('importFile').click()">📤 엑셀 업로드</button>
+<button class="btn orange sm" id="btnTemplate" onclick="downloadTemplate()">📥 템플릿</button>
+<button class="btn purple sm" id="btnImport" onclick="document.getElementById('importFile').click()">📤 업로드</button>
 <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)"/>
-<button class="btn blue sm" onclick="go('result')">결과 보기 →</button>
+<button class="btn blue sm" onclick="go('result')">결과 →</button>
 </div>
 </div>
 <div class="import-result" id="importResult"></div>
 <div class="cl-tabs" id="clTabs"></div>
-<div class="search-filter-bar">
-<div class="search-box"><input id="searchInput" placeholder="항목명, 목적, 방법으로 검색..." oninput="onSearch()"/></div>
-</div>
+<div class="search-filter-bar"><div class="search-box"><input id="searchInput" placeholder="항목명, 목적, 방법으로 검색..." oninput="onSearch()"/></div></div>
 <div class="filter-wrap">
 <div><span class="filter-group-label">상태</span><div class="filter-group" id="fgStatus"></div></div>
 <div><span class="filter-group-label">중요도</span><div class="filter-group" id="fgImp"></div></div>
@@ -286,18 +273,8 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 </div>
 <div class="search-result-info" id="searchInfo"></div>
 <div id="clBody"></div>
-<!-- Comments Section -->
-<div class="comments-section" id="commentsSection">
-<div class="comments-title">💬 법인 코멘트</div>
-<div id="commentsList"></div>
-<div class="comment-input-row">
-<input class="comment-input" id="commentInput" placeholder="코멘트를 남겨주세요..." onkeydown="if(event.key==='Enter')addComment()"/>
-<button class="btn blue sm" onclick="addComment()">등록</button>
-</div>
-</div>
 </div>
 
-<!-- RESULT -->
 <div class="page" id="page-result">
 <div style="max-width:860px;margin:0 auto">
 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
@@ -309,33 +286,22 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 </div>
 </div>
 
-<!-- COMPARE -->
 <div class="page" id="page-compare">
 <div style="font-size:15px;font-weight:800;margin-bottom:14px">법인 비교</div>
 <div id="cmpWrap"></div>
 </div>
 
-<!-- ADD ORG MODAL -->
 <div class="mov" id="addModal">
-<div class="modal">
-<h3>새 법인 추가</h3>
+<div class="modal"><h3>새 법인 추가</h3>
 <div class="fg"><label class="fl">법인명</label><input class="fi" id="addName" placeholder="예: InBody Germany"/></div>
-<div class="mf">
-<button class="btn ghost sm" onclick="closeAdd()">취소</button>
-<button class="btn green sm" onclick="confirmAdd()">추가</button>
-</div>
-</div>
-</div>
+<div class="mf"><button class="btn ghost sm" onclick="closeAdd()">취소</button><button class="btn green sm" onclick="confirmAdd()">추가</button></div>
+</div></div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
 <script>
-/* ══════════════════════════════════════
-   🔧 여기에 본인 Firebase 설정값을 넣으세요
-   ══════════════════════════════════════ */
+/* ══ FIREBASE CONFIG ══ */
 const firebaseConfig = {
   apiKey: "AIzaSyAnrQKqg_NWgewQLMSorN4wV0Tniw_T2UE",
   authDomain: "ops-checklist-58c96.firebaseapp.com",
@@ -350,16 +316,12 @@ const ADMIN_EMAILS = [
   "glorialiakim@inbody.com"
   // "another-admin@example.com",
 ];
-
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+const auth=firebase.auth(),db=firebase.firestore();
+const TS=firebase.firestore.FieldValue.serverTimestamp;
 
 /* ══ DATA ══ */
-const TRACKS=[
-{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#6366f1"},
-{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#f59e0b"}
-];
+const TRACKS=[{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#6366f1"},{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#f59e0b"}];
 const SECTIONS=[
 {id:"a1",track:"tA",label:"인증·인허가",emoji:"🛂",color:"#8b5cf6"},
 {id:"a2",track:"tA",label:"품질·규제 체계",emoji:"🔬",color:"#6366f1"},
@@ -370,19 +332,17 @@ const SECTIONS=[
 {id:"b2",track:"tB",label:"공급망·출고",emoji:"📦",color:"#ec4899"},
 {id:"b3",track:"tB",label:"설치·고객경험",emoji:"🔧",color:"#f97316"},
 {id:"b4",track:"tB",label:"CS·사후서비스",emoji:"🛠️",color:"#14b8a6"},
-{id:"b5",track:"tB",label:"회계·수금",emoji:"💰",color:"#e11d48"},
-];
-
+{id:"b5",track:"tB",label:"회계·수금",emoji:"💰",color:"#e11d48"}];
 const ALL=[
-{id:1,sec:"a1",imp:"H",who:"hq",name:"제품 판매를 위한 HW 의료기기 인증 확보",why:"현지 인증 없이는 통관·판매 자체가 불가능",how:"법인 설립 전부터 대상 국가의 인증 요건을 조사하고 착수",done:"①대상 제품 전체의 인증이 발급됨 ②인증서 사본이 HQ 마스터 리스트에 등록됨"},
-{id:2,sec:"a1",imp:"H",who:"hq",name:"SW(앱·펌웨어) 인증 또는 신고 의무 이행",why:"SW 미신고 시 통관 단계에서 제지당하는 사례 빈번",how:"HW 인증과 별도로 SW 관련 규제를 조사",done:"①SW 규제 해당 여부가 문서로 검토됨 ②해당 시 인증/신고가 완료됨"},
-{id:3,sec:"a1",imp:"H",who:"hq",name:"전파·계측기 등 추가 인증 요건 대응",why:"의료기기 인증 외에 별도 인증이 필요한 국가가 있음",how:"대상 국가의 의료기기 외 관련 법규를 사전 조사",done:"①추가 인증 요건 조사 결과가 문서화됨 ②필요한 추가 인증이 모두 취득됨"},
-{id:4,sec:"a1",imp:"H",who:"hq",name:"인증 유효기간 관리 및 갱신 체계 운영",why:"인증 만료 시 판매 즉시 중단",how:"HQ 마스터 리스트에 국가별 인증 만료일·담당자를 등록",done:"①전체 인증의 만료일이 마스터 리스트에 등록됨 ②갱신 알림 체계가 운영 중"},
+{id:1,sec:"a1",imp:"H",who:"hq",name:"제품 판매를 위한 HW 의료기기 인증 확보",why:"현지 인증 없이는 통관·판매 자체가 불가능하며, 국가별로 2년 이상 소요되기도 함",how:"법인 설립 전부터 대상 국가의 인증 요건을 조사하고 착수. HQ가 주도하되 현지 RA 파트너와 협업",done:"①대상 제품 전체의 인증이 발급됨 ②인증서 사본이 HQ 마스터 리스트에 등록됨 ③인증 범위에 판매 예정 품목이 모두 포함됨"},
+{id:2,sec:"a1",imp:"H",who:"hq",name:"SW(앱·펌웨어) 인증 또는 신고 의무 이행",why:"HW 인증만으로 끝나지 않는 국가가 많으며, SW 미신고 시 통관 단계에서 제지당하는 사례 빈번",how:"HW 인증과 별도로 SW 관련 규제를 조사. 의료기기 SW 분류(SaMD 등) 해당 여부 확인",done:"①SW 규제 해당 여부가 문서로 검토됨 ②해당 시 인증/신고가 완료됨 ③통관 시 필요한 SW 관련 서류가 준비됨"},
+{id:3,sec:"a1",imp:"H",who:"hq",name:"전파·계측기 등 추가 인증 요건 대응",why:"의료기기 인증 외에 전파법, 계측기법 등 별도 인증이 필요한 국가가 있어 누락 시 판매 중단",how:"대상 국가의 의료기기 외 관련 법규를 사전 조사",done:"①추가 인증 요건 조사 결과가 문서화됨 ②필요한 추가 인증이 모두 취득됨"},
+{id:4,sec:"a1",imp:"H",who:"hq",name:"인증 유효기간 관리 및 갱신 체계 운영",why:"인증 만료 시 판매 즉시 중단. 만료일 관리 누락은 사업 연속성에 직접적 위협",how:"HQ 마스터 리스트에 국가별 인증 만료일·담당자를 등록",done:"①전체 인증의 만료일이 마스터 리스트에 등록됨 ②갱신 알림 체계가 운영 중"},
 {id:5,sec:"a1",imp:"H",who:"hq",name:"HS코드 정확 지정 및 문서화",why:"HS코드 오류 시 관세 과다 납부 또는 통관 거부",how:"HQ에서 제품별 기준 HS코드를 정의",done:"①제품별 HS코드 리스트가 문서화됨 ②현지 세관 확인을 거친 최종 코드가 적용됨"},
 {id:6,sec:"a1",imp:"H",who:"local",name:"관세·세금 감면 제도 활용",why:"감면 제도를 놓치면 불필요한 비용 지속 발생",how:"현지 세무사, 업계 네트워크를 통해 감면 제도 조사",done:"①감면 제도가 조사·문서화됨 ②실제 통관 시 감면이 적용됨"},
-{id:7,sec:"a2",imp:"H",who:"local",name:"현지 법규 기반 품질 조직 구성",why:"법적으로 품질책임자 지정을 요구하는 경우가 많음",how:"현지 의료기기 법규가 요구하는 품질 조직 요건을 조사",done:"①품질 조직 요건이 문서화됨 ②법적 필수 역할이 지정됨"},
+{id:7,sec:"a2",imp:"H",who:"local",name:"현지 법규 기반 품질 조직 구성",why:"법적으로 품질책임자(QA/RA) 지정, 품질 매뉴얼 보유 등을 요구하는 경우가 많음",how:"현지 의료기기 법규가 요구하는 품질 조직 요건을 조사",done:"①품질 조직 요건이 문서화됨 ②법적 필수 역할이 지정됨 ③관할 기관 신고/등록이 완료됨"},
 {id:8,sec:"a2",imp:"H",who:"local",name:"시판 후 감시(PMS) 체계 구축",why:"대부분의 국가에서 시판 후 안전성 모니터링을 법적으로 의무화",how:"현지 규제기관의 PMS 요건을 파악",done:"①PMS 절차서가 문서화됨 ②부작용 보고 경로가 정의됨"},
-{id:9,sec:"a2",imp:"H",who:"both",name:"현지 QA 프로세스 운영",why:"현지에서 실제 품질관리가 안 되면 불량 대응 지연",how:"현지 법규에 맞는 불만처리, CAPA, 리콜 절차를 수립",done:"①불만처리 절차서가 작성됨 ②CAPA 프로세스가 운영 중"},
+{id:9,sec:"a2",imp:"H",who:"both",name:"현지 QA 프로세스 운영",why:"현지에서 실제 품질관리가 안 되면 불량 대응 지연",how:"현지 법규에 맞는 불만처리, CAPA, 리콜 절차를 수립",done:"①불만처리 절차서가 작성됨 ②CAPA 프로세스가 운영 중 ③리콜 대응 절차가 문서화됨"},
 {id:10,sec:"a2",imp:"M",who:"both",name:"반복 불량의 체계적 집계 및 HQ 환류",why:"반복 불량이 HQ에 전달되지 않으면 설계 개선 기회를 놓침",how:"불량을 모델·부품 기준으로 분석 가능한 구조로 기록",done:"①불량 데이터가 모델·부품 단위로 집계 가능 ②월 1회 이상 HQ에 리포트 공유"},
 {id:11,sec:"a3",imp:"H",who:"local",name:"법인 기능별 책임자 지정 및 백업 체계",why:"책임자 미지정 시 의사결정 지연",how:"기능별 책임자를 지정. 백업자를 반드시 지정",done:"①기능별 책임자·백업자가 문서화됨 ②조직도가 최신 상태로 유지됨"},
 {id:12,sec:"a3",imp:"H",who:"local",name:"운영에 필요한 금융 인프라 구축",why:"현지 통화 결제·수금·송금이 원활하지 않으면 영업 활동에 지장",how:"현지 상황에 맞게 은행 계좌를 개설",done:"①은행 계좌가 개설·운영 중 ②HQ↔법인 송금 프로세스가 정의됨"},
@@ -433,76 +393,70 @@ const ALL=[
 {id:57,sec:"b5",imp:"M",who:"both",name:"수금 상태 공유 및 미수금 관리",why:"수금 정보 단절 시 미수금 고객에게 추가 출고 등 문제 발생",how:"수금 상태를 관련 부서와 공유",done:"①수금 상태가 공유됨 ②미수금이 연체 구간별로 관리됨"},
 {id:58,sec:"b5",imp:"M",who:"both",name:"HQ-법인 간 정기 리뷰 운영",why:"피드백 루프 단절 시 문제 누적",how:"월 1회 CS·영업 리뷰를 고정 운영",done:"①월간 리뷰가 정기적으로 운영됨"},
 {id:59,sec:"b5",imp:"M",who:"both",name:"세금·환율 적용 기준 표준화",why:"오류 시 인보이스 재발행",how:"세금·환율 로직을 문서화",done:"①세금·환율 적용 기준이 문서화됨"},
-{id:60,sec:"b5",imp:"M",who:"both",name:"COD 결제 기준 및 유상 수리 결제 연계",why:"결제 확인 전 출고 시 미수금 리스크",how:"COD 기준을 명확히 정의",done:"①COD 기준이 정의됨 ②유상 수리 결제→출고 프로세스가 운영됨"},
+{id:60,sec:"b5",imp:"M",who:"both",name:"COD 결제 기준 및 유상 수리 결제 연계",why:"결제 확인 전 출고 시 미수금 리스크",how:"COD 기준을 명확히 정의",done:"①COD 기준이 정의됨 ②유상 수리 결제→출고 프로세스가 운영됨"}
 ];
 
 /* ══ STATE ══ */
-let currentUser=null;
-let orgsCache=[];
-let responsesCache={};
-let memosCache={};
-let commentsCache={};
+let CU=null,orgsC=[],respC={},reviewC={},memosC={},commC=[];
 const ST={page:"auth",oid:null,sec:null,fStatus:"all",fImp:"all",fWho:"all",search:""};
-
-/* ══ HELPERS ══ */
 function _h(s){return(s??"").toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function whoLabel(w){return{hq:"본사",local:"현지",both:"공통"}[w]||w;}
 function heat(p){if(p>=80)return"background:#d1fae5;color:#065f46";if(p>=50)return"background:#fef3c7;color:#92400e";return"background:#fee2e2;color:#991b1b";}
 const GROWTH=[{min:0,max:19,icon:"🌱",label:"씨앗"},{min:20,max:39,icon:"🌿",label:"새싹"},{min:40,max:59,icon:"🌳",label:"나무"},{min:60,max:79,icon:"🍃",label:"잎무성"},{min:80,max:100,icon:"🍎",label:"열매"}];
 function getG(p){return GROWTH.find(g=>p>=g.min&&p<=g.max)||GROWTH[0];}
-function isAdmin(){return currentUser&&currentUser.role==="admin";}
-function canEdit(orgId){if(isAdmin())return true;const org=orgsCache.find(o=>o.id===orgId);return org&&org.createdBy===currentUser?.uid;}
-function getSt(oid,iid){return(responsesCache[oid]||{})[iid]||"";}
-function getMemo(oid,iid){return(memosCache[oid]||{})[iid]||"";}
-function calcOrg(oid){let d=0;ALL.forEach(i=>{if(getSt(oid,i.id)==="yes")d++;});return{total:ALL.length,done:d,pct:ALL.length?Math.round(d*100/ALL.length):0};}
-function calcSec(oid,sid){const its=ALL.filter(i=>i.sec===sid);return its.length?Math.round(its.filter(i=>getSt(oid,i.id)==="yes").length*100/its.length):0;}
-function calcTrack(oid,tid){const its=ALL.filter(i=>{const s=SECTIONS.find(x=>x.id===i.sec);return s&&s.track===tid;});return its.length?Math.round(its.filter(i=>getSt(oid,i.id)==="yes").length*100/its.length):0;}
-function calcWhoExact(oid,who){const its=ALL.filter(i=>i.who===who);const d=its.filter(i=>getSt(oid,i.id)==="yes").length;return{total:its.length,done:d,pct:its.length?Math.round(d*100/its.length):0};}
+function isAdmin(){return CU&&CU.role==="admin";}
+function canEdit(oid){if(isAdmin())return true;const o=orgsC.find(x=>x.id===oid);return o&&o.createdBy===CU?.uid;}
+// Final status = review confirmed by HQ. If no review, use response.
+function getFinal(oid,iid){const rv=(reviewC[oid]||{})[iid];if(rv==="confirmed")return"yes";if(rv==="rejected")return"no";return"";}
+function getResp(oid,iid){return(respC[oid]||{})[iid]||"";}
+function getReview(oid,iid){return(reviewC[oid]||{})[iid]||"";}
+function getMemo(oid,iid){return(memosC[oid]||{})[iid]||"";}
+// For stats, use confirmed items only
+function calcOrg(oid){let d=0;ALL.forEach(i=>{if(getReview(oid,i.id)==="confirmed")d++;});return{total:ALL.length,done:d,pct:ALL.length?Math.round(d*100/ALL.length):0};}
+function calcSec(oid,sid){const its=ALL.filter(i=>i.sec===sid);return its.length?Math.round(its.filter(i=>getReview(oid,i.id)==="confirmed").length*100/its.length):0;}
+function calcTrack(oid,tid){const its=ALL.filter(i=>{const s=SECTIONS.find(x=>x.id===i.sec);return s&&s.track===tid;});return its.length?Math.round(its.filter(i=>getReview(oid,i.id)==="confirmed").length*100/its.length):0;}
+function calcWhoExact(oid,who){const its=ALL.filter(i=>i.who===who);const d=its.filter(i=>getReview(oid,i.id)==="confirmed").length;return{total:its.length,done:d,pct:its.length?Math.round(d*100/its.length):0};}
 
-/* ══ FIREBASE DATA ══ */
+/* ══ FIREBASE ══ */
 async function loadAllData(){
   try{
-    const orgSnap=await db.collection("orgs").get();
-    orgsCache=[];
-    orgSnap.forEach(doc=>{orgsCache.push({id:doc.id,...doc.data()});});
-    responsesCache={};memosCache={};commentsCache={};
-    for(const org of orgsCache){
-      try{
-        const rDoc=await db.collection("responses").doc(org.id).get();
-        if(rDoc.exists)responsesCache[org.id]=rDoc.data();
-        const mDoc=await db.collection("memos").doc(org.id).get();
-        if(mDoc.exists)memosCache[org.id]=mDoc.data();
-      }catch(e){}
+    const snap=await db.collection("orgs").get();orgsC=[];
+    snap.forEach(d=>{orgsC.push({id:d.id,...d.data()});});
+    respC={};reviewC={};memosC={};
+    for(const o of orgsC){
+      try{const r=await db.collection("responses").doc(o.id).get();if(r.exists)respC[o.id]=r.data();}catch(e){}
+      try{const r=await db.collection("reviews").doc(o.id).get();if(r.exists)reviewC[o.id]=r.data();}catch(e){}
+      try{const m=await db.collection("memos").doc(o.id).get();if(m.exists)memosC[o.id]=m.data();}catch(e){}
     }
-  }catch(e){console.error("Load error:",e);}
+  }catch(e){console.error(e);}
 }
-
-async function loadComments(orgId){
-  try{
-    const snap=await db.collection("comments").where("orgId","==",orgId).orderBy("createdAt","desc").limit(50).get();
-    const list=[];
-    snap.forEach(doc=>{list.push({id:doc.id,...doc.data()});});
-    commentsCache[orgId]=list;
-  }catch(e){commentsCache[orgId]=[];}
+async function saveResp(oid,iid,v){
+  if(!respC[oid])respC[oid]={};respC[oid][iid]=v;
+  await db.collection("responses").doc(oid).set(respC[oid]);
+  await logActivity(oid,iid,"response",v);
 }
-
-async function saveResponse(orgId,itemId,value){
-  if(!responsesCache[orgId])responsesCache[orgId]={};
-  responsesCache[orgId][itemId]=value;
-  try{await db.collection("responses").doc(orgId).set(responsesCache[orgId]);}catch(e){console.error(e);}
+async function saveReview(oid,iid,v){
+  if(!reviewC[oid])reviewC[oid]={};reviewC[oid][iid]=v;
+  await db.collection("reviews").doc(oid).set(reviewC[oid]);
+  await logActivity(oid,iid,"review",v);
 }
-
-async function saveBulkResponses(orgId,data){
-  if(!responsesCache[orgId])responsesCache[orgId]={};
-  Object.assign(responsesCache[orgId],data);
-  try{await db.collection("responses").doc(orgId).set(responsesCache[orgId]);}catch(e){console.error(e);}
+async function saveMemoDb(oid,iid,t){
+  if(!memosC[oid])memosC[oid]={};memosC[oid][iid]=t;
+  await db.collection("memos").doc(oid).set(memosC[oid]);
 }
-
-async function saveMemoToDb(orgId,itemId,text){
-  if(!memosCache[orgId])memosCache[orgId]={};
-  memosCache[orgId][itemId]=text;
-  try{await db.collection("memos").doc(orgId).set(memosCache[orgId]);}catch(e){console.error(e);}
+async function saveBulkResp(oid,data){
+  if(!respC[oid])respC[oid]={};Object.assign(respC[oid],data);
+  await db.collection("responses").doc(oid).set(respC[oid]);
+  await logActivity(oid,null,"bulk_import",`${Object.keys(data).length} items`);
 }
+async function logActivity(oid,iid,type,value){
+  try{await db.collection("activityLog").add({orgId:oid,itemId:iid,type,value,uid:CU.uid,userName:CU.name,orgName:CU.orgName,createdAt:TS()});}catch(e){}
+}
+async function loadItemComments(oid){
+  try{const snap=await db.collection("comments").where("orgId","==",oid).orderBy("createdAt","desc").limit(100).get();
+  commC=[];snap.forEach(d=>{commC.push({id:d.id,...d.data()});});}catch(e){commC=[];}
+}
+function getItemComments(iid){return commC.filter(c=>c.itemId===iid);}
 
 /* ══ AUTH ══ */
 let authMode="login";
@@ -514,456 +468,287 @@ function toggleAuthMode(){
   document.getElementById('signupFields').style.display=authMode==="signup"?"block":"none";
   document.getElementById('authError').className='auth-error';
 }
-function showAuthError(msg){const el=document.getElementById('authError');el.textContent=msg;el.className='auth-error show';}
-function toggleOtherOrg(){
-  const sel=document.getElementById('authOrgSelect');
-  const other=document.getElementById('authOrgOther');
-  other.style.display=sel.value==='__other__'?'block':'none';
-  if(sel.value!=='__other__')other.value='';
-}
-function getSelectedOrg(){
-  const sel=document.getElementById('authOrgSelect');
-  if(sel.value==='__other__')return document.getElementById('authOrgOther').value.trim();
-  return sel.value;
-}
-
+function showAuthError(m){const e=document.getElementById('authError');e.textContent=m;e.className='auth-error show';}
+function toggleOtherOrg(){const s=document.getElementById('authOrgSelect'),o=document.getElementById('authOrgOther');o.style.display=s.value==='__other__'?'block':'none';}
+function getSelectedOrg(){const s=document.getElementById('authOrgSelect');return s.value==='__other__'?document.getElementById('authOrgOther').value.trim():s.value;}
 async function doAuth(){
-  const email=document.getElementById('authEmail').value.trim();
-  const pw=document.getElementById('authPw').value;
+  const email=document.getElementById('authEmail').value.trim(),pw=document.getElementById('authPw').value;
   if(!email||!pw)return showAuthError("이메일과 비밀번호를 입력하세요.");
   try{
     if(authMode==="signup"){
       if(!email.endsWith("@inbody.com"))return showAuthError("@inbody.com 이메일만 가입할 수 있습니다.");
-      const name=document.getElementById('authName').value.trim();
-      const orgName=getSelectedOrg();
+      const name=document.getElementById('authName').value.trim(),orgName=getSelectedOrg();
       if(!name||!orgName)return showAuthError("이름과 법인명을 입력하세요.");
       const cred=await auth.createUserWithEmailAndPassword(email,pw);
       const role=ADMIN_EMAILS.includes(email)?"admin":"user";
-      await db.collection("users").doc(cred.user.uid).set({email,name,orgName,role,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    }else{
-      await auth.signInWithEmailAndPassword(email,pw);
-    }
+      await db.collection("users").doc(cred.user.uid).set({email,name,orgName,role,createdAt:TS()});
+    }else{await auth.signInWithEmailAndPassword(email,pw);}
   }catch(e){
-    const msgs={"auth/email-already-in-use":"이미 사용 중인 이메일입니다.","auth/invalid-email":"유효하지 않은 이메일입니다.","auth/weak-password":"비밀번호가 너무 짧습니다.","auth/user-not-found":"등록되지 않은 이메일입니다.","auth/wrong-password":"비밀번호가 틀렸습니다.","auth/invalid-credential":"이메일 또는 비밀번호가 틀렸습니다."};
-    showAuthError(msgs[e.code]||e.message);
+    const m={"auth/email-already-in-use":"이미 사용 중인 이메일","auth/invalid-email":"유효하지 않은 이메일","auth/weak-password":"비밀번호 6자 이상","auth/user-not-found":"등록되지 않은 이메일","auth/wrong-password":"비밀번호 오류","auth/invalid-credential":"이메일 또는 비밀번호 오류"};
+    showAuthError(m[e.code]||e.message);
   }
 }
 function doLogout(){auth.signOut();}
-
-auth.onAuthStateChanged(async user=>{
-  if(user){
-    try{
-      const uDoc=await db.collection("users").doc(user.uid).get();
-      if(!uDoc.exists){auth.signOut();return;}
-      const ud=uDoc.data();
-      const role=ADMIN_EMAILS.includes(ud.email)?"admin":(ud.role||"user");
-      currentUser={uid:user.uid,email:ud.email,name:ud.name,orgName:ud.orgName,role};
-      document.getElementById('headerSub').textContent=`${ud.name} (${ud.orgName}) · ${role==="admin"?"본사 관리자":"법인 사용자"}`;
-      document.getElementById('userInfoSpan').innerHTML=`${_h(ud.email)} <span class="role-badge ${role}">${role==="admin"?"Admin":"User"}</span>`;
-      document.getElementById('mainNav').style.display='flex';
-      if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('addOrgBtn').style.display='';}
-      await loadAllData();
-      if(role!=="admin"&&!orgsCache.find(o=>o.createdBy===user.uid)){
-        const ref=await db.collection("orgs").add({name:ud.orgName,createdBy:user.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-        orgsCache.push({id:ref.id,name:ud.orgName,createdBy:user.uid});
-      }
-      go('home');
-    }catch(e){console.error(e);}
-  }else{
-    currentUser=null;
-    document.getElementById('mainNav').style.display='none';
-    document.getElementById('headerSub').textContent='로그인이 필요합니다';
-    go('auth');
-  }
+auth.onAuthStateChanged(async u=>{
+  if(u){
+    try{const d=await db.collection("users").doc(u.uid).get();if(!d.exists){auth.signOut();return;}
+    const ud=d.data(),role=ADMIN_EMAILS.includes(ud.email)?"admin":(ud.role||"user");
+    CU={uid:u.uid,email:ud.email,name:ud.name,orgName:ud.orgName,role};
+    document.getElementById('headerSub').textContent=`${ud.name} (${ud.orgName}) · ${role==="admin"?"본사 관리자":"법인 사용자"}`;
+    document.getElementById('userInfoSpan').innerHTML=`${_h(ud.email)} <span class="role-badge ${role}">${role==="admin"?"Admin":"User"}</span>`;
+    document.getElementById('mainNav').style.display='flex';
+    if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('addOrgBtn').style.display='';}
+    await loadAllData();
+    if(role!=="admin"&&!orgsC.find(o=>o.createdBy===u.uid)){
+      const ref=await db.collection("orgs").add({name:ud.orgName,createdBy:u.uid,createdAt:TS()});
+      orgsC.push({id:ref.id,name:ud.orgName,createdBy:u.uid});}
+    go('home');}catch(e){console.error(e);}
+  }else{CU=null;document.getElementById('mainNav').style.display='none';document.getElementById('headerSub').textContent='로그인이 필요합니다';go('auth');}
 });
 
 /* ══ NAV ══ */
-function go(p){
-  ST.page=p;
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
-  const el=document.getElementById('page-'+p);if(el)el.classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
-  const n=document.getElementById('nav-'+p);if(n)n.classList.add('on');
-  if(p==='home')renderHome();
-  if(p==='dashboard')renderDashboard();
-  if(p==='checklist')renderChecklist();
-  if(p==='result')renderResult();
-  if(p==='compare')renderCompare();
-}
+function go(p){ST.page=p;document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+const el=document.getElementById('page-'+p);if(el)el.classList.add('active');
+document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+const n=document.getElementById('nav-'+p);if(n)n.classList.add('on');
+if(p==='home')renderHome();if(p==='dashboard')renderDashboard();if(p==='checklist')renderChecklist();if(p==='result')renderResult();if(p==='compare')renderCompare();}
 
 /* ══ HOME ══ */
 function renderHome(){
-  const myOrgs=isAdmin()?orgsCache:orgsCache.filter(o=>o.createdBy===currentUser?.uid);
-  const avg=myOrgs.length?Math.round(myOrgs.reduce((a,o)=>a+calcOrg(o.id).pct,0)/myOrgs.length):0;
-  const g=getG(avg);
-  document.getElementById('gstats').innerHTML=`
-    <div class="gs"><div class="gs-l">${isAdmin()?'전체':'내'} 법인</div><div class="gs-v">${myOrgs.length}</div></div>
-    <div class="gs"><div class="gs-l">평균 완료율</div><div class="gs-v">${avg}%</div><div class="gs-s">${g.icon} ${g.label}</div></div>
-    <div class="gs"><div class="gs-l">총 점검 항목</div><div class="gs-v">${ALL.length}</div></div>`;
-  document.getElementById('orgGrid').innerHTML=myOrgs.map(o=>{
-    const ov=calcOrg(o.id),g=getG(ov.pct);
-    const tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");
-    const wHq=calcWhoExact(o.id,"hq"),wLo=calcWhoExact(o.id,"local"),wBo=calcWhoExact(o.id,"both");
-    return`<div class="org-card">
-      <div class="org-name">${_h(o.name)} <span style="font-size:11px;color:#94a3b8">${g.icon} ${g.label} ${ov.pct}%</span></div>
-      <div class="track-row">
-        <div class="track-box"><div class="track-label" style="color:var(--tA)">A. 조직기반</div><div class="track-pct" style="color:var(--tA)">${tA}%</div><div class="track-bar"><div class="track-fill" style="width:${tA}%;background:var(--tA)"></div></div></div>
-        <div class="track-box"><div class="track-label" style="color:var(--tB)">B. 판매사이클</div><div class="track-pct" style="color:var(--tB)">${tB}%</div><div class="track-bar"><div class="track-fill" style="width:${tB}%;background:var(--tB)"></div></div></div>
-      </div>
-      <div class="who-summary">
-        <div class="who-sum-box"><div class="who-sum-label" style="color:#6366f1">🏢 본사</div><div class="who-sum-pct" style="color:#6366f1">${wHq.pct}%</div></div>
-        <div class="who-sum-box"><div class="who-sum-label" style="color:#0ea5e9">📍 현지</div><div class="who-sum-pct" style="color:#0ea5e9">${wLo.pct}%</div></div>
-        <div class="who-sum-box"><div class="who-sum-label" style="color:#f59e0b">🤝 공통</div><div class="who-sum-pct" style="color:#f59e0b">${wBo.pct}%</div></div>
-      </div>
-      <div style="display:flex;gap:6px">
-        <button class="btn red sm" style="flex:1;justify-content:center" onclick="openOrg('${o.id}')">체크리스트 →</button>
-        ${isAdmin()?`<button class="btn ghost sm" onclick="delOrg('${o.id}')">삭제</button>`:""}
-      </div>
-    </div>`;
+  const my=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);
+  const avg=my.length?Math.round(my.reduce((a,o)=>a+calcOrg(o.id).pct,0)/my.length):0;const g=getG(avg);
+  document.getElementById('gstats').innerHTML=`<div class="gs"><div class="gs-l">${isAdmin()?'전체':'내'} 법인</div><div class="gs-v">${my.length}</div></div><div class="gs"><div class="gs-l">평균 확정률</div><div class="gs-v">${avg}%</div><div class="gs-s">${g.icon} ${g.label}</div></div><div class="gs"><div class="gs-l">총 점검 항목</div><div class="gs-v">${ALL.length}</div></div>`;
+  document.getElementById('orgGrid').innerHTML=my.map(o=>{
+    const ov=calcOrg(o.id),g=getG(ov.pct),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");
+    const wH=calcWhoExact(o.id,"hq"),wL=calcWhoExact(o.id,"local"),wB=calcWhoExact(o.id,"both");
+    // Count pending (responded but not reviewed)
+    const pending=ALL.filter(i=>getResp(o.id,i.id)&&!getReview(o.id,i.id)).length;
+    return`<div class="org-card"><div class="org-name">${_h(o.name)} <span style="font-size:11px;color:#94a3b8">${g.icon} ${ov.pct}%</span>${pending?` <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:6px;font-weight:700">${pending} 검토 대기</span>`:''}</div>
+    <div class="track-row"><div class="track-box"><div class="track-label" style="color:var(--tA)">A. 조직기반</div><div class="track-pct" style="color:var(--tA)">${tA}%</div><div class="track-bar"><div class="track-fill" style="width:${tA}%;background:var(--tA)"></div></div></div>
+    <div class="track-box"><div class="track-label" style="color:var(--tB)">B. 판매사이클</div><div class="track-pct" style="color:var(--tB)">${tB}%</div><div class="track-bar"><div class="track-fill" style="width:${tB}%;background:var(--tB)"></div></div></div></div>
+    <div class="who-summary"><div class="who-sum-box"><div class="who-sum-label" style="color:#6366f1">🏢 본사</div><div class="who-sum-pct" style="color:#6366f1">${wH.pct}%</div></div><div class="who-sum-box"><div class="who-sum-label" style="color:#0ea5e9">📍 현지</div><div class="who-sum-pct" style="color:#0ea5e9">${wL.pct}%</div></div><div class="who-sum-box"><div class="who-sum-label" style="color:#f59e0b">🤝 공통</div><div class="who-sum-pct" style="color:#f59e0b">${wB.pct}%</div></div></div>
+    <div style="display:flex;gap:6px"><button class="btn red sm" style="flex:1;justify-content:center" onclick="openOrg('${o.id}')">체크리스트 →</button>${isAdmin()?`<button class="btn ghost sm" onclick="delOrg('${o.id}')">삭제</button>`:''}</div></div>`;
   }).join('')||'<div class="no-results">등록된 법인이 없습니다.</div>';
 }
-
 function openOrg(oid){ST.oid=oid;ST.sec=SECTIONS[0].id;ST.fStatus="all";ST.fImp="all";ST.fWho="all";ST.search="";go('checklist');}
-
-async function delOrg(oid){
-  if(!confirm('삭제할까요?'))return;
-  try{
-    await db.collection("orgs").doc(oid).delete();
-    try{await db.collection("responses").doc(oid).delete();}catch(e){}
-    try{await db.collection("memos").doc(oid).delete();}catch(e){}
-    orgsCache=orgsCache.filter(o=>o.id!==oid);
-    delete responsesCache[oid];delete memosCache[oid];
-    renderHome();
-  }catch(e){alert("삭제 실패: "+e.message);}
-}
+async function delOrg(oid){if(!confirm('삭제할까요?'))return;try{await db.collection("orgs").doc(oid).delete();try{await db.collection("responses").doc(oid).delete();}catch(e){}try{await db.collection("reviews").doc(oid).delete();}catch(e){}try{await db.collection("memos").doc(oid).delete();}catch(e){}orgsC=orgsC.filter(o=>o.id!==oid);delete respC[oid];delete reviewC[oid];delete memosC[oid];renderHome();}catch(e){alert("삭제 실패");}}
 
 /* ══ DASHBOARD ══ */
-function renderDashboard(){
-  if(!isAdmin())return;
-  const totalOrgs=orgsCache.length;
-  const avgPct=totalOrgs?Math.round(orgsCache.reduce((a,o)=>a+calcOrg(o.id).pct,0)/totalOrgs):0;
-  const avgTA=totalOrgs?Math.round(orgsCache.reduce((a,o)=>a+calcTrack(o.id,"tA"),0)/totalOrgs):0;
-  const avgTB=totalOrgs?Math.round(orgsCache.reduce((a,o)=>a+calcTrack(o.id,"tB"),0)/totalOrgs):0;
-  let html=`<div class="gstats">
-    <div class="gs"><div class="gs-l">전체 법인 수</div><div class="gs-v">${totalOrgs}</div></div>
-    <div class="gs"><div class="gs-l">평균 완료율</div><div class="gs-v">${avgPct}%</div><div class="gs-s">${getG(avgPct).icon} ${getG(avgPct).label}</div></div>
-    <div class="gs"><div class="gs-l">A. 조직기반 평균</div><div class="gs-v" style="color:var(--tA)">${avgTA}%</div></div>
-    <div class="gs"><div class="gs-l">B. 판매사이클 평균</div><div class="gs-v" style="color:var(--tB)">${avgTB}%</div></div>
-  </div>`;
-  if(totalOrgs>0){
-    html+=`<div class="dash-section"><div class="dash-title">🗺️ 법인 × 섹션 히트맵</div>`;
-    html+=`<div style="overflow-x:auto"><div class="heatmap-grid" style="grid-template-columns:120px repeat(${SECTIONS.length},1fr)">`;
-    html+=`<div class="heatmap-cell" style="background:#f8fafc;font-weight:800;font-size:8px">법인</div>`;
-    SECTIONS.forEach(s=>{html+=`<div class="heatmap-cell" style="background:#f8fafc;font-size:8px;font-weight:700">${s.emoji}</div>`;});
-    orgsCache.forEach(o=>{
-      html+=`<div class="heatmap-cell" style="background:#f8fafc;font-size:9px;font-weight:700;text-align:left;padding-left:8px">${_h(o.name)}</div>`;
-      SECTIONS.forEach(s=>{const p=calcSec(o.id,s.id);html+=`<div class="heatmap-cell" style="${heat(p)}">${p}%</div>`;});
-    });
-    html+=`</div></div></div>`;
-    html+=`<div class="dash-section"><div class="dash-title">⚠️ 전체 법인 공통 취약 항목</div>`;
-    const itemStats=ALL.map(it=>{const yc=orgsCache.filter(o=>getSt(o.id,it.id)==="yes").length;return{...it,pct:Math.round(yc*100/totalOrgs),yesCount:yc};}).sort((a,b)=>a.pct-b.pct);
-    itemStats.slice(0,10).forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);html+=`<div class="weak-item"><div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700">${sec.emoji} ${_h(it.name)}</div><div style="font-size:9px;color:#94a3b8;margin-top:2px">${it.yesCount}/${totalOrgs} 법인 충족</div></div><div style="width:80px"><div class="weak-bar"><div class="weak-fill" style="width:${it.pct}%;background:${it.pct>=50?'#f59e0b':'#ef4444'}"></div></div></div><span class="heat" style="${heat(it.pct)};min-width:40px;text-align:center">${it.pct}%</span></div>`;});
-    html+=`</div>`;
-    html+=`<div class="dash-section"><div class="dash-title">🏆 법인 완료율 순위</div>`;
-    [...orgsCache].sort((a,b)=>calcOrg(b.id).pct-calcOrg(a.id).pct).forEach((o,i)=>{const ov=calcOrg(o.id),g=getG(ov.pct);html+=`<div class="weak-item"><div style="font-size:16px;font-weight:800;color:${i<3?'var(--red)':'#94a3b8'};width:28px;text-align:center">${i+1}</div><div style="flex:1"><div style="font-size:12px;font-weight:700">${g.icon} ${_h(o.name)}</div></div><div style="width:100px"><div class="weak-bar"><div class="weak-fill" style="width:${ov.pct}%;background:var(--tA)"></div></div></div><span class="heat" style="${heat(ov.pct)};min-width:50px;text-align:center">${ov.pct}%</span></div>`;});
-    html+=`</div>`;
-  }else{html+=`<div class="no-results">등록된 법인이 없습니다.</div>`;}
-  document.getElementById('dashContent').innerHTML=html;
+function switchDash(tab,btn){document.querySelectorAll('.dash-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('#page-dashboard .tab-content').forEach(t=>t.classList.remove('active'));document.getElementById('dash'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');if(tab==='activity')renderDashActivity();if(tab==='comments')renderDashComments();}
+
+function renderDashboard(){if(!isAdmin())return;renderDashOverview();renderDashActivity();renderDashComments();}
+
+function renderDashOverview(){
+  const n=orgsC.length,avg=n?Math.round(orgsC.reduce((a,o)=>a+calcOrg(o.id).pct,0)/n):0;
+  const avgA=n?Math.round(orgsC.reduce((a,o)=>a+calcTrack(o.id,"tA"),0)/n):0;
+  const avgB=n?Math.round(orgsC.reduce((a,o)=>a+calcTrack(o.id,"tB"),0)/n):0;
+  const totalPending=orgsC.reduce((a,o)=>a+ALL.filter(i=>getResp(o.id,i.id)&&!getReview(o.id,i.id)).length,0);
+  let h=`<div class="gstats"><div class="gs"><div class="gs-l">전체 법인</div><div class="gs-v">${n}</div></div><div class="gs"><div class="gs-l">평균 확정률</div><div class="gs-v">${avg}%</div></div><div class="gs"><div class="gs-l">A.조직기반</div><div class="gs-v" style="color:var(--tA)">${avgA}%</div></div><div class="gs"><div class="gs-l">B.판매사이클</div><div class="gs-v" style="color:var(--tB)">${avgB}%</div></div><div class="gs"><div class="gs-l">검토 대기</div><div class="gs-v" style="color:#f59e0b">${totalPending}</div></div></div>`;
+  if(n>0){
+    h+=`<div class="dash-section"><div class="dash-title">🗺️ 법인 × 섹션 히트맵</div><div style="overflow-x:auto"><div class="heatmap-grid" style="grid-template-columns:120px repeat(${SECTIONS.length},1fr)"><div class="heatmap-cell" style="background:#f8fafc;font-size:8px;font-weight:800">법인</div>`;
+    SECTIONS.forEach(s=>{h+=`<div class="heatmap-cell" style="background:#f8fafc;font-size:8px;font-weight:700">${s.emoji}</div>`;});
+    orgsC.forEach(o=>{h+=`<div class="heatmap-cell" style="background:#f8fafc;font-size:9px;font-weight:700;text-align:left;padding-left:8px">${_h(o.name)}</div>`;SECTIONS.forEach(s=>{const p=calcSec(o.id,s.id);h+=`<div class="heatmap-cell" style="${heat(p)}">${p}%</div>`;});});
+    h+=`</div></div></div>`;
+    h+=`<div class="dash-section"><div class="dash-title">🏆 법인 확정률 순위</div>`;
+    [...orgsC].sort((a,b)=>calcOrg(b.id).pct-calcOrg(a.id).pct).forEach((o,i)=>{const ov=calcOrg(o.id),g=getG(ov.pct);h+=`<div class="weak-item"><div style="font-size:16px;font-weight:800;color:${i<3?'var(--red)':'#94a3b8'};width:28px;text-align:center">${i+1}</div><div style="flex:1"><div style="font-size:12px;font-weight:700">${g.icon} ${_h(o.name)}</div></div><div style="width:100px"><div class="weak-bar"><div class="weak-fill" style="width:${ov.pct}%;background:var(--tA)"></div></div></div><span class="heat" style="${heat(ov.pct)};min-width:50px;text-align:center">${ov.pct}%</span></div>`;});
+    h+=`</div>`;
+  }
+  document.getElementById('dashOverview').innerHTML=h;
 }
 
-/* ══ EXCEL TEMPLATE & IMPORT ══ */
+async function renderDashActivity(){
+  try{const snap=await db.collection("activityLog").orderBy("createdAt","desc").limit(30).get();
+  let h='';snap.forEach(d=>{const l=d.data();const t=l.createdAt?new Date(l.createdAt.seconds*1000).toLocaleString('ko-KR'):'';
+  const org=orgsC.find(o=>o.id===l.orgId);const item=ALL.find(i=>i.id===l.itemId);
+  const typeLabel={response:"응답",review:"검토",bulk_import:"엑셀 업로드"}[l.type]||l.type;
+  const valLabel={yes:"O",no:"X",partial:"△",confirmed:"✅ 확정",rejected:"❌ 반려"}[l.value]||l.value;
+  h+=`<div class="log-item"><div class="log-time">${t}</div><div class="log-text"><span class="log-badge" style="background:#ede9fe;color:#5b21b6">${_h(org?.name||'')}</span><span class="log-badge" style="background:#e0f2fe;color:#0369a1">${_h(l.userName)}</span><span class="log-badge" style="background:#fef3c7;color:#92400e">${typeLabel}</span>${item?`<strong>${_h(item.name)}</strong> → `:''}<strong>${valLabel}</strong></div></div>`;});
+  document.getElementById('dashActivity').innerHTML=h||'<div class="no-results">아직 활동 로그가 없습니다.</div>';}catch(e){document.getElementById('dashActivity').innerHTML='<div class="no-results">로그를 불러올 수 없습니다.</div>';}
+}
+
+async function renderDashComments(){
+  try{const snap=await db.collection("comments").orderBy("createdAt","desc").limit(30).get();
+  let h='';snap.forEach(d=>{const c=d.data();const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';
+  const org=orgsC.find(o=>o.id===c.orgId);const item=ALL.find(i=>i.id===c.itemId);
+  h+=`<div class="log-item"><div class="log-time">${t}</div><div class="log-text"><span class="log-badge" style="background:#ede9fe;color:#5b21b6">${_h(org?.name||'')}</span><span class="log-badge" style="background:#e0f2fe;color:#0369a1">${_h(c.authorName)}</span>${item?`<span class="log-badge" style="background:#f1f5f9;color:#475569">#${item.id} ${_h(item.name).substring(0,20)}...</span>`:''}</div><div style="font-size:12px;color:#374151;margin-top:4px;padding:6px 8px;background:#f8fafc;border-radius:6px">${_h(c.text)}</div></div>`;});
+  document.getElementById('dashComments').innerHTML=h||'<div class="no-results">아직 코멘트가 없습니다.</div>';}catch(e){document.getElementById('dashComments').innerHTML='<div class="no-results">코멘트를 불러올 수 없습니다.</div>';}
+}
+
+/* ══ EXCEL ══ */
 function downloadTemplate(){
-  const wb=XLSX.utils.book_new();
-  const orgName=orgsCache.find(o=>o.id===ST.oid)?.name||"법인";
-  const impMap={H:"상",M:"중",L:"하"};
-  const whoMap={local:"현지",both:"공통",hq:"본사"};
-  // HQ 항목 제외, 현지+공통만
-  const filtered=ALL.filter(it=>it.who==="local"||it.who==="both");
-  const rows=[["Track","Section","ID","Importance","Owner",`Item (${orgName})`,"Why","How","Done Criteria","상태 (충족/미충족/부분)","메모"]];
-  filtered.forEach(it=>{
-    const sec=SECTIONS.find(s=>s.id===it.sec);
-    const trk=TRACKS.find(t=>t.id===sec.track);
-    rows.push([trk.label,sec.label,it.id,impMap[it.imp],whoMap[it.who],it.name,it.why,it.how,it.done,"",""]);
-  });
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:22},{wch:16},{wch:4},{wch:10},{wch:6},{wch:45},{wch:40},{wch:40},{wch:45},{wch:22},{wch:30}];
-  XLSX.utils.book_append_sheet(wb,ws,"체크리스트");
-  XLSX.writeFile(wb,`${orgName}_체크리스트_템플릿.xlsx`);
+  const wb=XLSX.utils.book_new();const org=orgsC.find(o=>o.id===ST.oid);const orgName=org?.name||"법인";
+  const impMap={H:"상",M:"중",L:"하"},whoMap={local:"현지",both:"공통",hq:"본사"};
+  const filtered=ALL.filter(i=>i.who!=="hq");
+  const rows=[["Track","Section","ID","Importance","Owner","Item","소속명","Why","How","Done Criteria","상태 (O/X/△)","메모"]];
+  filtered.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);
+  rows.push([trk.label,sec.label,it.id,impMap[it.imp],whoMap[it.who],it.name,orgName,it.why,it.how,it.done,"",""]);});
+  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:22},{wch:16},{wch:4},{wch:10},{wch:6},{wch:45},{wch:18},{wch:40},{wch:40},{wch:45},{wch:14},{wch:30}];
+  XLSX.utils.book_append_sheet(wb,ws,"체크리스트");XLSX.writeFile(wb,`${orgName}_체크리스트_템플릿.xlsx`);
 }
-
-async function handleImport(event){
-  const file=event.target.files[0];
-  if(!file)return;
-  const resultEl=document.getElementById('importResult');
-  if(!canEdit(ST.oid)){
-    resultEl.className='import-result show error';
-    resultEl.textContent='편집 권한이 없습니다.';
-    event.target.value='';return;
-  }
-  try{
-    const data=await file.arrayBuffer();
-    const wb=XLSX.read(data);
-    const ws=wb.Sheets[wb.SheetNames[0]];
-    const rows=XLSX.utils.sheet_to_json(ws,{header:1});
-    if(rows.length<2){
-      resultEl.className='import-result show error';
-      resultEl.textContent='데이터가 없습니다.';
-      event.target.value='';return;
-    }
-    const header=rows[0].map(h=>(h||"").toString().trim());
-    const statusCol=header.findIndex(h=>h.includes("상태"));
-    const idCol=header.findIndex(h=>h.includes("번호"));
-    const nameCol=header.findIndex(h=>h.includes("항목명"));
-    const memoCol=header.findIndex(h=>h.includes("메모"));
-    if(statusCol===-1){
-      resultEl.className='import-result show error';
-      resultEl.textContent='"상태" 열을 찾을 수 없습니다. 템플릿을 사용해주세요.';
-      event.target.value='';return;
-    }
-    const statusMap={"충족":"yes","미충족":"no","부분":"partial","yes":"yes","no":"no","partial":"partial","o":"yes","x":"no","△":"partial"};
-    let matched=0,skipped=0;
-    const bulkResp={};
-    const bulkMemo={};
-    for(let i=1;i<rows.length;i++){
-      const row=rows[i];if(!row||!row.length)continue;
-      const rawStatus=(row[statusCol]||"").toString().trim();
-      const status=statusMap[rawStatus.toLowerCase()]||statusMap[rawStatus];
-      if(!status){skipped++;continue;}
-      let item=null;
-      if(idCol>=0&&row[idCol]){
-        const rid=parseInt(row[idCol]);
-        item=ALL.find(a=>a.id===rid);
-      }
-      if(!item&&nameCol>=0&&row[nameCol]){
-        const rname=(row[nameCol]||"").toString().trim();
-        item=ALL.find(a=>a.name.includes(rname)||rname.includes(a.name));
-      }
-      if(item){
-        bulkResp[item.id]=status;
-        if(memoCol>=0&&row[memoCol]){
-          bulkMemo[item.id]=(row[memoCol]||"").toString().trim();
-        }
-        matched++;
-      }else{skipped++;}
-    }
-    if(matched>0){
-      await saveBulkResponses(ST.oid,bulkResp);
-      if(Object.keys(bulkMemo).length>0){
-        if(!memosCache[ST.oid])memosCache[ST.oid]={};
-        Object.assign(memosCache[ST.oid],bulkMemo);
-        await db.collection("memos").doc(ST.oid).set(memosCache[ST.oid]);
-      }
-    }
-    resultEl.className=`import-result show ${matched>0?'success':'error'}`;
-    resultEl.textContent=`✅ ${matched}개 항목 반영 완료${skipped>0?` / ⚠️ ${skipped}개 항목 건너뜀 (상태값 미입력 또는 매칭 실패)`:''}`;
-    renderChecklist();
-  }catch(e){
-    resultEl.className='import-result show error';
-    resultEl.textContent='파일 읽기 오류: '+e.message;
-  }
-  event.target.value='';
-}
-
-/* ══ COMMENTS ══ */
-async function renderComments(){
-  await loadComments(ST.oid);
-  const list=commentsCache[ST.oid]||[];
-  const el=document.getElementById('commentsList');
-  if(!list.length){el.innerHTML='<div style="text-align:center;color:#94a3b8;font-size:12px;padding:16px">아직 코멘트가 없습니다.</div>';return;}
-  el.innerHTML=list.map(c=>{
-    const time=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';
-    const canDel=currentUser&&(currentUser.uid===c.uid||isAdmin());
-    return`<div class="comment-item">
-      <div class="comment-header">
-        <span class="comment-author">${_h(c.authorName)} <span style="font-size:9px;color:#94a3b8">(${_h(c.orgName||'')})</span></span>
-        <span style="display:flex;align-items:center;gap:8px">
-          <span class="comment-time">${time}</span>
-          ${canDel?`<span class="comment-delete" onclick="deleteComment('${c.id}')">삭제</span>`:''}
-        </span>
-      </div>
-      <div class="comment-text">${_h(c.text)}</div>
-    </div>`;
-  }).join('');
-}
-
-async function addComment(){
-  const input=document.getElementById('commentInput');
-  const text=input.value.trim();
-  if(!text)return;
-  try{
-    await db.collection("comments").add({
-      orgId:ST.oid,
-      uid:currentUser.uid,
-      authorName:currentUser.name,
-      orgName:currentUser.orgName,
-      text,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
-    });
-    input.value='';
-    await renderComments();
-  }catch(e){alert("코멘트 등록 실패: "+e.message);}
-}
-
-async function deleteComment(cid){
-  if(!confirm('삭제할까요?'))return;
-  try{await db.collection("comments").doc(cid).delete();await renderComments();}catch(e){alert("삭제 실패");}
+async function handleImport(ev){
+  const file=ev.target.files[0];if(!file)return;const rEl=document.getElementById('importResult');
+  if(!canEdit(ST.oid)){rEl.className='import-result show error';rEl.textContent='편집 권한이 없습니다.';ev.target.value='';return;}
+  try{const d=await file.arrayBuffer();const wb=XLSX.read(d);const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+  if(rows.length<2){rEl.className='import-result show error';rEl.textContent='데이터가 없습니다.';ev.target.value='';return;}
+  const hdr=rows[0].map(h=>(h||"").toString().trim());const stCol=hdr.findIndex(h=>h.includes("상태"));const idCol=hdr.findIndex(h=>h.includes("ID"));const nameCol=hdr.findIndex(h=>h.includes("Item"));const memoCol=hdr.findIndex(h=>h.includes("메모"));
+  if(stCol===-1){rEl.className='import-result show error';rEl.textContent='"상태" 열을 찾을 수 없습니다.';ev.target.value='';return;}
+  const sMap={"충족":"yes","미충족":"no","부분":"partial","o":"yes","x":"no","△":"partial","yes":"yes","no":"no","partial":"partial"};
+  let ok=0,skip=0;const bulk={},bMemo={};
+  for(let i=1;i<rows.length;i++){const r=rows[i];if(!r||!r.length)continue;const raw=(r[stCol]||"").toString().trim();const st=sMap[raw.toLowerCase()]||sMap[raw];
+  if(!st){skip++;continue;}let item=null;if(idCol>=0&&r[idCol])item=ALL.find(a=>a.id===parseInt(r[idCol]));
+  if(!item&&nameCol>=0&&r[nameCol]){const rn=(r[nameCol]||"").toString().trim();item=ALL.find(a=>a.name.includes(rn)||rn.includes(a.name));}
+  if(item){bulk[item.id]=st;if(memoCol>=0&&r[memoCol])bMemo[item.id]=(r[memoCol]||"").toString().trim();ok++;}else{skip++;}}
+  if(ok>0){await saveBulkResp(ST.oid,bulk);if(Object.keys(bMemo).length>0){if(!memosC[ST.oid])memosC[ST.oid]={};Object.assign(memosC[ST.oid],bMemo);await db.collection("memos").doc(ST.oid).set(memosC[ST.oid]);}}
+  rEl.className=`import-result show ${ok>0?'success':'error'}`;rEl.textContent=`✅ ${ok}개 항목 반영${skip>0?` / ⚠️ ${skip}개 건너뜀`:''}`;renderChecklist();
+  }catch(e){rEl.className='import-result show error';rEl.textContent='오류: '+e.message;}ev.target.value='';
 }
 
 /* ══ CHECKLIST ══ */
 async function renderChecklist(){
-  const org=orgsCache.find(o=>o.id===ST.oid);
-  document.getElementById('clOrg').textContent=org?.name||'';
-  const editable=canEdit(ST.oid);
-  document.getElementById('clReadonly').innerHTML=editable?'':`<span class="readonly-badge">읽기 전용</span>`;
-  document.getElementById('btnTemplate').style.display=editable?'':'none';
-  document.getElementById('btnImport').style.display=editable?'':'none';
+  const org=orgsC.find(o=>o.id===ST.oid);document.getElementById('clOrg').textContent=org?.name||'';
+  const ed=canEdit(ST.oid);document.getElementById('clReadonly').innerHTML=ed?'':`<span class="readonly-badge">읽기 전용</span>`;
+  document.getElementById('btnTemplate').style.display=ed?'':'none';document.getElementById('btnImport').style.display=ed?'':'none';
   const si=document.getElementById('searchInput');if(si)si.value=ST.search;
-
-  const allPct=calcOrg(ST.oid).pct;
-  const allOn=ST.sec==="all";
-  let tabsHtml=`<button class="cl-tab ${allOn?'on':''}" style="${allOn?'background:#971B2F;color:#fff;border-color:#971B2F':''}" onclick="ST.sec='all';renderChecklist()">📊 전체 ${allPct}%</button>`;
-  tabsHtml+=SECTIONS.map(s=>{const p=calcSec(ST.oid,s.id);const on=s.id===ST.sec;return`<button class="cl-tab ${on?'on':''}" style="${on?`background:${s.color};color:#fff;border-color:${s.color}`:''}" onclick="ST.sec='${s.id}';renderChecklist()">${s.emoji} ${s.label} ${p}%</button>`;}).join('');
-  document.getElementById('clTabs').innerHTML=tabsHtml;
-
-  const statusOpts=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"yes",l:"충족"},{v:"no",l:"미충족"},{v:"partial",l:"부분"}];
-  document.getElementById('fgStatus').innerHTML=statusOpts.map(f=>`<button class="f-btn ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderChecklistBody()">${f.l}</button>`).join('');
-  const impOpts=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"}];
-  document.getElementById('fgImp').innerHTML=impOpts.map(f=>`<button class="f-btn ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderChecklistBody()">${f.l}</button>`).join('');
-  const whoOpts=[{v:"all",l:"전체",c:""},{v:"hq",l:"🏢 본사",c:"who-hq"},{v:"local",l:"📍 현지",c:"who-local"},{v:"both",l:"🤝 공통",c:"who-both"}];
-  document.getElementById('fgWho').innerHTML=whoOpts.map(f=>`<button class="f-btn ${f.c} ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderChecklistBody()">${f.l}</button>`).join('');
-  renderChecklistBody();
-  await renderComments();
+  await loadItemComments(ST.oid);
+  const allPct=calcOrg(ST.oid).pct;const allOn=ST.sec==="all";
+  let tabs=`<button class="cl-tab ${allOn?'on':''}" style="${allOn?'background:#971B2F;color:#fff;border-color:#971B2F':''}" onclick="ST.sec='all';renderChecklist()">📊 전체 ${allPct}%</button>`;
+  tabs+=SECTIONS.map(s=>{const p=calcSec(ST.oid,s.id);const on=s.id===ST.sec;return`<button class="cl-tab ${on?'on':''}" style="${on?`background:${s.color};color:#fff;border-color:${s.color}`:''}" onclick="ST.sec='${s.id}';renderChecklist()">${s.emoji} ${s.label} ${p}%</button>`;}).join('');
+  document.getElementById('clTabs').innerHTML=tabs;
+  const sOpts=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"pending",l:"검토대기"},{v:"confirmed",l:"확정"},{v:"rejected",l:"반려"}];
+  document.getElementById('fgStatus').innerHTML=sOpts.map(f=>`<button class="f-btn ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderCLBody()">${f.l}</button>`).join('');
+  document.getElementById('fgImp').innerHTML=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"}].map(f=>`<button class="f-btn ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderCLBody()">${f.l}</button>`).join('');
+  document.getElementById('fgWho').innerHTML=[{v:"all",l:"전체"},{v:"hq",l:"본사"},{v:"local",l:"현지"},{v:"both",l:"공통"}].map(f=>`<button class="f-btn ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderCLBody()">${f.l}</button>`).join('');
+  renderCLBody();
 }
+function onSearch(){ST.search=document.getElementById('searchInput').value.trim().toLowerCase();renderCLBody();}
+function matchSearch(it,q){if(!q)return true;return(it.name+' '+it.why+' '+it.how+' '+it.done).toLowerCase().split?q.split(/\s+/).every(w=>(it.name+' '+it.why+' '+it.how+' '+it.done).toLowerCase().includes(w)):true;}
+function highlightText(t,q){if(!q)return _h(t);let r=_h(t);q.split(/\s+/).filter(Boolean).forEach(w=>{r=r.replace(new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<span class="highlight">$1</span>');});return r;}
 
-function onSearch(){ST.search=document.getElementById('searchInput').value.trim().toLowerCase();renderChecklistBody();}
-function matchSearch(it,q){if(!q)return true;const hay=(it.name+' '+it.why+' '+it.how+' '+it.done).toLowerCase();return q.split(/\s+/).every(w=>hay.includes(w));}
-function highlightText(text,query){if(!query)return _h(text);const escaped=_h(text);const words=query.split(/\s+/).filter(Boolean);if(!words.length)return escaped;let r=escaped;words.forEach(w=>{const re=new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');r=r.replace(re,'<span class="highlight">$1</span>');});return r;}
-
-function renderChecklistBody(){
-  const q=ST.search;const isSearchMode=!!q;const editable=canEdit(ST.oid);
-  let items=isSearchMode?ALL.filter(i=>matchSearch(i,q)):ST.sec==="all"?[...ALL]:ALL.filter(i=>i.sec===ST.sec);
-  if(ST.fStatus==="todo")items=items.filter(i=>getSt(ST.oid,i.id)!=="yes");
-  else if(ST.fStatus!=="all")items=items.filter(i=>getSt(ST.oid,i.id)===ST.fStatus);
+function renderCLBody(){
+  const q=ST.search,isS=!!q,ed=canEdit(ST.oid);
+  let items=isS?ALL.filter(i=>matchSearch(i,q)):ST.sec==="all"?[...ALL]:ALL.filter(i=>i.sec===ST.sec);
+  if(ST.fStatus==="todo")items=items.filter(i=>!getReview(ST.oid,i.id));
+  else if(ST.fStatus==="pending")items=items.filter(i=>getResp(ST.oid,i.id)&&!getReview(ST.oid,i.id));
+  else if(ST.fStatus==="confirmed")items=items.filter(i=>getReview(ST.oid,i.id)==="confirmed");
+  else if(ST.fStatus==="rejected")items=items.filter(i=>getReview(ST.oid,i.id)==="rejected");
   if(ST.fImp!=="all")items=items.filter(i=>i.imp===ST.fImp);
   if(ST.fWho!=="all")items=items.filter(i=>i.who===ST.fWho);
-
   const infoEl=document.getElementById('searchInfo');
-  if(isSearchMode){infoEl.className='search-result-info show';infoEl.innerHTML=`🔍 "${_h(q)}" 검색 결과: <strong>${items.length}</strong>개 <button class="f-btn" style="margin-left:8px" onclick="ST.search='';document.getElementById('searchInput').value='';renderChecklistBody()">초기화</button>`;}
-  else{infoEl.className='search-result-info';}
-  if(!items.length){document.getElementById('clBody').innerHTML=`<div class="no-results">${isSearchMode?'검색 결과가 없습니다.':'해당 조건의 항목이 없습니다.'}</div>`;return;}
-
-  const secGroups=isSearchMode||ST.sec==="all"?SECTIONS.filter(s=>items.some(i=>i.sec===s.id)):[SECTIONS.find(s=>s.id===ST.sec)].filter(Boolean);
-  let html="";
-  secGroups.forEach(sec=>{
-    const secItems=items.filter(i=>i.sec===sec.id);if(!secItems.length)return;
-    const trk=TRACKS.find(t=>t.id===sec.track);
-    html+=`<div class="sec-block"><div class="sec-hd" style="background:${sec.color}"><span style="font-size:16px">${sec.emoji}</span><span class="sec-hd-label">${trk.short} > ${sec.label}</span><span class="sec-hd-cnt">${secItems.length}개 · 충족 ${secItems.filter(i=>getSt(ST.oid,i.id)==="yes").length}</span></div>`;
-    secItems.forEach(it=>{
-      const s=getSt(ST.oid,it.id);const memo=getMemo(ST.oid,it.id);const nameHtml=isSearchMode?highlightText(it.name,q):_h(it.name);
-      const dis=editable?"":" disabled";
-      html+=`<div class="item-card ${s==="yes"?"done":s==="no"?"flagged":s==="partial"?"partial-st":""}" id="item_${it.id}">
-        <div class="item-top"><div class="item-name">${nameHtml}</div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>
-        <div class="detail-toggle" onclick="toggleDetail(${it.id})">▸ 목적 · 방법 · 달성기준 보기</div>
+  if(isS){infoEl.className='search-result-info show';infoEl.innerHTML=`🔍 "${_h(q)}" → <strong>${items.length}</strong>개 <button class="f-btn" style="margin-left:8px" onclick="ST.search='';document.getElementById('searchInput').value='';renderCLBody()">초기화</button>`;}else{infoEl.className='search-result-info';}
+  if(!items.length){document.getElementById('clBody').innerHTML=`<div class="no-results">해당 항목이 없습니다.</div>`;return;}
+  const secG=isS||ST.sec==="all"?SECTIONS.filter(s=>items.some(i=>i.sec===s.id)):[SECTIONS.find(s=>s.id===ST.sec)].filter(Boolean);
+  let h="";
+  secG.forEach(sec=>{
+    const si=items.filter(i=>i.sec===sec.id);if(!si.length)return;const trk=TRACKS.find(t=>t.id===sec.track);
+    h+=`<div class="sec-block"><div class="sec-hd" style="background:${sec.color}"><span style="font-size:16px">${sec.emoji}</span><span class="sec-hd-label">${trk.short} > ${sec.label}</span><span class="sec-hd-cnt">${si.length}개 · 확정 ${si.filter(i=>getReview(ST.oid,i.id)==="confirmed").length}</span></div>`;
+    si.forEach(it=>{
+      const resp=getResp(ST.oid,it.id),rv=getReview(ST.oid,it.id),memo=getMemo(ST.oid,it.id);
+      const nm=isS?highlightText(it.name,q):_h(it.name);
+      const cardClass=rv==="confirmed"?"confirmed":rv==="rejected"?"rejected":resp?"pending":"";
+      const dis=ed&&!isAdmin()?"":" disabled";
+      const iComments=getItemComments(it.id);
+      h+=`<div class="item-card ${cardClass}" id="item_${it.id}">
+        <div class="item-top"><div class="item-name">${nm}</div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>
+        <div class="status-row">
+          <span class="status-label">법인 응답:</span> <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span>
+          <span class="status-label" style="margin-left:10px">HQ 검토:</span> <span class="st-badge ${rv||'none'}">${{confirmed:"✅ 확정",rejected:"❌ 반려"}[rv]||"—"}</span>
+        </div>
+        <div class="detail-toggle" onclick="document.getElementById('det_${it.id}')?.classList.toggle('open')">▸ 목적 · 방법 · 달성기준</div>
         <div class="detail-box" id="det_${it.id}">
-          <div class="detail-section"><div class="detail-label">🔴 목적 (Why)</div><div class="detail-text why">${isSearchMode?highlightText(it.why,q):_h(it.why)}</div></div>
-          <div class="detail-section"><div class="detail-label">🔵 방법 (How)</div><div class="detail-text how">${isSearchMode?highlightText(it.how,q):_h(it.how)}</div></div>
-          <div class="detail-section"><div class="detail-label">🟢 달성 기준 (Done)</div><div class="detail-text done-criteria">${isSearchMode?highlightText(it.done,q):_h(it.done)}</div></div>
-        </div>
-        <div class="item-btns">
-          <button class="ib yes ${s==="yes"?"on":""}"${dis} onclick="setItem(${it.id},'yes')">✓ 충족</button>
-          <button class="ib partial ${s==="partial"?"on":""}"${dis} onclick="setItem(${it.id},'partial')">△ 부분</button>
-          <button class="ib no ${s==="no"?"on":""}"${dis} onclick="setItem(${it.id},'no')">✗ 미충족</button>
-        </div>
-        <div class="memo-row">
-          <span class="memo-tog" onclick="toggleMemo(${it.id})">📝 메모 ${memo?"(작성됨)":"추가"}</span>
-          <div class="memo-box" id="mb_${it.id}">
-            <textarea class="memo-area" id="mt_${it.id}" placeholder="현황, 담당자, 기한 등"${editable?"":"readonly"}>${_h(memo)}</textarea>
-            ${editable?`<button class="memo-save" onclick="saveMemo(${it.id})">저장</button><div style="clear:both"></div>`:""}
-          </div>
-        </div>
-      </div>`;
+          <div class="detail-section"><div class="detail-label">🔴 Why</div><div class="detail-text why">${_h(it.why)}</div></div>
+          <div class="detail-section"><div class="detail-label">🔵 How</div><div class="detail-text how">${_h(it.how)}</div></div>
+          <div class="detail-section"><div class="detail-label">🟢 Done</div><div class="detail-text done-criteria">${_h(it.done)}</div></div>
+        </div>`;
+      // 법인 응답 버튼 (User만, Admin은 검토만)
+      if(ed&&!isAdmin()){
+        h+=`<div class="item-btns">
+          <button class="ib yes ${resp==="yes"?"on":""}" onclick="setResp(${it.id},'yes')">O</button>
+          <button class="ib partial ${resp==="partial"?"on":""}" onclick="setResp(${it.id},'partial')">△</button>
+          <button class="ib no ${resp==="no"?"on":""}" onclick="setResp(${it.id},'no')">X</button>
+        </div>`;
+      }
+      // Admin 검토 버튼
+      if(isAdmin()&&resp){
+        h+=`<div class="review-btns">
+          <span style="font-size:10px;font-weight:700;color:#64748b;margin-right:6px">HQ 검토:</span>
+          <button class="rb confirm ${rv==="confirmed"?"on":""}" onclick="setRv(${it.id},'confirmed')">✅ 확정</button>
+          <button class="rb reject ${rv==="rejected"?"on":""}" onclick="setRv(${it.id},'rejected')">❌ 반려</button>
+        </div>`;
+      }
+      // 메모
+      h+=`<div class="memo-row"><span class="memo-tog" onclick="document.getElementById('mb_${it.id}')?.classList.toggle('open')">📝 메모 ${memo?"(작성됨)":"추가"}</span>
+        <div class="memo-box" id="mb_${it.id}"><textarea class="memo-area" id="mt_${it.id}" placeholder="현황, 담당자, 기한 등"${ed?"":"readonly"}>${_h(memo)}</textarea>
+        ${ed?`<button class="memo-save" onclick="saveMm(${it.id})">저장</button><div style="clear:both"></div>`:''}</div></div>`;
+      // 항목별 코멘트
+      h+=`<div class="item-comments"><span class="ic-toggle" onclick="document.getElementById('ic_${it.id}')?.classList.toggle('open')">💬 코멘트 (${iComments.length})</span>
+        <div class="ic-list" id="ic_${it.id}">
+        ${iComments.map(c=>{const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';const canDel=CU&&(CU.uid===c.uid||isAdmin());
+        return`<div class="ic-item"><div class="ic-meta">${_h(c.authorName)} (${_h(c.orgName||'')}) · ${t}${canDel?` <span class="ic-del" onclick="delCmt('${c.id}')">삭제</span>`:''}</div><div class="ic-text">${_h(c.text)}</div></div>`;}).join('')}
+        <div class="ic-input-row"><input class="ic-input" id="ci_${it.id}" placeholder="코멘트 입력..." onkeydown="if(event.key==='Enter')addCmt(${it.id})"/><button class="btn blue sm" onclick="addCmt(${it.id})">등록</button></div>
+        </div></div>`;
+      h+=`</div>`;
     });
-    html+=`</div>`;
+    h+=`</div>`;
   });
-  document.getElementById('clBody').innerHTML=html;
+  document.getElementById('clBody').innerHTML=h;
 }
 
-async function setItem(iid,v){await saveResponse(ST.oid,iid,v);renderChecklistBody();}
-function toggleDetail(iid){document.getElementById('det_'+iid)?.classList.toggle('open');}
-function toggleMemo(iid){document.getElementById('mb_'+iid)?.classList.toggle('open');}
-async function saveMemo(iid){const el=document.getElementById('mt_'+iid);if(el)await saveMemoToDb(ST.oid,iid,el.value);}
+async function setResp(iid,v){await saveResp(ST.oid,iid,v);renderCLBody();}
+async function setRv(iid,v){await saveReview(ST.oid,iid,v);renderCLBody();}
+async function saveMm(iid){const el=document.getElementById('mt_'+iid);if(el)await saveMemoDb(ST.oid,iid,el.value);}
+async function addCmt(iid){const el=document.getElementById('ci_'+iid);const t=el?.value.trim();if(!t)return;
+  await db.collection("comments").add({orgId:ST.oid,itemId:iid,uid:CU.uid,authorName:CU.name,orgName:CU.orgName,text:t,createdAt:TS()});
+  el.value='';await loadItemComments(ST.oid);renderCLBody();}
+async function delCmt(cid){if(!confirm('삭제?'))return;await db.collection("comments").doc(cid).delete();await loadItemComments(ST.oid);renderCLBody();}
 
 /* ══ RESULT ══ */
 function renderResult(){
-  const org=orgsCache.find(o=>o.id===ST.oid);
-  const ov=calcOrg(ST.oid),g=getG(ov.pct);
+  const org=orgsC.find(o=>o.id===ST.oid),ov=calcOrg(ST.oid),g=getG(ov.pct);
   const tA=calcTrack(ST.oid,"tA"),tB=calcTrack(ST.oid,"tB");
-  const wHq=calcWhoExact(ST.oid,"hq"),wLo=calcWhoExact(ST.oid,"local"),wBo=calcWhoExact(ST.oid,"both");
-  const secMinis=SECTIONS.map(s=>`<div class="sec-mini"><div class="sec-mini-pct" style="color:${s.color}">${calcSec(ST.oid,s.id)}%</div><div class="sec-mini-lbl">${s.emoji} ${s.label}</div></div>`).join('');
-  document.getElementById('resultHero').innerHTML=`
-    <div style="font-size:48px">${g.icon}</div><div class="rg-pct">${ov.pct}%</div>
-    <div style="font-size:12px;color:#64748b;font-weight:600">${_h(org?.name)} · ${ALL.length}개 항목 · ${g.label}</div>
+  const wH=calcWhoExact(ST.oid,"hq"),wL=calcWhoExact(ST.oid,"local"),wB=calcWhoExact(ST.oid,"both");
+  const minis=SECTIONS.map(s=>`<div class="sec-mini"><div class="sec-mini-pct" style="color:${s.color}">${calcSec(ST.oid,s.id)}%</div><div class="sec-mini-lbl">${s.emoji} ${s.label}</div></div>`).join('');
+  document.getElementById('resultHero').innerHTML=`<div style="font-size:48px">${g.icon}</div><div class="rg-pct">${ov.pct}%</div>
+    <div style="font-size:12px;color:#64748b;font-weight:600">${_h(org?.name)} · HQ 확정 기준</div>
     <div class="track-summary"><div class="ts-box tA"><div class="ts-label" style="color:var(--tA)">A. 조직 운영 기반</div><div class="ts-pct" style="color:var(--tA)">${tA}%</div></div><div class="ts-box tB"><div class="ts-label" style="color:var(--tB)">B. 제품 판매 사이클</div><div class="ts-pct" style="color:var(--tB)">${tB}%</div></div></div>
-    <div class="who-result-row">
-      <div class="who-result-box"><div class="who-result-label" style="color:#6366f1">🏢 본사</div><div class="who-result-pct" style="color:#6366f1">${wHq.pct}%</div><div class="who-result-detail">${wHq.done}/${wHq.total}</div></div>
-      <div class="who-result-box"><div class="who-result-label" style="color:#0ea5e9">📍 현지</div><div class="who-result-pct" style="color:#0ea5e9">${wLo.pct}%</div><div class="who-result-detail">${wLo.done}/${wLo.total}</div></div>
-      <div class="who-result-box"><div class="who-result-label" style="color:#f59e0b">🤝 공통</div><div class="who-result-pct" style="color:#f59e0b">${wBo.pct}%</div><div class="who-result-detail">${wBo.done}/${wBo.total}</div></div>
-    </div>
-    <div class="sec-minis">${secMinis}</div>`;
-  const todos=ALL.filter(i=>getSt(ST.oid,i.id)!=="yes");
-  let html=`<div style="font-size:14px;font-weight:800;margin:16px 0 10px">📋 미충족/미응답 (${todos.length}개)</div>`;
-  if(!todos.length)html+=`<div class="no-results">🎉 모든 항목 충족!</div>`;
-  else{SECTIONS.forEach(sec=>{const its=todos.filter(i=>i.sec===sec.id);if(!its.length)return;html+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:6px 10px;border-radius:8px;background:${sec.color};color:#fff;font-size:11px;font-weight:800">${sec.emoji} ${sec.label} <span style="opacity:.7;margin-left:auto">${its.length}개</span></div>${its.map(it=>{const s=getSt(ST.oid,it.id);return`<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-size:11px;font-weight:700">${_h(it.name)}</div><div style="font-size:10px;color:${s==="no"?"var(--no)":s==="partial"?"#f59e0b":"#94a3b8"};font-weight:700;margin-top:2px">${s==="no"?"✗ 미충족":s==="partial"?"△ 부분":"— 미응답"}</div></div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>`;}).join('')}</div>`;});}
-  document.getElementById('resultTodo').innerHTML=html;
+    <div class="who-result-row"><div class="who-result-box"><div class="who-result-label" style="color:#6366f1">🏢 본사</div><div class="who-result-pct" style="color:#6366f1">${wH.pct}%</div><div class="who-result-detail">${wH.done}/${wH.total}</div></div><div class="who-result-box"><div class="who-result-label" style="color:#0ea5e9">📍 현지</div><div class="who-result-pct" style="color:#0ea5e9">${wL.pct}%</div><div class="who-result-detail">${wL.done}/${wL.total}</div></div><div class="who-result-box"><div class="who-result-label" style="color:#f59e0b">🤝 공통</div><div class="who-result-pct" style="color:#f59e0b">${wB.pct}%</div><div class="who-result-detail">${wB.done}/${wB.total}</div></div></div>
+    <div class="sec-minis">${minis}</div>`;
+  const todos=ALL.filter(i=>getReview(ST.oid,i.id)!=="confirmed");
+  let h=`<div style="font-size:14px;font-weight:800;margin:16px 0 10px">📋 미확정 항목 (${todos.length}개)</div>`;
+  if(!todos.length)h+=`<div class="no-results">🎉 모든 항목 확정!</div>`;
+  else{SECTIONS.forEach(sec=>{const its=todos.filter(i=>i.sec===sec.id);if(!its.length)return;h+=`<div style="margin-bottom:14px"><div style="padding:6px 10px;border-radius:8px;background:${sec.color};color:#fff;font-size:11px;font-weight:800;margin-bottom:6px">${sec.emoji} ${sec.label} <span style="opacity:.7;margin-left:auto">${its.length}개</span></div>${its.map(it=>{const resp=getResp(ST.oid,it.id),rv=getReview(ST.oid,it.id);return`<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-size:11px;font-weight:700">${_h(it.name)}</div><div style="font-size:10px;margin-top:2px">응답: <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span> 검토: <span class="st-badge ${rv||'none'}">${{confirmed:"✅",rejected:"❌"}[rv]||"—"}</span></div></div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span></div>`;}).join('')}</div>`;});}
+  document.getElementById('resultTodo').innerHTML=h;
 }
 
 /* ══ COMPARE ══ */
 function renderCompare(){
-  if(orgsCache.length<1){document.getElementById('cmpWrap').innerHTML=`<div class="no-results">비교할 법인이 없습니다.</div>`;return;}
-  const showDetail=isAdmin();
-  let html=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>법인</th><th>전체</th><th>A.조직</th><th>B.판매</th>`;
-  if(showDetail){html+=`<th>🏢본사</th><th>📍현지</th><th>🤝공통</th>`;SECTIONS.forEach(s=>{html+=`<th style="color:${s.color}">${s.emoji}</th>`;});}
-  html+=`</tr></thead><tbody>`;
-  [...orgsCache].sort((a,b)=>calcOrg(b.id).pct-calcOrg(a.id).pct).forEach(o=>{
+  if(!orgsC.length){document.getElementById('cmpWrap').innerHTML=`<div class="no-results">비교할 법인이 없습니다.</div>`;return;}
+  const sd=isAdmin();
+  let h=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>법인</th><th>확정률</th><th>A.조직</th><th>B.판매</th>`;
+  if(sd){SECTIONS.forEach(s=>{h+=`<th style="color:${s.color}">${s.emoji}</th>`;});}
+  h+=`</tr></thead><tbody>`;
+  [...orgsC].sort((a,b)=>calcOrg(b.id).pct-calcOrg(a.id).pct).forEach(o=>{
     const ov=calcOrg(o.id),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");
-    html+=`<tr><td style="font-weight:800">${_h(o.name)}</td><td><span class="heat" style="${heat(ov.pct)}">${ov.pct}%</span></td><td><span class="heat" style="${heat(tA)}">${tA}%</span></td><td><span class="heat" style="${heat(tB)}">${tB}%</span></td>`;
-    if(showDetail){const wHq=calcWhoExact(o.id,"hq"),wLo=calcWhoExact(o.id,"local"),wBo=calcWhoExact(o.id,"both");html+=`<td><span class="heat" style="${heat(wHq.pct)}">${wHq.pct}%</span></td><td><span class="heat" style="${heat(wLo.pct)}">${wLo.pct}%</span></td><td><span class="heat" style="${heat(wBo.pct)}">${wBo.pct}%</span></td>`;SECTIONS.forEach(s=>{const p=calcSec(o.id,s.id);html+=`<td><span class="heat" style="${heat(p)}">${p}%</span></td>`;});}
-    html+=`</tr>`;
-  });
-  html+=`</tbody></table></div>`;
-  document.getElementById('cmpWrap').innerHTML=html;
+    h+=`<tr><td style="font-weight:800">${_h(o.name)}</td><td><span class="heat" style="${heat(ov.pct)}">${ov.pct}%</span></td><td><span class="heat" style="${heat(tA)}">${tA}%</span></td><td><span class="heat" style="${heat(tB)}">${tB}%</span></td>`;
+    if(sd){SECTIONS.forEach(s=>{const p=calcSec(o.id,s.id);h+=`<td><span class="heat" style="${heat(p)}">${p}%</span></td>`;});}
+    h+=`</tr>`;});
+  h+=`</tbody></table></div>`;document.getElementById('cmpWrap').innerHTML=h;
 }
 
 /* ══ ADD ORG ══ */
 function openAdd(){document.getElementById('addModal').classList.add('open');document.getElementById('addName').focus();}
 function closeAdd(){document.getElementById('addModal').classList.remove('open');}
-async function confirmAdd(){
-  const name=document.getElementById('addName').value.trim();
-  if(!name)return alert('법인명을 입력하세요.');
-  if(orgsCache.some(o=>o.name===name))return alert('같은 이름이 있습니다.');
-  try{
-    const ref=await db.collection("orgs").add({name,createdBy:currentUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    orgsCache.push({id:ref.id,name,createdBy:currentUser.uid});
-    document.getElementById('addName').value='';closeAdd();renderHome();
-  }catch(e){alert("추가 실패: "+e.message);}
-}
+async function confirmAdd(){const nm=document.getElementById('addName').value.trim();if(!nm)return alert('법인명을 입력하세요.');if(orgsC.some(o=>o.name===nm))return alert('같은 이름이 있습니다.');
+  const ref=await db.collection("orgs").add({name:nm,createdBy:CU.uid,createdAt:TS()});orgsC.push({id:ref.id,name:nm,createdBy:CU.uid});document.getElementById('addName').value='';closeAdd();renderHome();}
 
-/* ══ CSV EXPORT ══ */
+/* ══ CSV ══ */
 function exportCSV(){
-  const impMap={H:"상",M:"중",L:"하"};
-  const targetOrgs=isAdmin()?orgsCache:orgsCache.filter(o=>o.createdBy===currentUser?.uid);
-  const h=["법인","Track","섹션","중요도","담당","항목명","목적","방법","달성기준","상태","메모"];
-  const rows=[];
-  targetOrgs.forEach(o=>{ALL.forEach(it=>{
-    const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);
-    rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,it.why,it.how,it.done,getSt(o.id,it.id),getMemo(o.id,it.id)]);
-  });});
+  const impMap={H:"상",M:"중",L:"하"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);
+  const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","메모"];const rows=[];
+  tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);
+  rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"반려"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});
   const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};
-  const csv=[h.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
-  a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a);a.click();a.remove();
+  const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();
 }
 </script>
 </body>
