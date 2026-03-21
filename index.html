@@ -596,7 +596,7 @@ async function renderDashUsers(){
     h+=`<td><select style="font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:6px" onchange="changeUserOrg('${u.id}',this.value)"><option value="">변경</option>`;
     ORG_LIST.forEach(org=>{h+=`<option value="${org}"${u.orgName===org?' disabled':''}>${org}</option>`;});
     h+=`<option value="__other__">Other...</option></select></td>`;
-    h+=`<td>${role!=="admin"?`<span class="ic-del" onclick="deleteUser('${u.id}','${_h(u.name)}')">삭제</span>`:''}</td></tr>`;
+    h+=`<td>${role!=="admin"?`<span style="font-size:9px;color:#94a3b8">Firebase 콘솔</span>`:''}</td></tr>`;
   });
   h+=`</tbody></table></div>`;
   document.getElementById('dashUsers').innerHTML=h;
