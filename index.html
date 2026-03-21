@@ -316,7 +316,8 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 </div>
 
 <div class="guide-section"><h4>📊 상태 흐름</h4>
-<p>법인 입력 (O/△/X) → 검토 대기 → 본사 확정(✅) 또는 추가 의견(💬) → 최종 Status 확정</p>
+<p>법인 입력 (O/△/X) → 검토 대기 → 본사 확정(✅) 또는 추가 의견(💬) → 최종 Status</p>
+<p>완료율 반영 조건: <strong>O (충족) + ✅ 확정</strong>인 항목만 완료율에 포함됩니다. X/△는 확정되어도 완료율에 포함되지 않습니다.</p>
 </div>
 </div>
 
@@ -609,9 +610,8 @@ async function changeUserOrg(uid,newOrg){
   alert('변경되었습니다.');renderDashUsers();
 }
 async function deleteUser(uid,name){
-  if(!confirm(`"${name}" 사용자를 삭제할까요?\n삭제 후 해당 사용자는 다시 가입해야 합니다.`))return;
-  await db.collection("users").doc(uid).delete();
-  alert('삭제되었습니다.');renderDashUsers();
+  if(!confirm(`"${name}" 사용자를 삭제할까요?\n삭제 후 해당 사용자는 로그인이 차단됩니다.`))return;
+  try{await db.collection("users").doc(uid).delete();alert('삭제되었습니다. 해당 사용자는 더 이상 로그인할 수 없습니다.');renderDashUsers();}catch(e){alert('삭제 실패: '+e.message);}
 }
 
 /* ══ RESULT ══ */
