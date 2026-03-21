@@ -90,7 +90,7 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .item-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .item-name{font-size:13px;font-weight:800;color:#1e293b;line-height:1.5;flex:1;min-width:200px}
 .imp-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;flex-shrink:0}
-.imp-badge.H{background:#fee2e2;color:#991b1b}.imp-badge.M{background:#fef3c7;color:#92400e}.imp-badge.L{background:#f1f5f9;color:#475569}
+.imp-badge.H{background:#fee2e2;color:#991b1b}.imp-badge.M{background:#fef3c7;color:#92400e}.imp-badge.L{background:#f1f5f9;color:#475569}.imp-badge.R{background:#e0e7ff;color:#3730a3}
 .who-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;flex-shrink:0}
 .who-tag.hq{background:#ede9fe;color:#5b21b6}.who-tag.local{background:#e0f2fe;color:#0369a1}.who-tag.both{background:#fef3c7;color:#92400e}
 .status-row{display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap}
@@ -345,68 +345,101 @@ const ADMIN_EMAILS = [
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.firestore(),TS=firebase.firestore.FieldValue.serverTimestamp;
 const TRACKS=[{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#6366f1"},{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#f59e0b"}];
-const SECTIONS=[{id:"a1",track:"tA",label:"인증·인허가",emoji:"🛂",color:"#8b5cf6"},{id:"a2",track:"tA",label:"품질·규제 체계",emoji:"🔬",color:"#6366f1"},{id:"a3",track:"tA",label:"조직·인프라",emoji:"⚙️",color:"#0ea5e9"},{id:"a4",track:"tA",label:"법률·컴플라이언스",emoji:"⚖️",color:"#10b981"},{id:"a5",track:"tA",label:"거버넌스·정책 관리",emoji:"📋",color:"#64748b"},{id:"b1",track:"tB",label:"영업·수주",emoji:"💼",color:"#f59e0b"},{id:"b2",track:"tB",label:"공급망·출고",emoji:"📦",color:"#ec4899"},{id:"b3",track:"tB",label:"설치·고객경험",emoji:"🔧",color:"#f97316"},{id:"b4",track:"tB",label:"CS·사후서비스",emoji:"🛠️",color:"#14b8a6"},{id:"b5",track:"tB",label:"회계·수금",emoji:"💰",color:"#e11d48"}];
+const SECTIONS=[{id:"a1",track:"tA",label:"인증·인허가",emoji:"🛂",color:"#8b5cf6"},{id:"a2",track:"tA",label:"품질·규제 체계",emoji:"🔬",color:"#6366f1"},{id:"a3",track:"tA",label:"조직·인프라",emoji:"⚙️",color:"#0ea5e9"},{id:"a4",track:"tA",label:"법률·컴플라이언스",emoji:"⚖️",color:"#10b981"},{id:"a5",track:"tA",label:"거버넌스·정책 관리",emoji:"📋",color:"#64748b"},{id:"a6",track:"tA",label:"HR 체계",emoji:"👥",color:"#7c3aed"},{id:"a7",track:"tA",label:"회계·재무 체계",emoji:"📊",color:"#0891b2"},{id:"b1",track:"tB",label:"영업·수주",emoji:"💼",color:"#f59e0b"},{id:"b2",track:"tB",label:"대리점 관리",emoji:"🤝",color:"#d946ef"},{id:"b3",track:"tB",label:"공급망·출고",emoji:"📦",color:"#ec4899"},{id:"b4",track:"tB",label:"설치·고객경험",emoji:"🔧",color:"#f97316"},{id:"b5",track:"tB",label:"CS·사후서비스",emoji:"🛠️",color:"#14b8a6"},{id:"b6",track:"tB",label:"회계·수금",emoji:"💰",color:"#e11d48"},{id:"b7",track:"tB",label:"마케팅",emoji:"📣",color:"#059669"}];
 const ALL=[
-{id:1,sec:"a1",imp:"H",who:"hq",name:"제품 판매를 위한 HW 의료기기 인증 확보",why:"현지 인증 없이는 통관·판매 자체가 불가능",how:"법인 설립 전부터 인증 요건을 조사하고 착수",done:"①대상 제품 전체의 인증이 발급됨 ②인증서 사본이 HQ 마스터 리스트에 등록됨"},
-{id:2,sec:"a1",imp:"H",who:"hq",name:"SW(앱·펌웨어) 인증 또는 신고 의무 이행",why:"SW 미신고 시 통관 단계에서 제지당하는 사례 빈번",how:"HW 인증과 별도로 SW 관련 규제를 조사",done:"①SW 규제 해당 여부가 문서로 검토됨 ②해당 시 인증/신고가 완료됨"},
-{id:3,sec:"a1",imp:"H",who:"hq",name:"전파·계측기 등 추가 인증 요건 대응",why:"별도 인증이 필요한 국가가 있어 누락 시 판매 중단",how:"대상 국가의 관련 법규를 사전 조사",done:"①추가 인증 요건이 문서화됨 ②필요한 추가 인증이 모두 취득됨"},
-{id:4,sec:"a1",imp:"H",who:"hq",name:"인증 유효기간 관리 및 갱신 체계 운영",why:"인증 만료 시 판매 즉시 중단",how:"HQ 마스터 리스트에 만료일·담당자를 등록",done:"①만료일이 마스터 리스트에 등록됨 ②갱신 알림 체계가 운영 중"},
-{id:5,sec:"a1",imp:"H",who:"hq",name:"HS코드 정확 지정 및 문서화",why:"HS코드 오류 시 관세 과다 납부 또는 통관 거부",how:"HQ에서 제품별 기준 HS코드를 정의",done:"①제품별 HS코드 리스트가 문서화됨"},
-{id:6,sec:"a1",imp:"H",who:"local",name:"관세·세금 감면 제도 활용",why:"감면 제도를 놓치면 불필요한 비용 지속 발생",how:"현지 세무사, 업계 네트워크를 통해 감면 제도 조사",done:"①감면 제도가 조사·문서화됨 ②통관 시 감면이 적용됨"},
-{id:7,sec:"a2",imp:"H",who:"local",name:"현지 법규 기반 품질 조직 구성",why:"법적으로 품질책임자 지정을 요구하는 경우가 많음",how:"현지 법규가 요구하는 품질 조직 요건을 조사",done:"①품질 조직 요건이 문서화됨 ②법적 필수 역할이 지정됨"},
-{id:8,sec:"a2",imp:"H",who:"local",name:"시판 후 감시(PMS) 체계 구축",why:"시판 후 안전성 모니터링을 법적으로 의무화",how:"현지 규제기관의 PMS 요건을 파악",done:"①PMS 절차서가 문서화됨 ②부작용 보고 경로가 정의됨"},
-{id:9,sec:"a2",imp:"H",who:"both",name:"현지 QA 프로세스 운영",why:"현지에서 품질관리가 안 되면 불량 대응 지연",how:"불만처리, CAPA, 리콜 절차를 수립",done:"①불만처리 절차서가 작성됨 ②CAPA 프로세스가 운영 중"},
-{id:10,sec:"a2",imp:"M",who:"both",name:"반복 불량의 체계적 집계 및 HQ 환류",why:"반복 불량이 HQ에 전달되지 않으면 개선 기회를 놓침",how:"불량을 모델·부품 기준으로 기록",done:"①불량 데이터가 집계 가능 ②월 1회 이상 HQ에 리포트 공유"},
-{id:11,sec:"a3",imp:"H",who:"local",name:"법인 기능별 책임자 지정 및 백업 체계",why:"책임자 미지정 시 의사결정 지연",how:"기능별 책임자를 지정. 백업자를 반드시 지정",done:"①기능별 책임자·백업자가 문서화됨"},
-{id:12,sec:"a3",imp:"H",who:"local",name:"운영에 필요한 금융 인프라 구축",why:"결제·수금·송금이 원활하지 않으면 영업에 지장",how:"은행 계좌를 개설",done:"①은행 계좌가 운영 중 ②HQ↔법인 송금 프로세스가 정의됨"},
-{id:13,sec:"a3",imp:"H",who:"hq",name:"법인 필수 시스템 최소 기준 수립",why:"시스템 수준 편차가 크면 데이터 연결 불가",how:"HQ에서 시스템별 최소 기능 기준을 정의",done:"①시스템별 최소 기능 기준이 문서화됨"},
-{id:14,sec:"a3",imp:"H",who:"both",name:"CS 부품 보관 및 데모·자재 공간 확보",why:"혼재 보관 시 오출고·재고 오류 발생",how:"CS 부품, 데모, 판매용, 반품을 Zone 분리",done:"①보관 공간이 Zone 분리됨 ②라벨링이 적용됨"},
-{id:15,sec:"a3",imp:"H",who:"hq",name:"CS 부품 마스터 리스트 및 Safety Stock 기준",why:"핵심 부품과 권장 재고 수량이 없으면 CS 대응 지연",how:"HQ에서 모델별 핵심 부품 리스트 제공",done:"①핵심 부품 리스트가 존재 ②Min/Max가 설정됨"},
-{id:16,sec:"a3",imp:"H",who:"hq",name:"SN 기반 자산 추적 구조 설계",why:"SN이 고객 정보와 매핑되지 않으면 데이터 단절",how:"출고 단계에서 SN-고객 매핑 구조를 설계",done:"①SN-고객 매핑 구조가 설계됨"},
-{id:17,sec:"a3",imp:"M",who:"both",name:"입사·퇴사 시 계정·권한 관리 절차",why:"퇴사자 권한 미회수 시 보안 리스크",how:"입퇴사 체크리스트를 만들고 절차를 정의",done:"①입퇴사 체크리스트가 존재"},
-{id:18,sec:"a3",imp:"M",who:"both",name:"데모 장비 관리 및 이력 추적",why:"데모 장비 관리 부재 시 분실·파손 미감지",how:"데모 장비를 판매용과 구분 관리",done:"①데모 장비가 구분 관리됨 ②이동/대여 이력이 기록됨"},
-{id:19,sec:"a4",imp:"H",who:"both",name:"고객 개인정보 국외이전 법규 준수",why:"법규 위반 시 과징금·영업 정지",how:"현지 개인정보보호법의 국외이전 요건을 조사",done:"①법적 요건이 문서화됨 ②동의/계약 조치가 이행됨"},
-{id:20,sec:"a4",imp:"H",who:"hq",name:"클라우드/서버 데이터 보관 법규 준수",why:"일부 국가는 자국 내 데이터 보관을 의무화",how:"클라우드 서버 위치가 현지 법규에 부합하는지 확인",done:"①서버 위치가 법규 요건을 충족"},
-{id:21,sec:"a4",imp:"H",who:"both",name:"IOR(수입자) 명확 지정",why:"수입자 불명확 시 통관 지연",how:"계약서상 IOR를 명확히 지정",done:"①IOR가 계약서에 명시됨"},
-{id:22,sec:"a4",imp:"M",who:"both",name:"통관 프로세스 및 필수 서류 체계화",why:"서류 누락은 즉시 통관 지연",how:"국가별 통관 필수 서류 체크리스트를 작성",done:"①통관 서류 체크리스트가 존재"},
-{id:23,sec:"a5",imp:"H",who:"hq",name:"글로벌 가격 승인 매트릭스 수립",why:"할인 기준이 없으면 마진 훼손",how:"할인율/금액별 승인 레벨을 정의",done:"①할인 승인 매트릭스가 문서화됨"},
-{id:24,sec:"a5",imp:"H",who:"hq",name:"FOC 승인 기준 및 로그 관리",why:"FOC 기준 없이 법인 재량에 맡기면 비용 통제 불가",how:"제품군·금액 구간별 FOC 승인 레벨을 정의",done:"①FOC 승인 레벨이 정의됨"},
-{id:25,sec:"a5",imp:"H",who:"hq",name:"현지 법인 재량권 한도 문서화",why:"한도 미정의 시 매번 HQ에 문의하거나 임의 처리",how:"항목별로 자체 판단할 수 있는 범위를 명시",done:"①항목별 재량권 한도가 문서화됨"},
-{id:26,sec:"a5",imp:"H",who:"hq",name:"글로벌 표준 계약서 템플릿 운영",why:"임의로 계약서를 만들면 필수 조항 누락 위험",how:"HQ 법무 검토 완료 버전을 표준으로 배포",done:"①표준 계약서 템플릿이 HQ에서 배포됨"},
-{id:27,sec:"a5",imp:"H",who:"hq",name:"정책 변경 시 HQ 사전 승인 체계",why:"현지에서 임의 변경하면 글로벌 일관성 훼손",how:"승인 필요 항목과 자체 변경 가능 항목을 구분",done:"①승인 필요 항목이 정의됨"},
-{id:28,sec:"a5",imp:"M",who:"both",name:"PO 승인 이력 및 감사 추적",why:"미승인 PO 추적 불가 시 감사 대응 불가",how:"PO 승인 이력을 시스템에 기록",done:"①PO 승인 이력이 시스템에 기록됨"},
-{id:29,sec:"a5",imp:"L",who:"both",name:"주요 업무 SOP 유지 및 정기 감사",why:"SOP 미관리 시 기준 혼선",how:"핵심 SOP만이라도 문서 오너를 지정",done:"①핵심 SOP에 오너가 지정됨"},
-{id:30,sec:"a5",imp:"L",who:"hq",name:"신규 법인 온보딩 가이드",why:"초기 혼선으로 세팅 지연",how:"체크리스트·연락처 등을 요약본으로 제공",done:"①온보딩 가이드 문서가 존재"},
-{id:31,sec:"b1",imp:"H",who:"local",name:"영업 리드의 단일 시스템 통합 관리",why:"리드가 분산되면 파이프라인 가시성 저하",how:"모든 영업 문의를 하나의 CRM으로 통합",done:"①모든 리드가 단일 CRM에 기록됨"},
-{id:32,sec:"b1",imp:"H",who:"both",name:"할인 승인의 글로벌 매트릭스 기반 운영",why:"승인 로그 없으면 책임 소재 불명확",how:"가격 매트릭스 기준으로 할인 승인을 처리",done:"①할인이 매트릭스 기준으로 처리됨"},
-{id:33,sec:"b1",imp:"H",who:"local",name:"표준 계약서 기반 계약 체결",why:"임의 계약서 사용 시 필수 조항 누락 위험",how:"글로벌 표준 계약서 템플릿 기반으로 체결",done:"①계약이 HQ 템플릿 기반으로 체결됨"},
-{id:34,sec:"b1",imp:"M",who:"local",name:"영업 단계 정의 및 파이프라인 관리",why:"단계 정의 없으면 진행률 왜곡",how:"영업 단계를 정의하고 필수 입력 항목을 설정",done:"①영업 단계가 정의됨"},
-{id:35,sec:"b1",imp:"M",who:"local",name:"문의 응답 시간(SLA) 관리",why:"응답 지연 시 수주율 저하",how:"첫 응답 시간 기준을 정하고 모니터링",done:"①응답 SLA가 정의됨"},
-{id:36,sec:"b1",imp:"M",who:"local",name:"견적·주문서 표준화 및 버전 관리",why:"구버전 견적서 사용 시 재작업 발생",how:"견적서·주문서 양식을 표준화",done:"①표준 양식이 사용됨"},
-{id:37,sec:"b2",imp:"H",who:"both",name:"PO 발행 기준 및 Forecast 체계 운영",why:"초기에는 과잉·과소 주문 실수가 많음",how:"PO 발행 기준, Forecast 주기를 정의",done:"①PO 발행 기준이 정의됨"},
-{id:38,sec:"b2",imp:"H",who:"local",name:"재고 상태의 시스템 구분 관리",why:"상태 미구분 시 오출고 발생",how:"재고 상태를 시스템상 구분",done:"①재고 상태가 시스템상 구분됨"},
-{id:39,sec:"b2",imp:"M",who:"local",name:"입고 시 SN 등록 및 출하 전 Pre-test",why:"SN 미등록 시 CS·보증 데이터 단절",how:"입고 시 SN 스캔 등록을 필수화",done:"①입고 시 SN 등록이 필수"},
-{id:40,sec:"b2",imp:"M",who:"local",name:"포장·출하 기준 및 배송 추적",why:"포장 기준 미비 시 파손",how:"포장 기준, 출하 사진 보관 규칙 정의",done:"①포장 기준이 정해짐"},
-{id:41,sec:"b2",imp:"M",who:"local",name:"반품 처리 및 재고 실사",why:"반품 Disposition 기준 없으면 재고 왜곡",how:"반품 시 필수 정보 및 상태 분류 기준 정의",done:"①반품 Disposition 기준이 있음"},
-{id:42,sec:"b3",imp:"H",who:"local",name:"설치 담당 주체 및 책임 범위 명확화",why:"설치 주체 불명확 시 현장 책임 공방",how:"설치 주체를 명확히 정의하고 계약서에 반영",done:"①설치 주체가 정의·문서화됨"},
-{id:43,sec:"b3",imp:"H",who:"local",name:"설치 완료 보고 및 SN-고객 매핑",why:"보고서 미제출 시 완료 여부 불명확",how:"설치 완료 보고서를 필수화",done:"①보고서가 필수 항목으로 운영됨"},
-{id:44,sec:"b3",imp:"H",who:"hq",name:"Warranty Start 기준 통일",why:"기준 혼재 시 고객 분쟁 발생",how:"Warranty Start 기준을 하나로 통일",done:"①글로벌 단일 기준으로 정의됨"},
-{id:45,sec:"b3",imp:"M",who:"local",name:"설치 전 고객 사전 안내 및 교육 체계",why:"현장 도착 후 환경 미비 발견 시 재방문",how:"설치 전 체크리스트를 고객에게 사전 안내",done:"①설치 전 안내가 전달됨"},
-{id:46,sec:"b3",imp:"M",who:"local",name:"설치 후 사후관리 체계",why:"초기 불만이 방치되면 재구매율 하락",how:"설치 후 일정 주기로 고객 상태를 확인",done:"①사후관리 주기와 방식이 정의됨"},
-{id:47,sec:"b3",imp:"M",who:"both",name:"초기 불량 기준 정의 및 별도 관리",why:"초기 불량을 일반 CS와 동일 처리하면 품질 이슈 감지 지연",how:"초기 불량 기준을 정의하고 별도 추적",done:"①초기 불량 기준이 정의됨"},
-{id:48,sec:"b4",imp:"H",who:"both",name:"CS 문의의 단일 시스템 통합 접수",why:"채널 분산 시 누락 발생",how:"모든 CS 문의가 하나의 시스템으로 통합 접수",done:"①모든 CS 문의가 단일 시스템으로 접수됨"},
-{id:49,sec:"b4",imp:"H",who:"hq",name:"CS 티켓의 SN 필수 입력 강제화",why:"SN 없으면 보증 추적 불가",how:"SN 미입력 시 티켓 종료 불가 설정",done:"①SN 미입력 시 티켓 종료 불가 설정됨"},
-{id:50,sec:"b4",imp:"H",who:"both",name:"유상/무상 수리 기준 명확화",why:"기준 없으면 담당자마다 다르게 처리",how:"보증 여부·고객 과실 기준을 문서화",done:"①유무상 기준이 문서화됨"},
-{id:51,sec:"b4",imp:"H",who:"local",name:"수리 자재 사용의 재고 반영",why:"자재 사용 미입력 시 재고 왜곡",how:"티켓 종료 전 자재 차감 입력을 의무화",done:"①자재 사용이 재고에 반영됨"},
-{id:52,sec:"b4",imp:"M",who:"both",name:"원격 진단 우선 체계 및 HQ 기술 연계",why:"모든 건을 현장 방문 처리하면 비용 과다",how:"현장 출장 전 원격 1차 해결 시도",done:"①원격 지원 환경이 구축됨"},
-{id:53,sec:"b4",imp:"M",who:"local",name:"티켓 우선순위 및 종료 조건 관리",why:"우선순위 미정의 시 중요 건 누락",how:"티켓 유형·우선순위 기준 정의",done:"①우선순위 기준이 정의됨"},
-{id:54,sec:"b4",imp:"L",who:"local",name:"반복 이슈의 지식화 및 CS 정기 리뷰",why:"같은 문제를 매번 처음부터 해결하면 비효율",how:"반복 이슈를 FAQ/기술문서로 정리",done:"①반복 이슈가 문서로 정리됨"},
-{id:55,sec:"b5",imp:"H",who:"hq",name:"매출 인식 기준 단일화",why:"기준이 다르면 회계 혼선",how:"매출 인식 기준을 하나로 통일",done:"①매출 인식 기준이 문서화됨"},
-{id:56,sec:"b5",imp:"H",who:"local",name:"인보이스 발행 적시성 확보",why:"발행 지연 = 수금 지연",how:"인보이스 발행 시점·담당자를 설정",done:"①발행 시점과 담당자가 정의됨"},
-{id:57,sec:"b5",imp:"M",who:"both",name:"수금 상태 공유 및 미수금 관리",why:"수금 정보 단절 시 문제 발생",how:"수금 상태를 관련 부서와 공유",done:"①수금 상태가 공유됨"},
-{id:58,sec:"b5",imp:"M",who:"both",name:"HQ-법인 간 정기 리뷰 운영",why:"피드백 루프 단절 시 문제 누적",how:"월 1회 CS·영업 리뷰를 고정 운영",done:"①월간 리뷰가 운영됨"},
-{id:59,sec:"b5",imp:"M",who:"both",name:"세금·환율 적용 기준 표준화",why:"오류 시 인보이스 재발행",how:"세금·환율 로직을 문서화",done:"①세금·환율 적용 기준이 문서화됨"},
-{id:60,sec:"b5",imp:"M",who:"both",name:"COD 결제 기준 및 유상 수리 결제 연계",why:"결제 확인 전 출고 시 미수금 리스크",how:"COD 기준을 명확히 정의",done:"①COD 기준이 정의됨"}
+{id:1,sec:"a1",imp:"H",who:"local",name:"현지 관세·세금 감면 제도 활용",why:"감면 제도를 놓치면 불필요한 비용이 지속 발생",how:"현지 세무사·업계 네트워크를 통해 감면 제도를 조사·문서화",done:"①감면 제도가 조사·문서화됨 ②통관 시 감면이 적용됨"},
+{id:2,sec:"a1",imp:"R",who:"both",name:"[경험공유] 의료기기 인증 프로세스",why:"각국 인증 기준·필수 서류가 상이하므로 타 법인 경험이 핵심 참고자료",how:"신생 법인은 외부 컨설팅 업체 도움으로 초기 인증 진행 후 자체 보완",done:"①인증 프로세스 및 활용 문서가 정리됨 ②타 법인에 경험이 공유됨"},
+{id:3,sec:"a1",imp:"H",who:"local",name:"수입 통관 시 HS Code 및 관세율 사전 확인",why:"HS Code 오류 시 과세 오류·통관 지연이 반복",how:"제품별 HS Code를 확정하고 관세율표를 문서화",done:"①제품별 HS Code가 확정·문서화됨 ②관세율이 사전 파악됨"},
+{id:4,sec:"a2",imp:"H",who:"local",name:"현지 법규 기반 품질 조직 구성",why:"법적으로 품질책임자 지정을 요구하는 경우가 많으며 미지정 시 영업 정지 리스크",how:"현지 법규가 요구하는 품질 조직 요건을 조사하고 필수 역할을 지정",done:"①품질 조직 요건이 문서화됨 ②법적 필수 역할이 지정됨"},
+{id:5,sec:"a2",imp:"H",who:"local",name:"시판 후 감시(PMS) 체계 구축",why:"시판 후 안전성 모니터링은 법적 의무이며 미이행 시 인허가 취소 위험",how:"현지 규제기관의 PMS 요건을 파악하고 부작용 보고 경로를 정의",done:"①PMS 절차서가 문서화됨 ②부작용 보고 경로가 정의됨"},
+{id:6,sec:"a2",imp:"H",who:"both",name:"현지 QA 프로세스 운영 (불만처리·CAPA·리콜)",why:"현지에서 품질관리가 안 되면 불량 대응 지연 고객 신뢰 하락",how:"불만처리 CAPA 리콜 절차를 수립하고 운영",done:"①불만처리 절차서가 작성됨 ②CAPA 프로세스가 운영 중"},
+{id:7,sec:"a2",imp:"M",who:"both",name:"반복 불량의 체계적 집계 및 HQ 환류",why:"반복 불량이 HQ에 전달되지 않으면 근본 원인 개선 기회를 놓침",how:"불량을 모델·부품 기준으로 기록하고 정기 리포트를 HQ에 공유",done:"①불량 데이터가 집계 가능 ②월 1회 이상 HQ에 리포트 공유"},
+{id:8,sec:"a2",imp:"M",who:"both",name:"출하 전 검사(Pre-shipment Inspection) 체계",why:"출하 전 검사 없이 발송하면 현장 불량 증가 CS 비용 급증",how:"제품 유형별 출하 전 검사 체크리스트와 인력·시간 기준을 정의",done:"①제품 유형별 검사 체크리스트 존재 ②검사 인력·기준 정의됨"},
+{id:9,sec:"a3",imp:"H",who:"local",name:"법인 기능별 책임자 지정 및 백업 체계",why:"책임자 미지정 시 의사결정 지연 업무 공백 발생",how:"기능별 책임자를 지정하고 백업자를 반드시 지정",done:"①기능별 책임자·백업자가 문서화됨"},
+{id:10,sec:"a3",imp:"H",who:"local",name:"운영에 필요한 금융 인프라 구축",why:"결제·수금·송금이 원활하지 않으면 영업에 지장",how:"은행 계좌를 개설하고 HQ와의 송금 프로세스를 정의",done:"①은행 계좌가 운영 중 ②HQ↔법인 송금 프로세스 정의됨"},
+{id:11,sec:"a3",imp:"H",who:"both",name:"CS 부품·데모·판매용·반품 보관 Zone 분리",why:"혼재 보관 시 오출고·재고 오류 발생",how:"CS 부품 데모 판매용 반품을 Zone 분리하고 라벨링",done:"①보관 공간이 Zone 분리됨 ②라벨링이 적용됨"},
+{id:12,sec:"a3",imp:"H",who:"local",name:"지역 거점(영업소) 운영 체계",why:"지방 고객 접근성과 대리점 관계 유지를 위해 거점 필요",how:"지역별 시장 규모·대리점 분포를 분석하여 거점 설치 기준을 정의",done:"①거점 설치 기준이 정의됨 ②각 거점 기능이 문서화됨"},
+{id:13,sec:"a3",imp:"M",who:"both",name:"입사·퇴사 시 계정·권한 관리 절차",why:"퇴사자 권한 미회수 시 보안 리스크",how:"입퇴사 체크리스트를 만들고 절차를 정의",done:"①입퇴사 체크리스트가 존재"},
+{id:14,sec:"a3",imp:"M",who:"both",name:"데모 장비 관리 및 이력 추적",why:"데모 장비 관리 부재 시 분실·파손 미감지",how:"데모 장비를 판매용과 구분 관리하고 이동/대여 이력을 기록",done:"①데모 장비가 구분 관리됨 ②이동/대여 이력이 기록됨"},
+{id:15,sec:"a3",imp:"M",who:"local",name:"업무용 IT 시스템(CRM·ERP·경비 등) 선정 및 구축",why:"시스템 미구축 시 수작업 의존 데이터 단절 업무 효율 저하",how:"CRM·ERP·경비정산·근태 등 핵심 시스템을 선정하고 도입",done:"①핵심 시스템이 도입·운영 중 ②시스템 간 데이터 연동 방식이 정의됨"},
+{id:16,sec:"a3",imp:"M",who:"local",name:"외부 전문가 네트워크 구축 (노무사·세리사·감사법인)",why:"현지 법규 대응을 내부 인력만으로 처리하면 리스크가 크다",how:"노무·세무·감사 각 영역에 외부 전문가를 계약하고 역할을 정의",done:"①각 영역별 외부 전문가가 계약됨 ②역할과 연락 체계가 문서화됨"},
+{id:17,sec:"a3",imp:"M",who:"both",name:"시스템 간 데이터 연동 및 중복 입력 최소화",why:"데이터 중복 입력은 오류와 비효율의 원인",how:"핵심 시스템 간 연동 방식을 정의하고 마스터 시스템을 지정",done:"①시스템 간 연동 방식이 정의됨 ②마스터 시스템이 지정됨"},
+{id:18,sec:"a4",imp:"H",who:"both",name:"고객 개인정보 국외이전 법규 준수",why:"법규 위반 시 과징금·영업 정지",how:"현지 개인정보보호법의 국외이전 요건을 조사하고 동의/계약 조치를 이행",done:"①법적 요건이 문서화됨 ②동의/계약 조치가 이행됨"},
+{id:19,sec:"a4",imp:"H",who:"both",name:"IOR(수입자) 명확 지정",why:"수입자 불명확 시 통관 지연",how:"계약서상 IOR를 명확히 지정",done:"①IOR가 계약서에 명시됨"},
+{id:20,sec:"a4",imp:"M",who:"both",name:"통관 프로세스 및 필수 서류 체계화",why:"서류 누락은 즉시 통관 지연으로 이어진다",how:"국가별 통관 필수 서류 체크리스트를 작성",done:"①통관 서류 체크리스트가 존재"},
+{id:21,sec:"a4",imp:"M",who:"local",name:"현지 노동법 준수 및 대응 체계",why:"노동법 위반 시 소송·과징금 리스크",how:"현지 노동법 핵심 사항을 파악하고 전문가와 정기 자문 체계를 구축",done:"①노동법 핵심 사항이 파악됨 ②외부 전문가 자문 체계가 있음"},
+{id:22,sec:"a4",imp:"M",who:"local",name:"전자서명 및 계약 관리 시스템 운영",why:"종이 계약만 사용하면 분실·추적 불가 리스크",how:"전자서명 시스템을 도입하고 계약 문서를 중앙 관리",done:"①전자서명 시스템이 도입됨 ②계약 문서가 중앙 관리됨"},
+{id:23,sec:"a5",imp:"M",who:"both",name:"PO 승인 이력 및 감사 추적",why:"미승인 PO 추적 불가 시 감사 대응 불가능",how:"PO 승인 이력을 시스템에 기록",done:"①PO 승인 이력이 시스템에 기록됨"},
+{id:24,sec:"a5",imp:"L",who:"both",name:"주요 업무 SOP 유지 및 정기 감사",why:"SOP 미관리 시 기준 혼선",how:"핵심 SOP만이라도 문서 오너를 지정하고 정기 갱신",done:"①핵심 SOP에 오너가 지정됨"},
+{id:25,sec:"a5",imp:"M",who:"both",name:"내부 회계 통제 및 정기 외부 감사 체계",why:"내부 통제 부재 시 부정·오류가 감지되지 않아 리스크 증가",how:"직무 분장 증빙 관리 접근 권한 통제를 정의하고 외부 감사 주기를 확정",done:"①내부 통제 정책이 문서화됨 ②외부 감사가 정기 수행됨"},
+{id:26,sec:"a5",imp:"M",who:"both",name:"사업 연속성 계획(BCP) 및 비상 연락 체계",why:"재난·비상 시 대응 체계가 없으면 사업 중단 리스크",how:"비상 시 핵심 업무 우선순위 대체 운영 방안 비상 연락 체계를 정의",done:"①BCP가 문서화됨 ②비상 연락 체계가 정의됨"},
+{id:27,sec:"a6",imp:"H",who:"local",name:"채용 프로세스 및 채널 체계화",why:"채용 프로세스 미정의 시 채용 품질 불안정 소요 기간 증가",how:"채용 단계·채널·평가 기준을 문서화하고 평균 채용 소요 기간을 관리",done:"①채용 프로세스가 문서화됨 ②주요 채용 채널이 정의됨"},
+{id:28,sec:"a6",imp:"H",who:"local",name:"온보딩 및 직무 교육 체계",why:"체계적 온보딩 없이는 신규 직원 전력화 지연 조기 퇴사율 증가",how:"공통 기초교육과 직무별 OJT 프로그램을 설계하고 평가 기준을 정의",done:"①온보딩 프로그램이 문서화됨 ②직무별 교육·평가 기준이 정의됨"},
+{id:29,sec:"a6",imp:"M",who:"local",name:"성과 평가 및 연봉 계약 체계",why:"공정한 평가·보상 없으면 핵심 인재 유지가 어렵다",how:"평가 주기·기준·연봉 계약 절차를 설계하고 운영",done:"①평가 주기와 기준이 문서화됨 ②연봉 계약 절차가 정의됨"},
+{id:30,sec:"a6",imp:"M",who:"local",name:"인센티브 구조 설계 (영업직 중심)",why:"인센티브 없으면 영업 동기부여가 약해지고 성과 차이가 보상에 반영되지 않는다",how:"영업 인센티브 구조를 설계하고 기준을 공개",done:"①인센티브 구조가 정의·공개됨"},
+{id:31,sec:"a6",imp:"M",who:"local",name:"급여 구조 및 복지 제도 정의",why:"급여·복지가 현지 시장 대비 경쟁력이 없으면 채용·유지가 어렵다",how:"기본급·수당·복지 항목을 현지 시장에 맞게 설계",done:"①급여 구조가 문서화됨 ②복지 제도가 정의됨"},
+{id:32,sec:"a6",imp:"M",who:"local",name:"근태 관리 시스템 운영",why:"근태 관리 미체계화 시 노무 리스크 발생",how:"클라우드 기반 근태 시스템을 도입하고 출장·외근 처리 규칙을 정의",done:"①근태 관리 시스템 운영 중 ②출장/외근 처리 규칙 정의됨"},
+{id:33,sec:"a6",imp:"M",who:"both",name:"이직률 관리 및 직원 유지 정책",why:"높은 이직률은 채용·교육 비용 증가 조직 안정성 저하",how:"이직률을 부서별로 추적하고 핵심 인재 유지 정책을 운영",done:"①부서별 이직률이 추적됨 ②유지 정책이 정의·운영됨"},
+{id:34,sec:"a6",imp:"L",who:"both",name:"HQ-법인 간 HR 협업 범위 정의",why:"HR 협업 범위가 불명확하면 현지 인사 자율성과 글로벌 정책 사이에서 혼선",how:"HQ가 관여하는 인사 항목과 법인 자율 항목을 명확히 구분",done:"①HQ 관여 항목과 법인 자율 항목이 구분됨"},
+{id:35,sec:"a7",imp:"H",who:"local",name:"매출 인식 기준 및 검증 체계",why:"매출 인식 기준 불명확 시 재무 보고 신뢰성 저하 감사 리스크",how:"매출 인식 기준을 정의하고 CRM-회계 교차 검증 체계를 구축",done:"①매출 인식 기준이 문서화됨 ②CRM-회계 교차 검증 수행됨"},
+{id:36,sec:"a7",imp:"H",who:"local",name:"비용 승인 및 경비 정산 체계",why:"비용 승인 절차 없으면 부정 지출·감사 대응 불가",how:"경비 정산 시스템을 도입하고 승인 워크플로우를 정의",done:"①경비 정산 시스템 운영 중 ②승인 단계가 정의됨"},
+{id:37,sec:"a7",imp:"H",who:"both",name:"월별/분기별 HQ 재무 보고 체계",why:"정기 재무 보고 없으면 HQ가 법인 재무 상태 파악 불가",how:"월별·분기별 보고 항목과 주기를 정의하고 시스템화",done:"①보고 항목·주기가 정의됨 ②보고가 정기 수행됨"},
+{id:38,sec:"a7",imp:"M",who:"local",name:"인보이스 발행 및 수금 프로세스",why:"인보이스 발행 지연·오류는 수금 지연으로 직결",how:"인보이스 발행 시점·담당·시스템을 정의하고 미수금 관리 프로세스를 수립",done:"①발행 프로세스가 정의됨 ②미수금 관리 프로세스가 있음"},
+{id:39,sec:"a7",imp:"M",who:"local",name:"재고 회계 및 정기 실사 체계",why:"재고 평가·실사 부실 시 재무제표 왜곡 감사 지적 리스크",how:"재고 평가 방식을 정의하고 정기 실사 주기와 차이 조정 프로세스를 수립",done:"①재고 평가 방식이 정의됨 ②정기 실사 수행됨"},
+{id:40,sec:"a7",imp:"M",who:"local",name:"현금 및 자금 관리 체계",why:"자금 관리 부실 시 운영 자금 부족·부정 사용 리스크",how:"현금 보관 한도 계좌 관리 자금 계획 수립 방식을 정의",done:"①현금 관리 기준이 정의됨 ②자금 계획이 정기 수립됨"},
+{id:41,sec:"a7",imp:"M",who:"both",name:"HQ-법인 간 제품 구매 정산 체계",why:"정산 방식·주기가 불명확하면 채무 관리가 혼란",how:"정산 방식과 채무 대조 프로세스를 정의",done:"①정산 방식·주기가 문서화됨 ②채무 대조 프로세스가 있음"},
+{id:42,sec:"a7",imp:"M",who:"local",name:"세무 관리 및 신고 체계",why:"세무 신고 오류·지연 시 가산세·법적 제재",how:"주요 세목을 파악하고 내부/외부 세무 신고 체계를 정의",done:"①주요 세목이 파악됨 ②세무 신고 체계가 정의됨"},
+{id:43,sec:"b1",imp:"H",who:"local",name:"영업 리드의 단일 시스템 통합 관리",why:"리드가 분산되면 파이프라인 가시성 저하 기회 상실",how:"모든 영업 문의를 하나의 CRM으로 통합",done:"①모든 리드가 단일 CRM에 기록됨"},
+{id:44,sec:"b1",imp:"H",who:"local",name:"영업 단계 정의 및 파이프라인 관리",why:"단계 미정의 시 진행률 왜곡 매출 예측 불가",how:"영업 단계를 정의하고 필수 입력 항목을 설정",done:"①영업 단계가 정의됨 ②파이프라인이 시스템에서 관리됨"},
+{id:45,sec:"b1",imp:"H",who:"both",name:"할인 승인의 글로벌 매트릭스 기반 운영",why:"승인 로그 없으면 책임 소재 불명확 마진 관리 불가",how:"가격 매트릭스 기준으로 할인 승인을 처리하고 이력을 남김",done:"①할인이 매트릭스 기준으로 처리됨 ②승인 이력이 기록됨"},
+{id:46,sec:"b1",imp:"H",who:"local",name:"표준 계약서 기반 계약 체결",why:"임의 계약서 사용 시 필수 조항 누락 위험",how:"글로벌 표준 계약서 템플릿 기반으로 체결",done:"①계약이 HQ 템플릿 기반으로 체결됨"},
+{id:47,sec:"b1",imp:"M",who:"local",name:"문의 응답 시간(SLA) 관리",why:"응답 지연 시 수주율 저하",how:"첫 응답 시간 기준을 정하고 모니터링",done:"①응답 SLA가 정의됨 ②모니터링이 수행됨"},
+{id:48,sec:"b1",imp:"M",who:"local",name:"견적·주문서 표준화 및 버전 관리",why:"구버전 견적서 사용 시 재작업 발생",how:"견적서·주문서 양식을 표준화",done:"①표준 양식이 사용됨"},
+{id:49,sec:"b1",imp:"M",who:"local",name:"영업 KPI 정의 및 정기 리뷰",why:"KPI 없으면 영업 활동 방향성이 흐려지고 성과 관리가 불가능",how:"영업 KPI를 정의하고 리뷰 주기를 설정",done:"①영업 KPI가 정의됨 ②정기 리뷰가 운영됨"},
+{id:50,sec:"b1",imp:"M",who:"local",name:"영업-마케팅 간 리드 전달 및 협업 체계",why:"마케팅 리드가 영업에 전달되지 않으면 투자 대비 효과 저하",how:"마케팅 리드의 CRM 등록과 영업 배정 프로세스를 정의",done:"①마케팅 리드 전달 프로세스가 정의됨"},
+{id:51,sec:"b1",imp:"M",who:"local",name:"시장별 영업 전략 차별화",why:"시장별 구매 결정 구조가 다르므로 동일 전략은 비효율",how:"시장별 핵심 고객 유형 진입 채널 영업 방식을 정의",done:"①시장별 영업 전략이 문서화됨"},
+{id:52,sec:"b1",imp:"L",who:"local",name:"영업사원별 고객 관리 범위 및 부하 기준",why:"1인당 고객 수가 과도하면 관리 품질이 하락",how:"영업사원별 적정 고객 수 기준을 정의하고 모니터링",done:"①1인당 관리 고객 수 기준이 정의됨"},
+{id:53,sec:"b1",imp:"M",who:"local",name:"CRM 입력 강제화 및 데이터 품질 관리",why:"CRM 데이터가 부실하면 파이프라인·KPI 모두 무의미",how:"CRM 필수 입력 항목을 정의하고 미입력 시 제한/경고 설계",done:"①필수 입력 항목이 정의됨 ②미입력 시 제한/경고 장치가 있음"},
+{id:54,sec:"b1",imp:"L",who:"local",name:"영업 리드 중복 관리 기준",why:"중복 리드가 발생하면 영업사원 간 충돌 고객 혼선",how:"중복 리드 판별 기준과 처리 규칙을 정의",done:"①중복 리드 판별 기준이 정의됨"},
+{id:55,sec:"b1",imp:"M",who:"local",name:"공공 입찰 대응 체계",why:"공공 입찰은 절차·서류가 복잡하며 대응 체계 없으면 기회 상실",how:"입찰 정보 수집 방법 대리점 연계 서류 준비 프로세스를 정의",done:"①입찰 대응 프로세스가 정의됨"},
+{id:56,sec:"b1",imp:"M",who:"local",name:"컨슈머 제품 판매 및 물류 체계",why:"전문가용과 컨슈머는 물량·채널·물류가 다르므로 별도 체계 필요",how:"컨슈머 전용 판매 채널 물류 프로세스 재고 관리를 정의",done:"①컨슈머 판매 채널이 정의됨 ②물류 프로세스가 분리 운영됨"},
+{id:57,sec:"b2",imp:"H",who:"local",name:"대리점 등록·관리 및 가격 정책 체계",why:"대리점 관리 체계 없으면 거래 조건 혼선 부정 거래 리스크",how:"대리점 등록 기준 가격 정책 성과 평가 기준을 정의",done:"①등록 기준이 정의됨 ②가격 정책 문서화됨 ③성과 평가 기준 있음"},
+{id:58,sec:"b2",imp:"M",who:"local",name:"대리점 교육 및 지원 프로그램",why:"대리점 역량 부족 시 엔드유저 경험 저하 매출 감소",how:"대리점 대상 교육 프로그램과 지원 자료를 체계화",done:"①대리점 교육 프로그램이 존재 ②지원 자료가 제공됨"},
+{id:59,sec:"b2",imp:"M",who:"local",name:"대리점 부정 방지 및 관계 관리",why:"대리점 부정이 발생하면 시장 가격 체계가 무너진다",how:"대리점 거래 모니터링 기준과 부정 발생 시 대응 절차를 정의",done:"①모니터링 기준이 있음 ②부정 대응 절차가 정의됨"},
+{id:60,sec:"b3",imp:"H",who:"both",name:"PO 발행 기준 및 Forecast 체계 운영",why:"과잉·과소 주문 실수가 많아 재고 비용 증가",how:"PO 발행 기준 Forecast 주기를 정의",done:"①PO 발행 기준이 정의됨 ②Forecast 주기가 운영됨"},
+{id:61,sec:"b3",imp:"H",who:"local",name:"재고 상태의 시스템 구분 관리",why:"상태 미구분 시 오출고 발생",how:"재고 상태를 시스템상 구분",done:"①재고 상태가 시스템상 구분됨"},
+{id:62,sec:"b3",imp:"M",who:"local",name:"입고 시 SN 등록 및 출하 전 검사 연계",why:"SN 미등록 시 CS·보증 데이터 단절",how:"입고 시 SN 스캔 등록을 필수화하고 출하 전 검사와 연계",done:"①입고 시 SN 등록이 필수 ②출하 전 검사와 연계됨"},
+{id:63,sec:"b3",imp:"M",who:"local",name:"포장·출하 기준 및 배송 추적",why:"포장 기준 미비 시 파손 발생",how:"포장 기준 출하 마감 시간 배송 추적 방식을 정의",done:"①포장 기준이 정해짐 ②배송 추적 가능"},
+{id:64,sec:"b3",imp:"M",who:"local",name:"반품 처리 기준 및 Disposition 관리",why:"반품 Disposition 기준 없으면 재고 왜곡",how:"반품 시 필수 정보 상태 분류 Disposition 기준을 정의",done:"①반품 Disposition 기준이 있음"},
+{id:65,sec:"b3",imp:"M",who:"local",name:"소모품(포장재) 관리 및 재발주 기준",why:"포장재 부족 시 출고 지연 과다 재고 시 공간 낭비",how:"소모품 재고 관리 방식과 재발주 기준을 정의",done:"①소모품 관리 방식이 정의됨 ②재발주 기준이 있음"},
+{id:66,sec:"b3",imp:"M",who:"local",name:"3PL 활용 여부 및 물류 외주 전략",why:"자체 물류만으로 물량 증가에 대응하면 고정비가 과도해질 수 있다",how:"자체 vs 3PL 비교 분석을 수행하고 외주 범위를 정의",done:"①자체 vs 3PL 비교가 수행됨 ②외주 범위가 정의됨"},
+{id:67,sec:"b4",imp:"H",who:"local",name:"설치 담당 주체 및 책임 범위 명확화",why:"설치 주체 불명확 시 현장 책임 공방",how:"설치 주체를 명확히 정의하고 계약서에 반영",done:"①설치 주체가 정의·문서화됨"},
+{id:68,sec:"b4",imp:"H",who:"local",name:"설치 완료 보고 및 SN-고객 매핑",why:"보고서 미제출 시 완료 여부 불명확",how:"설치 완료 보고서를 필수화하고 SN-고객 매핑을 수행",done:"①보고서가 필수 운영됨 ②SN-고객 매핑이 완료됨"},
+{id:69,sec:"b4",imp:"M",who:"local",name:"설치 전 고객 사전 안내 및 환경 확인",why:"현장 도착 후 환경 미비 발견 시 재방문 필요",how:"설치 전 체크리스트를 고객에게 사전 안내",done:"①설치 전 안내가 전달됨"},
+{id:70,sec:"b4",imp:"M",who:"local",name:"설치 후 사후관리 체계 (정기 점검·방문)",why:"초기 불만 방치 시 재구매율 하락",how:"설치 후 정기 점검 주기·방식을 정의하고 운영",done:"①사후관리 주기와 방식이 정의됨"},
+{id:71,sec:"b4",imp:"M",who:"both",name:"초기 불량 기준 정의 및 별도 관리",why:"초기 불량을 일반 CS와 동일 처리하면 품질 이슈 감지 지연",how:"초기 불량 기준을 정의하고 별도 추적",done:"①초기 불량 기준이 정의됨 ②별도 추적됨"},
+{id:72,sec:"b4",imp:"M",who:"local",name:"업셀링/교체 판매(Trade-in) 전략",why:"기존 고객 대상 교체 판매는 신규 영업 대비 효율이 높다",how:"교체 대상 장비 기준 보상 조건 영업-CS 연계 프로세스를 정의",done:"①교체 대상 기준이 정의됨 ②보상 조건이 문서화됨"},
+{id:73,sec:"b5",imp:"H",who:"both",name:"CS 문의의 단일 시스템 통합 접수",why:"채널 분산 시 누락 발생",how:"모든 CS 문의를 하나의 시스템으로 통합 접수",done:"①모든 CS 문의가 단일 시스템으로 접수됨"},
+{id:74,sec:"b5",imp:"H",who:"both",name:"유상/무상 수리 기준 명확화",why:"기준 없으면 담당자마다 다르게 처리 고객 불만",how:"보증 여부·고객 과실 기준을 문서화",done:"①유무상 기준이 문서화됨"},
+{id:75,sec:"b5",imp:"H",who:"local",name:"수리 자재 사용의 재고 반영",why:"자재 사용 미입력 시 재고 왜곡",how:"티켓 종료 전 자재 차감 입력을 의무화",done:"①자재 사용이 재고에 반영됨"},
+{id:76,sec:"b5",imp:"M",who:"both",name:"원격 진단 우선 체계 및 HQ 기술 연계",why:"모든 건 현장 방문 시 비용 과다",how:"현장 출장 전 원격 1차 해결을 시도",done:"①원격 지원 환경이 구축됨 ②방문/입고 판단 기준 있음"},
+{id:77,sec:"b5",imp:"M",who:"local",name:"티켓 우선순위 및 종료 조건 관리",why:"우선순위 미정의 시 중요 건 누락",how:"티켓 유형·우선순위 기준·종료 조건을 정의",done:"①우선순위 기준이 정의됨 ②종료 조건이 정의됨"},
+{id:78,sec:"b5",imp:"M",who:"local",name:"수리 소요 기간 관리 및 SLA",why:"수리 기간이 길면 고객 만족도 하락 장비 가동률 저하",how:"입고/방문 수리별 목표 소요 기간을 정의하고 모니터링",done:"①수리 SLA가 정의됨 ②소요 기간이 모니터링됨"},
+{id:79,sec:"b5",imp:"M",who:"local",name:"방문 수리 커버리지 및 엔지니어 배치",why:"방문 수리 범위가 불명확하면 고객 기대와 실제 서비스 간 괴리",how:"방문 수리 가능 범위 엔지니어 배치 기준을 정의",done:"①방문 수리 커버리지가 정의됨 ②엔지니어 배치가 거점별로 되어 있음"},
+{id:80,sec:"b5",imp:"M",who:"local",name:"CS 매출 창출 체계 (점검·구독 서비스)",why:"CS를 비용 센터로만 운영하면 수익성 악화",how:"정기점검 유상화 구독형 서비스 확대 전략을 수립",done:"①CS 매출 항목이 정의됨 ②구독 서비스 해지율 관리됨"},
+{id:81,sec:"b5",imp:"L",who:"local",name:"반복 이슈의 지식화 및 CS 정기 리뷰",why:"같은 문제를 매번 처음부터 해결하면 비효율",how:"반복 이슈를 FAQ/기술문서로 정리",done:"①반복 이슈가 문서로 정리됨"},
+{id:82,sec:"b5",imp:"L",who:"local",name:"배송 클레임 처리 프로세스",why:"배송 파손·분실 발생 시 처리 기준 없으면 비용 부담 불명확",how:"배송 클레임 접수 주체 캐리어별 대응 프로세스를 정의",done:"①클레임 처리 프로세스가 정의됨 ②접수 주체가 명확함"},
+{id:83,sec:"b5",imp:"L",who:"local",name:"액세서리·소모품 주문 처리 프로세스",why:"액세서리 주문 처리가 비효율적이면 고객 불만",how:"액세서리·소모품 주문의 접수·처리 주체와 프로세스를 정의",done:"①주문 처리 주체가 정의됨 ②프로세스가 표준화됨"},
+{id:84,sec:"b6",imp:"H",who:"local",name:"인보이스 발행 적시성 확보",why:"발행 지연 = 수금 지연",how:"인보이스 발행 시점·담당자를 설정",done:"①발행 시점과 담당자가 정의됨"},
+{id:85,sec:"b6",imp:"M",who:"both",name:"수금 상태 공유 및 미수금 관리",why:"수금 정보 단절 시 문제 발생",how:"수금 상태를 관련 부서와 공유",done:"①수금 상태가 공유됨 ②미수금 회수 프로세스 있음"},
+{id:86,sec:"b6",imp:"M",who:"both",name:"HQ-법인 간 정기 리뷰 운영",why:"피드백 루프 단절 시 문제 누적",how:"월 1회 CS·영업 리뷰를 고정 운영",done:"①월간 리뷰가 운영됨"},
+{id:87,sec:"b6",imp:"M",who:"both",name:"세금·환율 적용 기준 표준화",why:"오류 시 인보이스 재발행",how:"세금·환율 로직을 문서화",done:"①세금·환율 적용 기준이 문서화됨"},
+{id:88,sec:"b6",imp:"M",who:"both",name:"COD 결제 기준 및 유상 수리 결제 연계",why:"결제 확인 전 출고 시 미수금 리스크",how:"COD 기준을 명확히 정의",done:"①COD 기준이 정의됨"},
+{id:89,sec:"b6",imp:"M",who:"local",name:"고객별 결제 조건 관리",why:"결제 조건이 고객마다 다를 경우 관리 없으면 수금 혼선",how:"고객별 결제 조건을 시스템에 등록하고 관리",done:"①고객별 결제 조건이 관리됨"},
+{id:90,sec:"b7",imp:"H",who:"local",name:"마케팅 리드 생성 채널 및 CRM 연계",why:"마케팅 투자 대비 리드가 영업으로 연결되지 않으면 ROI 저하",how:"마케팅 리드 생성 채널을 정의하고 CRM 등록 프로세스를 구축",done:"①리드 채널이 정의됨 ②CRM 등록 프로세스가 있음"},
+{id:91,sec:"b7",imp:"M",who:"local",name:"마케팅 예산 관리 및 ROI 추적",why:"비용 대비 효과를 모르면 예산 배분 최적화 불가",how:"연간 예산을 항목별로 관리하고 ROI를 추적",done:"①연간 예산이 항목별 관리됨 ②주요 활동 ROI가 추적됨"},
+{id:92,sec:"b7",imp:"M",who:"local",name:"마케팅 콘텐츠 체계화 (활용사례·임상자료 등)",why:"영업 지원 콘텐츠가 부족하면 영업사원이 개별적으로 자료를 만들어야 해 비효율",how:"활용사례 임상자료 교육 콘텐츠를 중앙에서 관리·배포",done:"①콘텐츠가 중앙 관리됨 ②영업에 정기 배포됨"},
+{id:93,sec:"b7",imp:"M",who:"local",name:"고객 이벤트 운영 체계 (챌린지·세미나 등)",why:"이벤트는 브랜드 인지도와 리드 생성에 효과적이나 체계 없으면 일회성에 그침",how:"정기 이벤트 프로그램을 기획하고 성과를 측정",done:"①정기 이벤트 프로그램이 운영됨 ②참여자 수/성과가 측정됨"}
 ];
 
 let CU=null,orgsC=[],respC={},reviewC={},memosC={},commC=[];
@@ -478,7 +511,7 @@ async function handleImport(ev){const file=ev.target.files[0];if(!file)return;co
 async function renderChecklist(){const org=orgsC.find(o=>o.id===ST.oid);document.getElementById('clOrg').textContent=org?.name||'';const ed=canEdit(ST.oid);document.getElementById('clReadonly').innerHTML=ed?'':`<span class="readonly-badge">읽기 전용</span>`;document.getElementById('btnTemplate').style.display=ed?'':'none';document.getElementById('btnImport').style.display=ed?'':'none';const si=document.getElementById('searchInput');if(si)si.value=ST.search;await loadItemComments(ST.oid);
 const allPct=calcOrg(ST.oid).pct,allOn=ST.sec==="all";let tabs=`<button class="cl-tab ${allOn?'on':''}" style="${allOn?'background:#971B2F;color:#fff;border-color:#971B2F':''}" onclick="ST.sec='all';renderChecklist()">📊 전체 ${allPct}%</button>`;tabs+=SECTIONS.map(s=>{const p=calcSec(ST.oid,s.id),on=s.id===ST.sec;return`<button class="cl-tab ${on?'on':''}" style="${on?`background:${s.color};color:#fff;border-color:${s.color}`:''}" onclick="ST.sec='${s.id}';renderChecklist()">${s.emoji} ${s.label} ${p}%</button>`;}).join('');document.getElementById('clTabs').innerHTML=tabs;
 document.getElementById('fgStatus').innerHTML=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"pending",l:"검토대기"},{v:"confirmed",l:"확정"},{v:"rejected",l:"추가의견"}].map(f=>`<button class="f-btn ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderCLBody()">${f.l}</button>`).join('');
-document.getElementById('fgImp').innerHTML=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"}].map(f=>`<button class="f-btn ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderCLBody()">${f.l}</button>`).join('');
+document.getElementById('fgImp').innerHTML=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"},{v:"R",l:"참고"}].map(f=>`<button class="f-btn ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderCLBody()">${f.l}</button>`).join('');
 document.getElementById('fgWho').innerHTML=[{v:"all",l:"전체"},{v:"hq",l:"본사"},{v:"local",l:"현지"},{v:"both",l:"공통"}].map(f=>`<button class="f-btn ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderCLBody()">${f.l}</button>`).join('');
 renderCLBody();}
 function onSearch(){ST.search=document.getElementById('searchInput').value.trim().toLowerCase();renderCLBody();}
@@ -508,7 +541,7 @@ const hqMsgs=getHQMessages(it.id);
 // HQ messages visible only to org owner + admin
 const canSeeHQ=isAdmin()||canEdit(ST.oid);
 h+=`<div class="item-card ${cardClass}" id="item_${it.id}">
-<div class="item-top"><div class="item-name">${nm}</div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>
+<div class="item-top"><div class="item-name">${nm}</div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하",R:"참고"}[it.imp]}</span><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div>
 <div class="status-row"><span class="status-label">법인 응답:</span> <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span>
 <span class="status-label" style="margin-left:10px">HQ 검토:</span> <span class="st-badge ${rv||'none'}">${{confirmed:"✅ 확정",rejected:"💬 추가 의견"}[rv]||"—"}</span></div>
 <div class="detail-toggle" onclick="document.getElementById('det_${it.id}')?.classList.toggle('open')">▸ 목적 · 방법 · 달성기준</div>
@@ -546,7 +579,7 @@ function renderResult(){const org=orgsC.find(o=>o.id===ST.oid),ov=calcOrg(ST.oid
 document.getElementById('resultHero').innerHTML=`<div style="font-size:48px">${g.icon}</div><div class="rg-pct">${ov.pct}%</div><div style="font-size:12px;color:#64748b;font-weight:600">${_h(org?.name)} · HQ 확정 기준</div><div class="track-summary"><div class="ts-box tA"><div class="ts-label" style="color:var(--tA)">A. 조직 운영 기반</div><div class="ts-pct" style="color:var(--tA)">${tA}%</div></div><div class="ts-box tB"><div class="ts-label" style="color:var(--tB)">B. 제품 판매 사이클</div><div class="ts-pct" style="color:var(--tB)">${tB}%</div></div></div><div class="who-result-row"><div class="who-result-box"><div class="who-result-label" style="color:#6366f1">🏢 본사</div><div class="who-result-pct" style="color:#6366f1">${wH.pct}%</div><div class="who-result-detail">${wH.done}/${wH.total}</div></div><div class="who-result-box"><div class="who-result-label" style="color:#0ea5e9">📍 현지</div><div class="who-result-pct" style="color:#0ea5e9">${wL.pct}%</div><div class="who-result-detail">${wL.done}/${wL.total}</div></div><div class="who-result-box"><div class="who-result-label" style="color:#f59e0b">🤝 공통</div><div class="who-result-pct" style="color:#f59e0b">${wB.pct}%</div><div class="who-result-detail">${wB.done}/${wB.total}</div></div></div><div class="sec-minis">${minis}</div>`;
 const todos=ALL.filter(i=>getReview(ST.oid,i.id)!=="confirmed");let h=`<div style="font-size:14px;font-weight:800;margin:16px 0 10px">📋 미확정 항목 (${todos.length}개)</div>`;
 if(!todos.length)h+=`<div class="no-results">🎉 모든 항목 확정!</div>`;
-else{SECTIONS.forEach(sec=>{const its=todos.filter(i=>i.sec===sec.id);if(!its.length)return;h+=`<div style="margin-bottom:14px"><div style="padding:6px 10px;border-radius:8px;background:${sec.color};color:#fff;font-size:11px;font-weight:800;margin-bottom:6px">${sec.emoji} ${sec.label} <span style="opacity:.7;margin-left:auto">${its.length}개</span></div>${its.map(it=>{const resp=getResp(ST.oid,it.id),rv=getReview(ST.oid,it.id);return`<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-size:11px;font-weight:700">${_h(it.name)}</div><div style="font-size:10px;margin-top:2px">응답: <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span> 검토: <span class="st-badge ${rv||'none'}">${{confirmed:"✅",rejected:"💬"}[rv]||"—"}</span></div></div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하"}[it.imp]}</span></div>`;}).join('')}</div>`;});}document.getElementById('resultTodo').innerHTML=h;}
+else{SECTIONS.forEach(sec=>{const its=todos.filter(i=>i.sec===sec.id);if(!its.length)return;h+=`<div style="margin-bottom:14px"><div style="padding:6px 10px;border-radius:8px;background:${sec.color};color:#fff;font-size:11px;font-weight:800;margin-bottom:6px">${sec.emoji} ${sec.label} <span style="opacity:.7;margin-left:auto">${its.length}개</span></div>${its.map(it=>{const resp=getResp(ST.oid,it.id),rv=getReview(ST.oid,it.id);return`<div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-size:11px;font-weight:700">${_h(it.name)}</div><div style="font-size:10px;margin-top:2px">응답: <span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span> 검토: <span class="st-badge ${rv||'none'}">${{confirmed:"✅",rejected:"💬"}[rv]||"—"}</span></div></div><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하",R:"참고"}[it.imp]}</span></div>`;}).join('')}</div>`;});}document.getElementById('resultTodo').innerHTML=h;}
 
 /* ══ COMPARE ══ */
 function renderCompare(){if(!orgsC.length){document.getElementById('cmpWrap').innerHTML=`<div class="no-results">비교할 법인이 없습니다.</div>`;return;}const sd=isAdmin();let h=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>법인</th><th>확정률</th><th>A.조직</th><th>B.판매</th>`;if(sd){SECTIONS.forEach(s=>{h+=`<th style="color:${s.color}">${s.emoji}</th>`;});}h+=`</tr></thead><tbody>`;[...orgsC].sort((a,b)=>calcOrg(b.id).pct-calcOrg(a.id).pct).forEach(o=>{const ov=calcOrg(o.id),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");h+=`<tr><td style="font-weight:800">${_h(o.name)}</td><td><span class="heat" style="${heat(ov.pct)}">${ov.pct}%</span></td><td><span class="heat" style="${heat(tA)}">${tA}%</span></td><td><span class="heat" style="${heat(tB)}">${tB}%</span></td>`;if(sd){SECTIONS.forEach(s=>{const p=calcSec(o.id,s.id);h+=`<td><span class="heat" style="${heat(p)}">${p}%</span></td>`;});}h+=`</tr>`;});h+=`</tbody></table></div>`;document.getElementById('cmpWrap').innerHTML=h;}
@@ -555,7 +588,7 @@ function openAdd(){document.getElementById('addModal').classList.add('open');doc
 function closeAdd(){document.getElementById('addModal').classList.remove('open');}
 async function confirmAdd(){const nm=document.getElementById('addName').value.trim();if(!nm)return alert('법인명을 입력하세요.');if(orgsC.some(o=>o.name===nm))return alert('같은 이름이 있습니다.');const ref=await db.collection("orgs").add({name:nm,createdBy:CU.uid,createdAt:TS()});orgsC.push({id:ref.id,name:nm,createdBy:CU.uid});document.getElementById('addName').value='';closeAdd();renderHome();}
 
-function exportCSV(){const impMap={H:"상",M:"중",L:"하"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","메모"];const rows=[];tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
+function exportCSV(){const impMap={H:"상",M:"중",L:"하",R:"참고"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","메모"];const rows=[];tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
 </script>
 </body>
 </html>
