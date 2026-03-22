@@ -356,8 +356,19 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-const firebaseConfig={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID",storageBucket:"YOUR_PROJECT.appspot.com",messagingSenderId:"YOUR_SENDER_ID",appId:"YOUR_APP_ID"};
-const ADMIN_EMAILS=["admin@example.com"];
+const firebaseConfig = {
+  apiKey: "AIzaSyAnrQKqg_NWgewQLMSorN4wV0Tniw_T2UE",
+  authDomain: "ops-checklist-58c96.firebaseapp.com",
+  projectId: "ops-checklist-58c96",
+  storageBucket: "ops-checklist-58c96.firebasestorage.app",
+  messagingSenderId: "216430360210",
+  appId: "Y1:216430360210:web:81f5ac63648cd62995584b"
+};
+
+/* Admin 이메일 목록 - 여기에 본사 관리자 이메일을 추가하세요 */
+const ADMIN_EMAILS = [
+  "glorialiakim@inbody.com"
+];
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.firestore(),TS=firebase.firestore.FieldValue.serverTimestamp;
 const TRACKS=[{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#6366f1"},{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#f59e0b"}];
