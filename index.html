@@ -554,27 +554,9 @@ function renderSalesOverview(){
   let h='';
   for(const[div,list]of Object.entries(DIVISIONS)){
     h+=`<div style="margin-bottom:20px"><div style="font-size:14px;font-weight:800;margin-bottom:8px">${div}</div>`;
-    h+=renderSalesTable(list,div);
-    h+=`</div>`;
+    h+=renderSalesTable(list,div);h+=`</div>`;
   }
   document.getElementById('salesOverview').innerHTML=h;
-}
-function renderSalesDiv(div){
-  const list=DIVISIONS[div]||[];
-  let h=`<div style="font-size:14px;font-weight:800;margin-bottom:8px">${div} 법인 매출 × 운영 현황</div>`;
-  h+=renderSalesTable(list,div);
-  const orgsInDiv=orgsC.filter(o=>list.includes(o.name));
-  if(orgsInDiv.length>0){
-    h+=`<div style="margin-top:16px;font-size:13px;font-weight:800;margin-bottom:8px">⚠️ ${div} 공통 보완 필요 항목 (확정률 낮은 순)</div>`;
-    const itemStats=ALL.filter(i=>i.imp==="H").map(it=>{
-      const yc=orgsInDiv.filter(o=>isComplete(o.id,it.id)).length;
-      return{...it,pct:Math.round(yc*100/orgsInDiv.length)};
-    }).filter(i=>i.pct<100).sort((a,b)=>a.pct-b.pct).slice(0,10);
-    if(itemStats.length){
-      itemStats.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);h+=`<div class="weak-item"><div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700">${sec?.emoji||''} ${_h(it.name)}</div></div><span class="heat" style="${heat(it.pct)};min-width:40px;text-align:center">${it.pct}%</span></div>`;});
-    }else{h+=`<div class="no-results">모든 상 항목이 완료되었습니다.</div>`;}
-  }
-  document.getElementById('sales'+div.replace('부','Div').replace('1','1').replace('2','2').replace('3','3')]||document.getElementById('salesDiv1')).innerHTML=h;
 }
 function renderSalesDiv(div){
   const list=DIVISIONS[div]||[];
