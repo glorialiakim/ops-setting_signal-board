@@ -807,7 +807,7 @@ document.getElementById('clBody').innerHTML=h;}
 async function setResp(iid,v){await saveResp(ST.oid,iid,v);renderCLBody();}
 async function setRv(iid,v){await saveReview(ST.oid,iid,v);renderCLBody();}
 async function saveMm(iid){const el=document.getElementById('mt_'+iid);if(el){await saveMemoDb(ST.oid,iid,el.value);alert('저장되었습니다.');}}
-async function addCmt(iid){const el=document.getElementById('ci_'+iid);const t=el?.value.trim();if(!t)return;const mentions=[];const mentionRegex=/@(InBody\s+\w+)/gi;let match;while((match=mentionRegex.exec(t))!==null){const mentioned=orgsC.find(o=>o.name.toLowerCase()===match[1].toLowerCase());if(mentioned&&!mentions.includes(mentioned.id))mentions.push(mentioned.id);}await db.collection("comments").add({orgId:ST.oid,itemId:iid,uid:CU.uid,authorName:CU.name,orgName:CU.orgName,text:t,isHQ:false,mentions:mentions,createdAt:TS()});el.value='';await loadItemComments(ST.oid);renderCLBody();} ```  **3. JS — 댓글 표시에서 @멘션 하이라이트** — `renderCLBody` 함수 안에서 댓글을 표시하는 부분을 찾으세요. `ic-text` 클래스가 있는 부분입니다: ``` <div class="ic-text">${_h(c.text)}</div> ```  이걸 두 군데 다 (공개 코멘트 표시 부분) 이걸로 교체: ``` <div class="ic-text">${highlightMentions(c.text)}</div>
+async function addCmt(iid){const el=document.getElementById('ci_'+iid);const t=el?.value.trim();if(!t)return;const mentions=[];const mentionRegex=/@(InBody\s+\w+)/gi;let match;while((match=mentionRegex.exec(t))!==null){const mentioned=orgsC.find(o=>o.name.toLowerCase()===match[1].toLowerCase());if(mentioned&&!mentions.includes(mentioned.id))mentions.push(mentioned.id);}await db.collection("comments").add({orgId:ST.oid,itemId:iid,uid:CU.uid,authorName:CU.name,orgName:CU.orgName,text:t,isHQ:false,mentions:mentions,createdAt:TS()});el.value='';await loadItemComments(ST.oid);renderCLBody();}
 async function addHQMsg(iid){const el=document.getElementById('hqi_'+iid);const t=el?.value.trim();if(!t)return;await db.collection("comments").add({orgId:ST.oid,itemId:iid,uid:CU.uid,authorName:CU.name,orgName:CU.orgName,text:t,isHQ:true,createdAt:TS()});el.value='';await loadItemComments(ST.oid);renderCLBody();}
 async function delCmt(cid){if(!confirm('이 댓글을 삭제할까요?'))return;await db.collection("comments").doc(cid).delete();alert('삭제되었습니다.');await loadItemComments(ST.oid);renderCLBody();}
 
@@ -878,15 +878,9 @@ function openOtherView(oid){ST.page='otherview';ST.oid=oid;document.querySelecto
 function highlightMentions(text){let h=_h(text);h=h.replace(/@(InBody\s+\w+)/gi,'<span class="mention">@$1</span>');return h;}
 function onMentionInput(el,iid){const v=el.value;const dd=document.getElementById('md_'+iid);const atIdx=v.lastIndexOf('@');if(atIdx===-1||v.substring(atIdx+1).includes(' ')){dd.className='mention-dropdown';return;}const q=v.substring(atIdx+1).toLowerCase();const matches=orgsC.filter(o=>o.name.toLowerCase().includes(q)&&o.id!==ST.oid);if(!matches.length){dd.className='mention-dropdown';return;}dd.className='mention-dropdown open';dd.innerHTML=matches.map(o=>`<div class="mention-opt" onmousedown="selectMention('${o.name}',${iid})">${o.name}</div>`).join('');}
 function selectMention(name,iid){const el=document.getElementById('ci_'+iid);const v=el.value;const atIdx=v.lastIndexOf('@');el.value=v.substring(0,atIdx)+'@'+name+' ';el.focus();document.getElementById('md_'+iid).className='mention-dropdown';}
-  ```
+  
 
-**4. JS — 댓글 입력란에 @ 자동완성** — 기존 댓글 입력 부분을 찾으세요:
-```
 <div class="ic-input-row"><input class="ic-input" id="ci_${it.id}" placeholder="Comment..."
-```
-
-이걸로 교체:
-```
 <div class="ic-input-row" style="position:relative"><div class="mention-dropdown" id="md_${it.id}"></div><input class="ic-input" id="ci_${it.id}" placeholder="Comment... (@로 법인 멘션)" oninput="onMentionInput(this,${it.id})"
   
   function exportCSV(){const impMap={H:"상",M:"중",L:"하",R:"참고"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","Detail"];const rows=[];tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
