@@ -702,6 +702,9 @@ function matchSearch(it,q){if(!q)return true;return q.split(/\s+/).every(w=>(it.
 function highlightText(t,q){if(!q)return _h(t);let r=_h(t);q.split(/\s+/).filter(Boolean).forEach(w=>{r=r.replace(new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<span class="highlight">$1</span>');});return r;}
 
 function renderCLBody(){const q=ST.search,isS=!!q,ed=canEdit(ST.oid);
+document.getElementById('fgStatus').innerHTML=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"pending",l:"검토대기"},{v:"confirmed",l:"확정"},{v:"rejected",l:"추가의견"}].map(f=>`<button class="f-btn st-${f.v} ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderCLBody()">${f.l}</button>`).join('');
+document.getElementById('fgImp').innerHTML=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"},{v:"R",l:"참고"}].map(f=>`<button class="f-btn imp-${f.v} ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderCLBody()">${f.l}</button>`).join('');
+document.getElementById('fgWho').innerHTML=[{v:"all",l:"전체"},{v:"local",l:"현지"},{v:"both",l:"공통"}].map(f=>`<button class="f-btn who-${f.v} ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderCLBody()">${f.l}</button>`).join('');                  
 let items=isS?ALL.filter(i=>matchSearch(i,q)):ST.sec==="all"?[...ALL]:ALL.filter(i=>i.sec===ST.sec);
 if(ST.fStatus==="todo")items=items.filter(i=>!getReview(ST.oid,i.id));
 else if(ST.fStatus==="pending")items=items.filter(i=>getResp(ST.oid,i.id)&&!getReview(ST.oid,i.id));
