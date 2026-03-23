@@ -167,7 +167,15 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .ic-input-row{display:flex;gap:6px;margin-top:6px}
 .ic-input{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-family:inherit;outline:none}
 .ic-del{font-size:9px;color:#94a3b8;cursor:pointer;font-weight:700;float:right}.ic-del:hover{color:#ef4444}
-/* Contact HQ */
+/* 멘션 */
+.mention{background:#ede9fe;color:#5b21b6;font-weight:700;border-radius:4px;padding:0 3px}
+.mention-dropdown{position:absolute;bottom:100%;left:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.1);max-height:160px;overflow-y:auto;display:none;z-index:50;min-width:180px}
+.mention-dropdown.open{display:block}
+.mention-opt{padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;color:#374151}
+.mention-opt:hover{background:#f5f3ff;color:#5b21b6}
+.mention-badge{position:absolute;top:-4px;right:-4px;background:#8b5cf6;color:#fff;font-size:8px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.nav-btn-wrap{position:relative;display:inline-block}
+  /* Contact HQ */
 .hq-msg{background:#faf5ff;border:1px solid #c4b5fd;border-radius:8px;padding:8px;margin-bottom:4px}
 .hq-msg .ic-meta{color:#7c3aed}
 .hq-private{font-size:9px;color:#8b5cf6;font-style:italic;margin-top:4px}
@@ -229,7 +237,7 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <header><div class="hi">
 <div class="logo"><h1>🌱 글로벌 CS 운영 함께 단계 올리기</h1><p id="headerSub">로그인이 필요합니다</p></div>
 <div class="nav" id="mainNav" style="display:none">
-<button class="nav-btn" id="nav-home" onclick="go('home')">Overview</button>
+<span class="nav-btn-wrap"><button class="nav-btn" id="nav-home" onclick="go('home')">Overview</button><span class="mention-badge" id="mentionBadge" style="display:none">0</span></span>
 <button class="nav-btn" id="nav-dashboard" onclick="go('dashboard')" style="display:none">📊 Dashboard</button>
 <button class="nav-btn" id="nav-sales" onclick="go('sales')" style="display:none">💰 매출 비교</button>
 <button class="nav-btn" id="nav-compare" onclick="go('compare')">Compare</button>
@@ -688,7 +696,8 @@ function go(p){ST.page=p;document.querySelectorAll('.page').forEach(e=>e.classLi
 /* ══ HOME ══ */
 function renderHome(){
 const myOrgs=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid||o.name===CU?.orgName||(o.members||[]).includes(CU?.uid));
-const otherOrgs=isAdmin()?[]:orgsC.filter(o=>!myOrgs.includes(o));
+const myOrgObj=myOrgs[0];let mentionCount=0;if(myOrgObj){commC.forEach||[];try{db.collection("comments").where("mentions","array-contains",myOrgObj.id).get().then(snap=>{const cnt=snap.size;const badge=document.getElementById('mentionBadge');if(badge)badge.style.display=cnt>0?'flex':'none';if(badge)badge.textContent=cnt;});}catch(e){}}
+  const otherOrgs=isAdmin()?[]:orgsC.filter(o=>!myOrgs.includes(o));
 const allMy=myOrgs.length?myOrgs:[];
 const avg=allMy.length?Math.round(allMy.reduce((a,o)=>a+calcOrg(o.id).pct,0)/allMy.length):0;
 const g=getG(avg);
@@ -798,7 +807,7 @@ document.getElementById('clBody').innerHTML=h;}
 async function setResp(iid,v){await saveResp(ST.oid,iid,v);renderCLBody();}
 async function setRv(iid,v){await saveReview(ST.oid,iid,v);renderCLBody();}
 async function saveMm(iid){const el=document.getElementById('mt_'+iid);if(el){await saveMemoDb(ST.oid,iid,el.value);alert('저장되었습니다.');}}
-async function addCmt(iid){const el=document.getElementById('ci_'+iid);const t=el?.value.trim();if(!t)return;await db.collection("comments").add({orgId:ST.oid,itemId:iid,uid:CU.uid,authorName:CU.name,orgName:CU.orgName,text:t,isHQ:false,createdAt:TS()});el.value='';await loadItemComments(ST.oid);renderCLBody();}
+async function addCmt(iid){const el=document.getElementById('ci_'+iid);const t=el?.value.trim();if(!t)return;const mentions=[];const mentionRegex=/@(InBody\s+\w+)/gi;let match;while((match=mentionRegex.exec(t))!==null){const mentioned=orgsC.find(o=>o.name.toLowerCase()===match[1].toLowerCase());if(mentioned&&!mentions.includes(mentioned.id))mentions.push(mentioned.id);}await db.collection("comments").add({orgId:ST.oid,itemId:iid,uid:CU.uid,authorName:CU.name,orgName:CU.orgName,text:t,isHQ:false,mentions:mentions,createdAt:TS()});el.value='';await loadItemComments(ST.oid);renderCLBody();} ```  **3. JS — 댓글 표시에서 @멘션 하이라이트** — `renderCLBody` 함수 안에서 댓글을 표시하는 부분을 찾으세요. `ic-text` 클래스가 있는 부분입니다: ``` <div class="ic-text">${_h(c.text)}</div> ```  이걸 두 군데 다 (공개 코멘트 표시 부분) 이걸로 교체: ``` <div class="ic-text">${highlightMentions(c.text)}</div>
 async function addHQMsg(iid){const el=document.getElementById('hqi_'+iid);const t=el?.value.trim();if(!t)return;await db.collection("comments").add({orgId:ST.oid,itemId:iid,uid:CU.uid,authorName:CU.name,orgName:CU.orgName,text:t,isHQ:true,createdAt:TS()});el.value='';await loadItemComments(ST.oid);renderCLBody();}
 async function delCmt(cid){if(!confirm('이 댓글을 삭제할까요?'))return;await db.collection("comments").doc(cid).delete();alert('삭제되었습니다.');await loadItemComments(ST.oid);renderCLBody();}
 
@@ -866,7 +875,21 @@ function openAdd(){document.getElementById('addModal').classList.add('open');doc
 function closeAdd(){document.getElementById('addModal').classList.remove('open');}
 async function confirmAdd(){const nm=document.getElementById('addName').value.trim();if(!nm)return alert('법인명을 입력하세요.');if(orgsC.some(o=>o.name===nm))return alert('같은 이름이 있습니다.');const ref=await db.collection("orgs").add({name:nm,createdBy:CU.uid,createdAt:TS()});orgsC.push({id:ref.id,name:nm,createdBy:CU.uid});document.getElementById('addName').value='';closeAdd();renderHome();}
 function openOtherView(oid){ST.page='otherview';ST.oid=oid;document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));document.getElementById('page-otherview').classList.add('active');const org=orgsC.find(o=>o.id===oid);const ov=calcOrg(oid),g=getG(ov.pct),tA=calcTrack(oid,"tA"),tB=calcTrack(oid,"tB");let h=`<div class="ov-hero"><div style="font-size:18px;font-weight:800">${_h(org?.name)} <span class="other-badge">읽기 전용</span></div><div style="font-size:36px;font-weight:800;color:var(--red);margin:8px 0">${ov.pct}%</div><div style="font-size:12px;color:#94a3b8">${g.icon} ${g.label} · ${ov.done}/${ov.total}개 확정</div><div class="track-summary"><div class="ts-box tA"><div class="ts-label" style="color:var(--tA)">A. 조직기반</div><div class="ts-pct" style="color:var(--tA)">${tA}%</div></div><div class="ts-box tB"><div class="ts-label" style="color:var(--tB)">B. 판매사이클</div><div class="ts-pct" style="color:var(--tB)">${tB}%</div></div></div></div>`;SECTIONS.forEach(sec=>{const items=ALL.filter(i=>i.sec===sec.id);const secPct=calcSec(oid,sec.id);const confirmedItems=items.filter(i=>getReview(oid,i.id)==="confirmed");h+=`<div class="ov-sec"><div class="ov-sec-hd" onclick="this.nextElementSibling.classList.toggle('open')"><span style="font-size:14px">${sec.emoji}</span><span class="ov-sec-label" style="background:${sec.color}">${sec.label}</span><span style="font-size:10px;color:#94a3b8;font-weight:600">${confirmedItems.length}/${items.length} 확정</span><span class="ov-sec-pct" style="color:${sec.color}">${secPct}%</span><span style="font-size:10px;color:#cbd5e1;margin-left:4px">▼</span></div><div class="ov-sec-body">`;items.forEach(it=>{const resp=getResp(oid,it.id),rv=getReview(oid,it.id),memo=getMemo(oid,it.id);const stLabel={yes:"O",no:"X",partial:"△"}[resp]||"—";const stClass=rv==="confirmed"?"background:#d1fae5;color:#065f46":rv==="rejected"?"background:#ede9fe;color:#5b21b6":resp?"background:#fef3c7;color:#92400e":"background:#f1f5f9;color:#94a3b8";const rvLabel={confirmed:"✅ 확정",rejected:"💬 추가의견"}[rv]||"";h+=`<div class="ov-item"><div class="ov-item-name">${_h(it.name)} <span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하",R:"참고"}[it.imp]}</span></div><div class="ov-item-status"><span style="padding:2px 8px;border-radius:6px;font-size:10px;font-weight:800;${stClass}">${stLabel}</span>${rvLabel?`<span style="font-size:10px;font-weight:700;color:#64748b">${rvLabel}</span>`:''}</div>`;if(memo&&rv==="confirmed"){h+=`<div class="ov-detail">${_h(memo)}</div>`;}h+=`</div>`;});h+=`</div></div>`;});document.getElementById('otherViewContent').innerHTML=h;}
-function exportCSV(){const impMap={H:"상",M:"중",L:"하",R:"참고"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","Detail"];const rows=[];tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
+function highlightMentions(text){let h=_h(text);h=h.replace(/@(InBody\s+\w+)/gi,'<span class="mention">@$1</span>');return h;}
+function onMentionInput(el,iid){const v=el.value;const dd=document.getElementById('md_'+iid);const atIdx=v.lastIndexOf('@');if(atIdx===-1||v.substring(atIdx+1).includes(' ')){dd.className='mention-dropdown';return;}const q=v.substring(atIdx+1).toLowerCase();const matches=orgsC.filter(o=>o.name.toLowerCase().includes(q)&&o.id!==ST.oid);if(!matches.length){dd.className='mention-dropdown';return;}dd.className='mention-dropdown open';dd.innerHTML=matches.map(o=>`<div class="mention-opt" onmousedown="selectMention('${o.name}',${iid})">${o.name}</div>`).join('');}
+function selectMention(name,iid){const el=document.getElementById('ci_'+iid);const v=el.value;const atIdx=v.lastIndexOf('@');el.value=v.substring(0,atIdx)+'@'+name+' ';el.focus();document.getElementById('md_'+iid).className='mention-dropdown';}
+  ```
+
+**4. JS — 댓글 입력란에 @ 자동완성** — 기존 댓글 입력 부분을 찾으세요:
+```
+<div class="ic-input-row"><input class="ic-input" id="ci_${it.id}" placeholder="Comment..."
+```
+
+이걸로 교체:
+```
+<div class="ic-input-row" style="position:relative"><div class="mention-dropdown" id="md_${it.id}"></div><input class="ic-input" id="ci_${it.id}" placeholder="Comment... (@로 법인 멘션)" oninput="onMentionInput(this,${it.id})"
+  
+  function exportCSV(){const impMap={H:"상",M:"중",L:"하",R:"참고"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","Detail"];const rows=[];tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
   
 </script>
 </body>
