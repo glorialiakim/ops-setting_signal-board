@@ -43,6 +43,25 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .org-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--tA),var(--tB))}
 .org-card:hover{border-color:#971b2f44;box-shadow:0 6px 24px rgba(0,0,0,.08)}
 .org-name{font-size:15px;font-weight:800;margin-bottom:10px}
+/* 타 법인 카드 (간소화) */
+.org-card.other{opacity:.85;border-color:#e2e8f0}
+.org-card.other::before{background:linear-gradient(90deg,#94a3b8,#cbd5e1)}
+.org-card.other:hover{border-color:#94a3b8;opacity:1}
+.other-badge{display:inline-block;padding:2px 8px;border-radius:6px;background:#f1f5f9;color:#94a3b8;font-size:9px;font-weight:700;margin-left:6px}
+/* 타 법인 뷰 */
+.ov-hero{background:#fff;border-radius:16px;border:1px solid var(--line);padding:20px;margin-bottom:16px;text-align:center}
+.ov-sec{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.ov-sec-hd{padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.ov-sec-hd:hover{background:#f8fafc}
+.ov-sec-label{font-size:12px;font-weight:800;color:#fff;padding:2px 10px;border-radius:6px}
+.ov-sec-pct{margin-left:auto;font-size:12px;font-weight:800}
+.ov-sec-body{display:none;padding:0 14px 14px}
+.ov-sec-body.open{display:block}
+.ov-item{border-bottom:1px solid #f1f5f9;padding:10px 0}
+.ov-item:last-child{border-bottom:none}
+.ov-item-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:4px}
+.ov-item-status{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.ov-detail{font-size:11px;color:#374151;background:#f8fafc;border-radius:8px;padding:8px 10px;border-left:3px solid #e2e8f0;margin-top:6px;line-height:1.6}
 .track-row{display:flex;gap:10px;margin-bottom:8px}
 .track-box{flex:1;background:#f8fafc;border-radius:10px;padding:10px;text-align:center;border:1px solid var(--line)}
 .track-label{font-size:9px;font-weight:700;color:#64748b;margin-bottom:3px}
@@ -306,6 +325,14 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <div id="cmpWrap"></div>
 </div>
 
+<!-- OTHER ORG VIEW -->
+<div class="page" id="page-otherview">
+<div style="max-width:900px;margin:0 auto">
+<button class="btn ghost sm" onclick="go('home')" style="margin-bottom:14px">← 목록</button>
+<div id="otherViewContent"></div>
+</div>
+</div>
+  
 <!-- SALES -->
 <div class="page" id="page-sales">
 <div style="font-size:18px;font-weight:800;margin-bottom:16px">💰 법인 매출 비교</div>
@@ -656,10 +683,23 @@ async function saveSalesOne(oid){
   alert('저장되었습니다.');
 }
 
-function go(p){ST.page=p;document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));const n=document.getElementById('nav-'+p);if(n)n.classList.add('on');if(p==='home')renderHome();if(p==='dashboard')renderDashboard();if(p==='checklist')renderChecklist();if(p==='result')renderResult();if(p==='compare')renderCompare();if(p==='inquiry')renderInquiry();if(p==='sales'){   let stabs='<button class="dash-tab on" onclick="switchSales(\'overview\',this)">전체</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div1\',this)">1부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div2\',this)">2부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div3\',this)">3부</button>';   if(isAdmin()){     stabs+='<button class="dash-tab" onclick="switchSales(\'fx\',this)">💱 환율 설정</button>';     stabs+='<button class="dash-tab" onclick="switchSales(\'input\',this)">📝 매출 입력</button>';   }   document.querySelector('#page-sales .dash-tabs').innerHTML=stabs;   loadFxAndSales().then(function(){renderSalesOverview();}); }}
+function go(p){ST.page=p;document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));const n=document.getElementById('nav-'+p);if(n)n.classList.add('on');if(p==='home')renderHome();if(p==='dashboard')renderDashboard();if(p==='checklist')renderChecklist();if(p==='result')renderResult();if(p==='compare')renderCompare();if(p==='otherview'){}if(p==='inquiry')renderInquiry();if(p==='sales'){   let stabs='<button class="dash-tab on" onclick="switchSales(\'overview\',this)">전체</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div1\',this)">1부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div2\',this)">2부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div3\',this)">3부</button>';   if(isAdmin()){     stabs+='<button class="dash-tab" onclick="switchSales(\'fx\',this)">💱 환율 설정</button>';     stabs+='<button class="dash-tab" onclick="switchSales(\'input\',this)">📝 매출 입력</button>';   }   document.querySelector('#page-sales .dash-tabs').innerHTML=stabs;   loadFxAndSales().then(function(){renderSalesOverview();}); }}
 
 /* ══ HOME ══ */
-function renderHome(){const my=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid||o.name===CU?.orgName||(o.members||[]).includes(CU?.uid));const avg=my.length?Math.round(my.reduce((a,o)=>a+calcOrg(o.id).pct,0)/my.length):0;const g=getG(avg);document.getElementById('gstats').innerHTML=`<div class="gs"><div class="gs-l">${isAdmin()?'전체':'내'} 법인</div><div class="gs-v">${my.length}</div></div><div class="gs"><div class="gs-l">평균 확정률</div><div class="gs-v">${avg}%</div><div class="gs-s">${g.icon} ${g.label}</div></div><div class="gs"><div class="gs-l">총 점검 항목</div><div class="gs-v">${ALL.length}</div></div>`;
+function renderHome(){
+const myOrgs=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid||o.name===CU?.orgName||(o.members||[]).includes(CU?.uid));
+const otherOrgs=isAdmin()?[]:orgsC.filter(o=>!myOrgs.includes(o));
+const allMy=myOrgs.length?myOrgs:[];
+const avg=allMy.length?Math.round(allMy.reduce((a,o)=>a+calcOrg(o.id).pct,0)/allMy.length):0;
+const g=getG(avg);
+document.getElementById('gstats').innerHTML=`<div class="gs"><div class="gs-l">${isAdmin()?'전체':'내'} 법인</div><div class="gs-v">${allMy.length}</div></div><div class="gs"><div class="gs-l">평균 확정률</div><div class="gs-v">${avg}%</div><div class="gs-s">${g.icon} ${g.label}</div></div><div class="gs"><div class="gs-l">총 점검 항목</div><div class="gs-v">${ALL.length}</div></div>`;
+let cards=myOrgs.map(o=>{const ov=calcOrg(o.id),g=getG(ov.pct),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");const wL=calcWhoExact(o.id,"local"),wB=calcWhoExact(o.id,"both");const pending=ALL.filter(i=>getResp(o.id,i.id)&&!getReview(o.id,i.id)).length;return`<div class="org-card"><div class="org-name">${_h(o.name)} <span style="font-size:11px;color:#94a3b8">${g.icon} ${ov.pct}%</span>${pending?` <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:6px;font-weight:700">${pending} 검토 대기</span>`:''}</div>${o.lastUpdated?`<div style="font-size:9px;color:#94a3b8;margin-bottom:6px">최종 업데이트: ${new Date(o.lastUpdated.seconds*1000).toLocaleString('ko-KR')}${o.lastUpdatedBy?' · '+_h(o.lastUpdatedBy):''}</div>`:''}<div class="track-row"><div class="track-box"><div class="track-label" style="color:var(--tA)">A. 조직기반</div><div class="track-pct" style="color:var(--tA)">${tA}%</div><div class="track-bar"><div class="track-fill" style="width:${tA}%;background:var(--tA)"></div></div></div><div class="track-box"><div class="track-label" style="color:var(--tB)">B. 판매사이클</div><div class="track-pct" style="color:var(--tB)">${tB}%</div><div class="track-bar"><div class="track-fill" style="width:${tB}%;background:var(--tB)"></div></div></div></div><div class="who-summary"><div class="who-sum-box"><div class="who-sum-label" style="color:#0ea5e9">📍 현지</div><div class="who-sum-pct" style="color:#0ea5e9">${wL.pct}%</div></div><div class="who-sum-box"><div class="who-sum-label" style="color:#f59e0b">🤝 공통</div><div class="who-sum-pct" style="color:#f59e0b">${wB.pct}%</div></div></div><div style="display:flex;gap:6px"><button class="btn red sm" style="flex:1;justify-content:center" onclick="openOrg('${o.id}')">체크리스트 →</button>${isAdmin()?`<button class="btn ghost sm" onclick="delOrg('${o.id}')">삭제</button>`:''}</div></div>`;}).join('');
+if(otherOrgs.length){
+cards+=`<div style="grid-column:1/-1;margin-top:16px;padding-top:16px;border-top:2px dashed #e2e8f0"><div style="font-size:13px;font-weight:800;color:#94a3b8;margin-bottom:10px">🌏 다른 법인 현황</div></div>`;
+cards+=otherOrgs.map(o=>{const ov=calcOrg(o.id),g=getG(ov.pct),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");return`<div class="org-card other" onclick="openOtherView('${o.id}')" style="cursor:pointer"><div class="org-name">${_h(o.name)} <span style="font-size:11px;color:#94a3b8">${g.icon} ${ov.pct}%</span><span class="other-badge">읽기 전용</span></div><div class="track-row"><div class="track-box"><div class="track-label" style="color:var(--tA)">A. 조직기반</div><div class="track-pct" style="color:var(--tA)">${tA}%</div><div class="track-bar"><div class="track-fill" style="width:${tA}%;background:var(--tA)"></div></div></div><div class="track-box"><div class="track-label" style="color:var(--tB)">B. 판매사이클</div><div class="track-pct" style="color:var(--tB)">${tB}%</div><div class="track-bar"><div class="track-fill" style="width:${tB}%;background:var(--tB)"></div></div></div></div></div>`;}).join('');
+}
+document.getElementById('orgGrid').innerHTML=cards||'<div class="no-results">등록된 법인이 없습니다.</div>';
+}
 document.getElementById('orgGrid').innerHTML=my.map(o=>{const ov=calcOrg(o.id),g=getG(ov.pct),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");const wL=calcWhoExact(o.id,"local"),wB=calcWhoExact(o.id,"both");const pending=ALL.filter(i=>getResp(o.id,i.id)&&!getReview(o.id,i.id)).length;return`<div class="org-card"><div class="org-name">${_h(o.name)} <span style="font-size:11px;color:#94a3b8">${g.icon} ${ov.pct}%</span>${pending?` <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:6px;font-weight:700">${pending} 검토 대기</span>`:''}</div>${o.lastUpdated?`<div style="font-size:9px;color:#94a3b8;margin-bottom:6px">최종 업데이트: ${new Date(o.lastUpdated.seconds*1000).toLocaleString('ko-KR')}${o.lastUpdatedBy?' · '+_h(o.lastUpdatedBy):''}</div>`:''}<div class="track-row"><div class="track-box"><div class="track-label" style="color:var(--tA)">A. 조직기반</div><div class="track-pct" style="color:var(--tA)">${tA}%</div><div class="track-bar"><div class="track-fill" style="width:${tA}%;background:var(--tA)"></div></div></div><div class="track-box"><div class="track-label" style="color:var(--tB)">B. 판매사이클</div><div class="track-pct" style="color:var(--tB)">${tB}%</div><div class="track-bar"><div class="track-fill" style="width:${tB}%;background:var(--tB)"></div></div></div></div><div class="who-summary"><div class="who-sum-box"><div class="who-sum-label" style="color:#0ea5e9">📍 현지</div><div class="who-sum-pct" style="color:#0ea5e9">${wL.pct}%</div></div><div class="who-sum-box"><div class="who-sum-label" style="color:#f59e0b">🤝 공통</div><div class="who-sum-pct" style="color:#f59e0b">${wB.pct}%</div></div></div><div style="display:flex;gap:6px"><button class="btn red sm" style="flex:1;justify-content:center" onclick="openOrg('${o.id}')">체크리스트 →</button>${isAdmin()?`<button class="btn ghost sm" onclick="delOrg('${o.id}')">삭제</button>`:''}</div></div>`;}).join('')||'<div class="no-results">등록된 법인이 없습니다.</div>';}
 function openOrg(oid){ST.oid=oid;ST.sec=SECTIONS[0].id;ST.fStatus="all";ST.fImp="all";ST.fWho="all";ST.search="";go('checklist');}
 async function delOrg(oid){if(!confirm('이 법인을 삭제할까요?'))return;try{await db.collection("orgs").doc(oid).delete();try{await db.collection("responses").doc(oid).delete();}catch(e){}try{await db.collection("reviews").doc(oid).delete();}catch(e){}try{await db.collection("memos").doc(oid).delete();}catch(e){}orgsC=orgsC.filter(o=>o.id!==oid);delete respC[oid];delete reviewC[oid];delete memosC[oid];renderHome();}catch(e){alert("삭제 실패");}}
@@ -827,6 +867,7 @@ function closeAdd(){document.getElementById('addModal').classList.remove('open')
 async function confirmAdd(){const nm=document.getElementById('addName').value.trim();if(!nm)return alert('법인명을 입력하세요.');if(orgsC.some(o=>o.name===nm))return alert('같은 이름이 있습니다.');const ref=await db.collection("orgs").add({name:nm,createdBy:CU.uid,createdAt:TS()});orgsC.push({id:ref.id,name:nm,createdBy:CU.uid});document.getElementById('addName').value='';closeAdd();renderHome();}
 
 function exportCSV(){const impMap={H:"상",M:"중",L:"하",R:"참고"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","Detail"];const rows=[];tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
+  
 </script>
 </body>
 </html>
