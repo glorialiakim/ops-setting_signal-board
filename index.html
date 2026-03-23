@@ -794,7 +794,7 @@ const otherMemos=orgsC.filter(o=>o.id!==ST.oid).map(o=>{const m=getMemo(o.id,it.
 // 공개 코멘트
 h+=`<div class="item-comments"><span class="ic-toggle" onclick="document.getElementById('ic_${it.id}')?.classList.toggle('open')">💬 Comment (${iCom.length})</span><div class="ic-list" id="ic_${it.id}">`;
 iCom.forEach(c=>{const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';const canDel=CU&&(CU.uid===c.uid||isAdmin());h+=`<div class="ic-item"><div class="ic-meta">${_h(c.authorName)} (${_h(c.orgName||'')}) · ${t}${canDel?` <span class="ic-del" onclick="delCmt('${c.id}')">삭제</span>`:''}</div><div class="ic-text">${highlightMentions(c.text)}</div></div>`;});
-h+=`<div class="ic-input-row"><input class="ic-input" id="ci_${it.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter')addCmt(${it.id})"/><button class="btn blue sm" onclick="addCmt(${it.id})">등록</button></div></div></div>`;
+h+=`<div class="ic-input-row" style="position:relative"><div class="mention-dropdown" id="md_${it.id}"></div><input class="ic-input" id="ci_${it.id}" placeholder="Comment... (@로 법인 멘션)" oninput="onMentionInput(this,${it.id})" onkeydown="if(event.key==='Enter')addCmt(${it.id})"/><button class="btn blue sm" onclick="addCmt(${it.id})">등록</button></div></div></div>`;
 // Contact HQ (비공개)
 if(canSeeHQ){
 h+=`<div class="item-comments" style="border-top-color:#c4b5fd"><span class="ic-toggle" onclick="document.getElementById('hq_${it.id}')?.classList.toggle('open')" style="color:#7c3aed">📨 Contact HQ (${hqMsgs.length}) <span style="font-size:8px;color:#94a3b8">비공개</span></span><div class="ic-list" id="hq_${it.id}">`;
