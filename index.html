@@ -231,6 +231,12 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 .inq-body{font-size:11px;color:#374151;line-height:1.6;background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:6px}
 .inq-reply{font-size:11px;color:#5b21b6;line-height:1.6;background:#faf5ff;border-radius:8px;padding:8px;border-left:3px solid #8b5cf6}
 .inq-private-note{font-size:10px;color:#8b5cf6;font-weight:600;text-align:center;margin:12px 0;padding:8px;background:#faf5ff;border-radius:8px;border:1px dashed #c4b5fd}
+
+#msLoginBtn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.user-mgmt-table{width:100%;border-collapse:collapse;font-size:13px}
+.user-mgmt-table th,.user-mgmt-table td{padding:10px;text-align:left}
+.user-mgmt-table thead tr{background:#f1f5f9}
+.user-mgmt-table tbody tr{border-bottom:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -243,6 +249,7 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <button class="nav-btn" id="nav-compare" onclick="go('compare')">Compare</button>
 <button class="nav-btn" id="nav-inquiry" onclick="go('inquiry')">📩 1:1 문의</button>
 <button class="nav-btn" onclick="go('guide')">📖 Guide</button>
+<button class="nav-btn" id="nav-usermgmt" onclick="go('usermgmt')" style="display:none">👥 사용자관리</button>
 <button class="nav-btn" onclick="exportCSV()">CSV</button>
 <span class="user-info" id="userInfoSpan"></span>
 <button class="nav-btn" onclick="doLogout()">로그아웃</button>
@@ -252,26 +259,32 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <!-- AUTH -->
 <div class="page active" id="page-auth"><div class="auth-wrap"><div class="auth-card">
 <div style="font-size:48px">🌏</div>
-<div class="auth-title" id="authTitle">로그인</div>
-<div class="auth-sub">회사 이메일로 로그인하세요</div>
-<input class="fi" id="authEmail" placeholder="Email" type="email"/>
-<input class="fi" id="authPw" placeholder="Password" type="password"/>
-<div id="signupFields" style="display:none">
-<input class="fi" id="authName" placeholder="이름"/>
-<select class="fi" id="authOrgSelect" onchange="toggleOtherOrg()">
+<div class="auth-title">Microsoft 로그인</div>
+<div class="auth-sub">InBody 회사 계정으로 로그인하세요</div>
+<button class="btn red" style="width:100%;justify-content:center;padding:13px;font-size:14px;gap:8px;display:flex;align-items:center" id="msLoginBtn" onclick="doMSLogin()">
+<svg width="20" height="20" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+Microsoft로 로그인
+</button>
+<div class="auth-error" id="authError"></div>
+</div></div></div>
+
+<!-- ORG SELECT PAGE (shown after MS login if org not set) -->
+<div class="page" id="page-orgselect"><div class="auth-wrap"><div class="auth-card">
+<div style="font-size:48px">🏢</div>
+<div class="auth-title">법인 선택</div>
+<div class="auth-sub">소속 법인을 선택해주세요</div>
+<select class="fi" id="orgSelectDropdown" onchange="toggleOtherOrg2()">
 <option value="">소속 법인을 선택하세요</option>
 <option>InBody USA</option><option>InBody EU</option><option>InBody Oceania</option>
 <option>InBody UK</option><option>InBody Japan</option><option>InBody China</option>
 <option>InBody Türkiye</option><option>InBody Asia</option><option>InBody Mexico</option>
 <option>InBody India</option><option>InBody Vietnam</option><option>InBody New York</option>
 <option>InBody HQ</option>
-<option value="__other__">Other (직접 입력)</option>
+<option value="__other__">기타 (직접 입력)</option>
 </select>
-<input class="fi" id="authOrgOther" placeholder="법인명을 직접 입력하세요" style="display:none"/>
-</div>
-<div class="auth-error" id="authError"></div>
-<button class="btn red" style="width:100%;justify-content:center;padding:13px;font-size:14px" id="authBtn" onclick="doAuth()">로그인</button>
-<div class="auth-toggle" id="authToggle" onclick="toggleAuthMode()">계정이 없으신가요? 회원가입</div>
+<input class="fi" id="orgOtherInput" placeholder="법인명 입력" style="display:none"/>
+<button class="btn red" style="width:100%;justify-content:center;padding:13px;font-size:14px;margin-top:8px" onclick="confirmOrg()">확인</button>
+<div class="auth-error" id="orgError"></div>
 </div></div></div>
 
 <!-- HOME -->
@@ -406,6 +419,14 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <div class="fg"><label class="fl">법인명</label><input class="fi" id="addName" placeholder="예: InBody Germany"/></div>
 <div class="mf"><button class="btn ghost sm" onclick="closeAdd()">취소</button><button class="btn green sm" onclick="confirmAdd()">추가</button></div>
 </div></div>
+
+<!-- USER MANAGEMENT (Admin only) -->
+<div class="page" id="page-usermgmt">
+<div style="max-width:900px;margin:0 auto;padding:20px">
+<h2 style="margin-bottom:16px">👥 사용자 관리</h2>
+<div id="userMgmtList"></div>
+</div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -553,14 +574,88 @@ async function loadItemComments(oid){try{const snap=await db.collection("comment
 function getItemComments(iid){return commC.filter(c=>c.itemId===iid&&!c.isHQ);}
 function getHQMessages(iid){return commC.filter(c=>c.itemId===iid&&c.isHQ);}
 
-let authMode="login";
-function toggleAuthMode(){authMode=authMode==="login"?"signup":"login";document.getElementById('authTitle').textContent=authMode==="login"?"로그인":"회원가입";document.getElementById('authBtn').textContent=authMode==="login"?"로그인":"회원가입";document.getElementById('authToggle').textContent=authMode==="login"?"계정이 없으신가요? 회원가입":"이미 계정이 있으신가요? 로그인";document.getElementById('signupFields').style.display=authMode==="signup"?"block":"none";document.getElementById('authError').className='auth-error';}
+/* Microsoft Auth */
+const msProvider = new firebase.auth.OAuthProvider('microsoft.com');
+msProvider.setCustomParameters({tenant: 'common'});
+
 function showAuthError(m){const e=document.getElementById('authError');e.textContent=m;e.className='auth-error show';}
-function toggleOtherOrg(){const s=document.getElementById('authOrgSelect'),o=document.getElementById('authOrgOther');o.style.display=s.value==='__other__'?'block':'none';}
-function getSelectedOrg(){const s=document.getElementById('authOrgSelect');return s.value==='__other__'?document.getElementById('authOrgOther').value.trim():s.value;}
-async function doAuth(){const email=document.getElementById('authEmail').value.trim(),pw=document.getElementById('authPw').value;if(!email||!pw)return showAuthError("이메일과 비밀번호를 입력하세요.");try{if(authMode==="signup"){if(!email.endsWith("@inbody.com"))return showAuthError("@inbody.com 이메일만 가입할 수 있습니다.");const name=document.getElementById('authName').value.trim(),orgName=getSelectedOrg();if(!name||!orgName)return showAuthError("이름과 법인명을 입력하세요.");const cred=await auth.createUserWithEmailAndPassword(email,pw);const role=ADMIN_EMAILS.includes(email)?"admin":"user";await db.collection("users").doc(cred.user.uid).set({email,name,orgName,role,createdAt:TS()});}else{await auth.signInWithEmailAndPassword(email,pw);}}catch(e){const m={"auth/email-already-in-use":"이미 사용 중인 이메일","auth/weak-password":"비밀번호 6자 이상","auth/user-not-found":"등록되지 않은 이메일","auth/invalid-credential":"이메일 또는 비밀번호 오류"};showAuthError(m[e.code]||e.message);}}
+function showOrgError(m){const e=document.getElementById('orgError');e.textContent=m;e.className='auth-error show';}
+function toggleOtherOrg2(){const s=document.getElementById('orgSelectDropdown'),o=document.getElementById('orgOtherInput');o.style.display=s.value==='__other__'?'block':'none';}
+function getSelectedOrg2(){const s=document.getElementById('orgSelectDropdown');return s.value==='__other__'?document.getElementById('orgOtherInput').value.trim():s.value;}
+
+async function doMSLogin(){
+  try{
+    const result = await auth.signInWithPopup(msProvider);
+    /* onAuthStateChanged will handle the rest */
+  }catch(e){
+    console.error(e);
+    if(e.code==='auth/popup-closed-by-user') return;
+    showAuthError(e.message||'로그인 실패');
+  }
+}
+
+async function confirmOrg(){
+  const orgName=getSelectedOrg2();
+  if(!orgName) return showOrgError('법인을 선택해주세요.');
+  const u=auth.currentUser;
+  if(!u) return;
+  const email=u.email||'';
+  const name=u.displayName||email.split('@')[0];
+  const role=ADMIN_EMAILS.includes(email)?'admin':'user';
+  /* Check if user doc exists */
+  const docRef=db.collection('users').doc(u.uid);
+  const existing=await docRef.get();
+  if(existing.exists){
+    await docRef.update({orgName:orgName});
+  }else{
+    await docRef.set({email,name,orgName,role,createdAt:TS()});
+  }
+  /* Also ensure org exists in orgs collection */
+  const orgSnap=await db.collection('orgs').where('name','==',orgName).get();
+  if(orgSnap.empty){
+    await db.collection('orgs').add({name:orgName,createdBy:u.uid,members:[u.uid]});
+  }else{
+    const orgDoc=orgSnap.docs[0];
+    const members=orgDoc.data().members||[];
+    if(!members.includes(u.uid)){
+      await orgDoc.ref.update({members:firebase.firestore.FieldValue.arrayUnion(u.uid)});
+    }
+  }
+  CU={uid:u.uid,email,name,orgName,role};
+  setupAfterLogin(CU);
+}
+
+async function setupAfterLogin(cu){
+  document.getElementById('headerSub').textContent=cu.name+' ('+cu.orgName+') · '+(cu.role==='admin'?'본사 관리자':'법인 사용자');
+  document.getElementById('userInfoSpan').innerHTML=_h(cu.email)+' <span class="role-badge '+cu.role+'">'+(cu.role==='admin'?'Admin':'User')+'</span>';
+  document.getElementById('mainNav').style.display='flex';
+  if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('nav-sales').style.display='';document.getElementById('nav-usermgmt').style.display='';var ab=document.getElementById('addOrgBtn');if(ab)ab.style.display='';document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='';});}else{document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='none';});}
+  await loadAllData();await loadFxAndSales();
+  if(cu.role!=='admin'){var myOrg=orgsC.find(function(o){return o.name===cu.orgName;});if(myOrg){if(myOrg.createdBy!==cu.uid){var members=myOrg.members||[];if(!members.includes(cu.uid)){members.push(cu.uid);await db.collection('orgs').doc(myOrg.id).update({members:members});myOrg.members=members;}}}else{var ref=await db.collection('orgs').add({name:cu.orgName,createdBy:cu.uid,createdAt:TS(),members:[cu.uid]});orgsC.push({id:ref.id,name:cu.orgName,createdBy:cu.uid,members:[cu.uid]});}}
+  go('home');
+}
+
 function doLogout(){auth.signOut();}
-auth.onAuthStateChanged(async u=>{if(u){try{const d=await db.collection("users").doc(u.uid).get();if(!d.exists){auth.signOut();return;}const ud=d.data(),role=ADMIN_EMAILS.includes(ud.email)?"admin":(ud.role||"user");CU={uid:u.uid,email:ud.email,name:ud.name,orgName:ud.orgName,role};document.getElementById('headerSub').textContent=`${ud.name} (${ud.orgName}) · ${role==="admin"?"본사 관리자":"법인 사용자"}`;document.getElementById('userInfoSpan').innerHTML=`${_h(ud.email)} <span class="role-badge ${role}">${role==="admin"?"Admin":"User"}</span>`;document.getElementById('mainNav').style.display='flex';    if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('addOrgBtn').style.display='';document.getElementById('nav-sales').style.display='';document.querySelectorAll('.guide-admin-only').forEach(e=>e.style.display='');}else{document.getElementById('nav-dashboard').style.display='';document.getElementById('nav-sales').style.display='';document.querySelectorAll('.guide-admin-only').forEach(e=>e.style.display='none');}    await loadAllData();await loadFxAndSales();if(role!=="admin"){const myOrg=orgsC.find(o=>o.name===ud.orgName);if(myOrg){if(myOrg.createdBy!==u.uid){const members=myOrg.members||[];if(!members.includes(u.uid)){members.push(u.uid);await db.collection("orgs").doc(myOrg.id).update({members:members});myOrg.members=members;}}}else{const ref=await db.collection("orgs").add({name:ud.orgName,createdBy:u.uid,createdAt:TS(),members:[u.uid]});orgsC.push({id:ref.id,name:ud.orgName,createdBy:u.uid,members:[u.uid]});}}go('home');}catch(e){console.error(e);}}else{CU=null;document.getElementById('mainNav').style.display='none';document.getElementById('headerSub').textContent='로그인이 필요합니다';go('auth');}});
+
+auth.onAuthStateChanged(async u=>{if(u){try{const d=await db.collection('users').doc(u.uid).get();if(!d.exists){
+  /* First time login - show org select */
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-orgselect').classList.add('active');
+  return;
+}const ud=d.data();
+if(!ud.orgName){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-orgselect').classList.add('active');
+  return;
+}
+const role=ADMIN_EMAILS.includes(ud.email)?'admin':(ud.role||'user');
+/* Update role in firestore if changed */
+if(ud.role!==role) await db.collection('users').doc(u.uid).update({role});
+CU={uid:u.uid,email:ud.email,name:ud.name,orgName:ud.orgName,role};
+setupAfterLogin(CU);
+}catch(e){console.error(e);}
+}else{CU=null;document.getElementById('mainNav').style.display='none';document.getElementById('headerSub').textContent='로그인이 필요합니다';go('auth');}});
+
 
 /* ══ SALES & FX ══ */
 const DIVISIONS={
@@ -691,7 +786,7 @@ async function saveSalesOne(oid){
   alert('저장되었습니다.');
 }
 
-function go(p){ST.page=p;document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));const n=document.getElementById('nav-'+p);if(n)n.classList.add('on');if(p==='home')renderHome();if(p==='dashboard')renderDashboard();if(p==='checklist')renderChecklist();if(p==='result')renderResult();if(p==='compare')renderCompare();if(p==='otherview'){}if(p==='inquiry')renderInquiry();if(p==='sales'){   let stabs='<button class="dash-tab on" onclick="switchSales(\'overview\',this)">전체</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div1\',this)">1부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div2\',this)">2부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div3\',this)">3부</button>';   if(isAdmin()){     stabs+='<button class="dash-tab" onclick="switchSales(\'fx\',this)">💱 환율 설정</button>';     stabs+='<button class="dash-tab" onclick="switchSales(\'input\',this)">📝 매출 입력</button>';   }   document.querySelector('#page-sales .dash-tabs').innerHTML=stabs;   loadFxAndSales().then(function(){renderSalesOverview();}); }}
+function go(p){ST.page=p;document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));const el=document.getElementById('page-'+p);if(el)el.classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));const n=document.getElementById('nav-'+p);if(n)n.classList.add('on');if(p==='home')renderHome();if(p==='dashboard')renderDashboard();if(p==='checklist')renderChecklist();if(p==='result')renderResult();if(p==='compare')renderCompare();if(p==='otherview'){}if(p==='usermgmt')renderUserMgmt();if(p==='inquiry')renderInquiry();if(p==='sales'){   let stabs='<button class="dash-tab on" onclick="switchSales(\'overview\',this)">전체</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div1\',this)">1부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div2\',this)">2부</button>';   stabs+='<button class="dash-tab" onclick="switchSales(\'div3\',this)">3부</button>';   if(isAdmin()){     stabs+='<button class="dash-tab" onclick="switchSales(\'fx\',this)">💱 환율 설정</button>';     stabs+='<button class="dash-tab" onclick="switchSales(\'input\',this)">📝 매출 입력</button>';   }   document.querySelector('#page-sales .dash-tabs').innerHTML=stabs;   loadFxAndSales().then(function(){renderSalesOverview();}); }}
 
 /* ══ HOME ══ */
 function renderHome(){
@@ -884,6 +979,40 @@ function selectMention(name,iid){const el=document.getElementById('ci_'+iid);con
 
   function exportCSV(){const impMap={H:"상",M:"중",L:"하",R:"참고"},tgt=isAdmin()?orgsC:orgsC.filter(o=>o.createdBy===CU?.uid);const hd=["법인","Track","섹션","중요도","담당","항목명","법인응답","HQ검토","Detail"];const rows=[];tgt.forEach(o=>{ALL.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);const trk=TRACKS.find(t=>t.id===sec.track);rows.push([o.name,trk.label,sec.label,impMap[it.imp],whoLabel(it.who),it.name,{yes:"O",no:"X",partial:"△"}[getResp(o.id,it.id)]||"",{confirmed:"확정",rejected:"추가의견"}[getReview(o.id,it.id)]||"",getMemo(o.id,it.id)]);});});const esc=v=>{const s=String(v??"");return/[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};const csv=[hd.map(esc).join(","),...rows.map(r=>r.map(esc).join(","))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Checklist_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
   
+
+/* User Management (Admin only) */
+async function renderUserMgmt(){
+  if(!isAdmin()){document.getElementById('userMgmtList').innerHTML='<p>권한이 없습니다.</p>';return;}
+  const snap=await db.collection('users').orderBy('email').get();
+  let html='<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#f1f5f9"><th style="padding:10px;text-align:left">이메일</th><th style="padding:10px;text-align:left">이름</th><th style="padding:10px;text-align:left">법인</th><th style="padding:10px;text-align:left">권한</th><th style="padding:10px;text-align:left">변경</th></tr></thead><tbody>';
+  snap.forEach(function(doc){
+    var u=doc.data();
+    var isAdminEmail=ADMIN_EMAILS.includes(u.email);
+    var currentRole=isAdminEmail?'admin':(u.role||'user');
+    html+='<tr style="border-bottom:1px solid var(--line)">';
+    html+='<td style="padding:10px">'+_h(u.email)+'</td>';
+    html+='<td style="padding:10px">'+_h(u.name)+'</td>';
+    html+='<td style="padding:10px">'+_h(u.orgName)+'</td>';
+    html+='<td style="padding:10px"><span class="role-badge '+currentRole+'">'+(currentRole==='admin'?'Admin':'User')+'</span></td>';
+    if(isAdminEmail){
+      html+='<td style="padding:10px;color:#94a3b8;font-size:11px">기본 Admin</td>';
+    }else{
+      html+='<td style="padding:10px"><select onchange="changeUserRole(\x27'+doc.id+'\x27,this.value)" style="padding:4px 8px;border-radius:6px;border:1px solid var(--line);font-size:12px">';
+      html+='<option value="user"'+(currentRole==='user'?' selected':'')+'>User</option>';
+      html+='<option value="admin"'+(currentRole==='admin'?' selected':'')+'>Admin</option>';
+      html+='</select></td>';
+    }
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  document.getElementById('userMgmtList').innerHTML=html;
+}
+async function changeUserRole(uid,newRole){
+  if(!isAdmin())return;
+  await db.collection('users').doc(uid).update({role:newRole});
+  renderUserMgmt();
+}
+
 </script>
 </body>
 </html>
