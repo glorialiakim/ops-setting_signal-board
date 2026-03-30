@@ -647,7 +647,7 @@ async function setupAfterLogin(cu){
   document.getElementById('mainNav').style.display='flex';
   if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('nav-sales').style.display='';document.getElementById('nav-usermgmt').style.display='';var ab=document.getElementById('addOrgBtn');if(ab)ab.style.display='';document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='';});}else{document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='none';});}
   await loadAllData();await loadFxAndSales();
-  if(cu.role!=='admin'){var myOrg=orgsC.find(function(o){return o.name===cu.orgName;});if(myOrg){if(myOrg.createdBy!==cu.uid){var members=myOrg.members||[];if(!members.includes(cu.uid)){members.push(cu.uid);await db.collection('orgs').doc(myOrg.id).update({members:members});myOrg.members=members;}}}else{var ref=await db.collection('orgs').add({name:cu.orgName,createdBy:cu.uid,createdAt:TS(),members:[cu.uid]});orgsC.push({id:ref.id,name:cu.orgName,createdBy:cu.uid,members:[cu.uid]});}}
+  if(cu.role!=='admin'){var myOrg=orgsC.find(function(o){return o.name===cu.orgName;});if(myOrg){if(myOrg.createdBy!==cu.uid){var members=myOrg.members||[];if(!members.includes(cu.uid)){members.push(cu.uid);await db.collection('orgs').doc(myOrg.id).update({members:members});myOrg.members=members;}}}else if(cu.orgName){var ref=await db.collection('orgs').add({name:cu.orgName,createdBy:cu.uid,createdAt:TS(),members:[cu.uid]});orgsC.push({id:ref.id,name:cu.orgName,createdBy:cu.uid,members:[cu.uid]});}}
   go('home');
 }
 
