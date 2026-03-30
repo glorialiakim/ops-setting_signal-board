@@ -590,6 +590,7 @@ async function doMSLogin(){
   }catch(e){
     console.error(e);
     if(e.code==='auth/popup-closed-by-user') return;
+      if(e.code==='auth/account-exists-with-different-credential'){try{await auth.signInWithCredential(e.credential);}catch(e2){console.error(e2);showAuthError('계정 연결 오류');}return;}
     showAuthError(e.message||'로그인 실패');
   }
 }
