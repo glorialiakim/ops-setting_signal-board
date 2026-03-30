@@ -586,11 +586,26 @@ function getSelectedOrg2(){const s=document.getElementById('orgSelectDropdown');
 async function doMSLogin(){
   try{
     const result = await auth.signInWithPopup(msProvider);
-    /* onAuthStateChanged will handle the rest */
   }catch(e){
     console.error(e);
     if(e.code==='auth/popup-closed-by-user') return;
-      if(e.code==='auth/account-exists-with-different-credential'){try{await auth.signInWithCredential(e.credential);}catch(e2){console.error(e2);showAuthError('계정 연결 오류');}return;}
+    if(e.code==='auth/account-exists-with-different-credential'){
+      const email = e.email; // 충돌 이메일
+      try{
+        // 해당 이메일의 기존 로그인 방식 확인
+        const methods = await auth.fetchSignInMethodsForEmail(email);
+        if(methods.includes('microsoft.com')){
+          // 이미 MS 계정인데 에러? → 재시도
+          await auth.signInWithPopup(msProvider);
+        } else {
+          showAuthError(`이미 다른 방식(${methods.join(', ')})으로 가입된 이메일입니다. Firebase 콘솔에서 계정을 통합해주세요.`);
+        }
+      }catch(e2){
+        console.error(e2);
+        showAuthError('계정 연결 오류: ' + e2.message);
+      }
+      return;
+    }
     showAuthError(e.message||'로그인 실패');
   }
 }
