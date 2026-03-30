@@ -9,7 +9,7 @@
 :root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4444;--tA:#6366f1;--tB:#f59e0b}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:13px}
-header{background:linear-gradient(135deg,#97h1B2F,#c0392b);padding:14px 20px;box-shadow:0 4px 20px rgba(151,27,47,.3)}
+header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-shadow:0 4px 20px rgba(151,27,47,.3)}
 .hi{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .logo h1{font-size:15px;font-weight:800;color:#fff}.logo p{font-size:10px;color:rgba(255,255,255,.6);font-weight:600;margin-top:1px}
 .nav{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
@@ -638,16 +638,11 @@ async function setupAfterLogin(cu){
 function doLogout(){auth.signOut();}
 
 auth.onAuthStateChanged(async u=>{if(u){try{const d=await db.collection('users').doc(u.uid).get();if(!d.exists){
-  /* First time login - show org select */
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
-  document.getElementById('page-orgselect').classList.add('active');
-  return;
+    /* First time login - auto create user doc */
+    const _em=u.email||'';const _nm=u.displayName||_em.split('@')[0];const _rl=ADMIN_EMAILS.includes(_em)?'admin':'user';
+    await db.collection('users').doc(u.uid).set({email:_em,name:_nm,orgName:'',role:_rl,createdAt:TS()});
+    CU={uid:u.uid,email:_em,name:_nm,orgName:'',role:_rl};setupAfterLogin(CU);return;
 }const ud=d.data();
-if(!ud.orgName){
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
-  document.getElementById('page-orgselect').classList.add('active');
-  return;
-}
 const role=ADMIN_EMAILS.includes(ud.email)?'admin':(ud.role||'user');
 /* Update role in firestore if changed */
 if(ud.role!==role) await db.collection('users').doc(u.uid).update({role});
@@ -992,7 +987,22 @@ async function renderUserMgmt(){
     html+='<tr style="border-bottom:1px solid var(--line)">';
     html+='<td style="padding:10px">'+_h(u.email)+'</td>';
     html+='<td style="padding:10px">'+_h(u.name)+'</td>';
-    html+='<td style="padding:10px">'+_h(u.orgName)+'</td>';
+      html+='<td style="padding:10px"><select onchange="changeUserOrg(\x27'+doc.id+'\x27,this.value)" style="padding:4px 8px;border-radius:6px">';
+      html+='<option value=""'+((!u.orgName)?' selected':'')+'>미배정</option>';
+      html+='<option value="InBody USA"'+((u.orgName==="InBody USA")?' selected':'')+'>InBody USA</option>';
+      html+='<option value="InBody EU"'+((u.orgName==="InBody EU")?' selected':'')+'>InBody EU</option>';
+      html+='<option value="InBody Oceania"'+((u.orgName==="InBody Oceania")?' selected':'')+'>InBody Oceania</option>';
+      html+='<option value="InBody UK"'+((u.orgName==="InBody UK")?' selected':'')+'>InBody UK</option>';
+      html+='<option value="InBody Japan"'+((u.orgName==="InBody Japan")?' selected':'')+'>InBody Japan</option>';
+      html+='<option value="InBody China"'+((u.orgName==="InBody China")?' selected':'')+'>InBody China</option>';
+      html+='<option value="InBody Türkiye"'+((u.orgName==="InBody Türkiye")?' selected':'')+'>InBody Türkiye</option>';
+      html+='<option value="InBody Asia"'+((u.orgName==="InBody Asia")?' selected':'')+'>InBody Asia</option>';
+      html+='<option value="InBody Mexico"'+((u.orgName==="InBody Mexico")?' selected':'')+'>InBody Mexico</option>';
+      html+='<option value="InBody India"'+((u.orgName==="InBody India")?' selected':'')+'>InBody India</option>';
+      html+='<option value="InBody Vietnam"'+((u.orgName==="InBody Vietnam")?' selected':'')+'>InBody Vietnam</option>';
+      html+='<option value="InBody New York"'+((u.orgName==="InBody New York")?' selected':'')+'>InBody New York</option>';
+      html+='<option value="InBody HQ"'+((u.orgName==="InBody HQ")?' selected':'')+'>InBody HQ</option>';
+      html+='</select></td>';
     html+='<td style="padding:10px"><span class="role-badge '+currentRole+'">'+(currentRole==='admin'?'Admin':'User')+'</span></td>';
     if(isAdminEmail){
       html+='<td style="padding:10px;color:#94a3b8;font-size:11px">기본 Admin</td>';
@@ -1012,6 +1022,12 @@ async function changeUserRole(uid,newRole){
   await db.collection('users').doc(uid).update({role:newRole});
   renderUserMgmt();
 }
+
+    async function changeUserOrg(uid,newOrg){
+      if(!isAdmin())return;
+      await db.collection('users').doc(uid).update({orgName:newOrg});
+      renderUserMgmt();
+    }
 
 </script>
 </body>
