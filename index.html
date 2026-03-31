@@ -776,8 +776,8 @@ function renderSalesInput(){if(!isAdmin()){return renderSalesInputReadOnly();}
     const amt25=sd.y25||sd.amount||0;const amt26=(sd.y26||{}).amount||0;const mon26=(sd.y26||{}).month||new Date().getMonth()+1;const krw25=amt25?toKRW(amt25,cur):0;const krw26=amt26?toKRW(amt26,cur):0;
     h+=`<tr><td style="font-weight:700">${_h(o.name)}</td><td style="font-size:10px">${getOrgDiv(o.name)}</td><td>${cur}</td>`;
     h+=`<td><input class="fi" id="sa25_${o.id}" value="${amt25||''}" placeholder="25년 매출액" style="width:115px;margin:0;padding:6px" oninput="updateKrwPreview25('${o.id}','${cur}')"/></td><td><input class="fi" id="sa26_${o.id}" value="${amt26||''}" placeholder="26년 매출액" style="width:115px;margin:0;padding:6px" oninput="updateKrwPreview26('${o.id}','${cur}')"/></td>`;
-    h+=`<td><select class="fi" id="sm26_${o.id}" style="width:80px;margin:0;padding:4px">${[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>`<option value="${m}"${m==mon26?' selected':''}>${m}월</option>`).join('')}</select></td><td style="font-weight:700;font-size:12px" id="skrw25_${o.id}">${krw25?formatKRW(krw25):'-'}</td><td style="font-weight:700;font-size:12px" id="skrw26_${o.id}">${krw26?formatKRW(krw26):'-'}</td><!--/></td>`;
-    h+=`<td style="font-weight:700;font-size:12px" id="skrw_${o.id}">${krw?formatKRW(krw):'-'}</td>`;
+    h+=`<td><select class="fi" id="sm26_${o.id}" style="width:80px;margin:0;padding:4px">${[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>`<option value="${m}"${m==mon26?' selected':''}>${m}월</option>`).join('')}</select></td><td style="font-weight:700;font-size:12px" id="skrw25_${o.id}">${krw25?formatKRW(krw25):'-'}</td><td style="font-weight:700;font-size:12px" id="skrw26_${o.id}">${krw26?formatKRW(krw26):'-'}</td></td>`;
+    
     h+=`<td><button class="btn blue sm" onclick="saveSalesOne('${o.id}')">저장</button></td></tr>`;
   });
   h+=`</tbody></table></div>`;
@@ -792,7 +792,7 @@ async function saveSalesOne(oid){if(!isAdmin()){alert('Admin만 매출을 수정
   const amt25=parseFloat(document.getElementById('sa25_'+oid)?.value)||0;const amt26=parseFloat(document.getElementById('sa26_'+oid)?.value)||0;const mon26=parseInt(document.getElementById('sm26_'+oid)?.value)||new Date().getMonth()+1;
   const amount=0;// legacy - replaced by amt25/amt26
   if(!salesData)salesData={};
-  salesData[oid]={year,amount};
+  salesData[oid]={y25:amt25,y26:{amount:amt26,month:mon26}};
   await db.collection("settings").doc("salesData").set(salesData);
   alert('저장되었습니다.');
 }
