@@ -1,4 +1,4 @@
-나 ㅁ<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -1058,7 +1058,6 @@ async function changeUserRole(uid,newRole){
       await db.collection('users').doc(uid).update({orgName:newOrg});
       renderUserMgmt();
     }
-}
 </script>
 </body>
 </html>
