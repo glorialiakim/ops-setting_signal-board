@@ -1057,7 +1057,7 @@ async function changeUserRole(uid,newRole){
       await db.collection('users').doc(uid).update({orgName:newOrg});
       renderUserMgmt();
     }
-
+}
 </script>
 </body>
 </html>
