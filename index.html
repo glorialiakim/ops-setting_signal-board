@@ -696,7 +696,7 @@ function renderSalesTable(orgList,title){
   let h=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>${title}</th><th>통화</th><th>현지 매출</th><th>원화 환산</th><th>확정률</th><th>A.조직</th><th>B.판매</th><th>미완료(상)</th></tr></thead><tbody>`;
   const rows=orgsInList.map(o=>{
     const cur=ORG_CURRENCY[o.name]||'USD';
-    const sd=salesData[o.id]||{};const localAmt=sd.amount||0;const krw=toKRW(localAmt,cur);
+    const sd=salesData[o.id]||{};const localAmt=sd.y25||sd.amount||0;const krw=toKRW(localAmt,cur);
     const ov=calcOrg(o.id),tA=calcTrack(o.id,"tA"),tB=calcTrack(o.id,"tB");
     const highPriorityTodo=ALL.filter(i=>i.imp==="H"&&!isComplete(o.id,i.id)).length;
     return{o,cur,localAmt,krw,ov,tA,tB,highPriorityTodo};
@@ -767,30 +767,30 @@ function resetFx(){
   });
 }
 
-function renderSalesInput(){
-  let h=`<div style="font-size:13px;color:#64748b;margin-bottom:12px">각 법인의 연간 매출을 현지 통화 기준으로 입력하세요. 환율에 따라 원화로 자동 환산됩니다.</div>`;
-  h+=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>법인</th><th>부</th><th>통화</th><th>연도</th><th>현지 매출액</th><th>원화 환산</th><th>저장</th></tr></thead><tbody>`;
+function renderSalesInput(){if(!isAdmin()){return renderSalesInputReadOnly();}
+  let h=`<div style="font-size:13px;color:#64748b;margin-bottom:12px">25년/26년 매출을 현지 통화 기준으로 입력하세요. (Admin 전용, 환율에 따라 원화 자동 환산)</div>`;
+  h+=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>법인</th><th>부</th><th>통화</th><th>25년 매출</th><th>26년 매출</th><th>26년 기준월</th><th>원화(25년)</th><th>원화(26년)</th><th>저장</th></tr></thead><tbody>`;
   orgsC.forEach(o=>{
     const cur=ORG_CURRENCY[o.name]||'USD';
     const sd=salesData[o.id]||{};
-    const krw=sd.amount?toKRW(sd.amount,cur):0;
+    const amt25=sd.y25||sd.amount||0;const amt26=(sd.y26||{}).amount||0;const mon26=(sd.y26||{}).month||new Date().getMonth()+1;const krw25=amt25?toKRW(amt25,cur):0;const krw26=amt26?toKRW(amt26,cur):0;
     h+=`<tr><td style="font-weight:700">${_h(o.name)}</td><td style="font-size:10px">${getOrgDiv(o.name)}</td><td>${cur}</td>`;
-    h+=`<td><input class="fi" id="sy_${o.id}" value="${sd.year||2024}" style="width:70px;margin:0;padding:6px"/></td>`;
-    h+=`<td><input class="fi" id="sa_${o.id}" value="${sd.amount||''}" placeholder="매출액" style="width:140px;margin:0;padding:6px" oninput="updateKrwPreview('${o.id}','${cur}')"/></td>`;
+    h+=`<td><input class="fi" id="sa25_${o.id}" value="${amt25||''}" placeholder="25년 매출액" style="width:115px;margin:0;padding:6px" oninput="updateKrwPreview25('${o.id}','${cur}')"/></td><td><input class="fi" id="sa26_${o.id}" value="${amt26||''}" placeholder="26년 매출액" style="width:115px;margin:0;padding:6px" oninput="updateKrwPreview26('${o.id}','${cur}')"/></td>`;
+    h+=`<td><select class="fi" id="sm26_${o.id}" style="width:80px;margin:0;padding:4px">${[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>`<option value="${m}"${m==mon26?' selected':''}>${m}월</option>`).join('')}</select></td><td style="font-weight:700;font-size:12px" id="skrw25_${o.id}">${krw25?formatKRW(krw25):'-'}</td><td style="font-weight:700;font-size:12px" id="skrw26_${o.id}">${krw26?formatKRW(krw26):'-'}</td><!--/></td>`;
     h+=`<td style="font-weight:700;font-size:12px" id="skrw_${o.id}">${krw?formatKRW(krw):'-'}</td>`;
     h+=`<td><button class="btn blue sm" onclick="saveSalesOne('${o.id}')">저장</button></td></tr>`;
   });
   h+=`</tbody></table></div>`;
   document.getElementById('salesInput').innerHTML=h;
 }
-function updateKrwPreview(oid,cur){
+function renderSalesInputReadOnly(){let h=`<div style="font-size:13px;color:#64748b;margin-bottom:12px">법인별 매출 현황입니다. (조회 전용)</div>`;h+=`<div style="overflow-x:auto"><table class="cmp-tbl"><thead><tr><th>법인</th><th>부</th><th>통화</th><th>25년 매출</th><th>25년(원화)</th><th>26년 매출</th><th>26년(원화)</th><th>26년 기준월</th></tr></thead><tbody>`;orgsC.forEach(o=>{const cur=ORG_CURRENCY[o.name]||'USD';const sd=salesData[o.id]||{};const amt25=sd.y25||sd.amount||0;const amt26=(sd.y26||{}).amount||0;const mon26=(sd.y26||{}).month||'-';const krw25=amt25?toKRW(amt25,cur):0;const krw26=amt26?toKRW(amt26,cur):0;h+=`<tr><td style="font-weight:700">${_h(o.name)}</td><td style="font-size:10px">${getOrgDiv(o.name)}</td><td>${cur}</td><td style="text-align:right">${amt25?formatKRW(amt25):'-'}</td><td style="text-align:right">${krw25?formatKRW(krw25):'-'}</td><td style="text-align:right">${amt26?formatKRW(amt26):'-'}</td><td style="text-align:right">${krw26?formatKRW(krw26):'-'}</td><td style="text-align:center">${mon26!=='-'?mon26+'월':'-'}</td></tr>`;});h+=`</tbody></table></div>`;document.getElementById('salesInput').innerHTML=h;}function updateKrwPreview25(oid,cur){const el=document.getElementById('sa25_'+oid);const amt=parseFloat(el?.value)||0;const krw=toKRW(amt,cur);document.getElementById('skrw25_'+oid).textContent=krw?formatKRW(krw):'-';}function updateKrwPreview26(oid,cur){const el=document.getElementById('sa26_'+oid);const amt=parseFloat(el?.value)||0;const krw=toKRW(amt,cur);document.getElementById('skrw26_'+oid).textContent=krw?formatKRW(krw):'-';}function updateKrwPreview(oid,cur){
   const el=document.getElementById('sa_'+oid);const amt=parseFloat(el?.value)||0;
   const krw=toKRW(amt,cur);
   document.getElementById('skrw_'+oid).textContent=krw?formatKRW(krw):'-';
 }
-async function saveSalesOne(oid){
-  const year=document.getElementById('sy_'+oid)?.value||'2024';
-  const amount=parseFloat(document.getElementById('sa_'+oid)?.value)||0;
+async function saveSalesOne(oid){if(!isAdmin()){alert('Admin만 매출을 수정할 수 있습니다.');return;}
+  const amt25=parseFloat(document.getElementById('sa25_'+oid)?.value)||0;const amt26=parseFloat(document.getElementById('sa26_'+oid)?.value)||0;const mon26=parseInt(document.getElementById('sm26_'+oid)?.value)||new Date().getMonth()+1;
+  const amount=0;// legacy - replaced by amt25/amt26
   if(!salesData)salesData={};
   salesData[oid]={year,amount};
   await db.collection("settings").doc("salesData").set(salesData);
