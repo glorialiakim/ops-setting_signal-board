@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+나 ㅁ<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4h444;--tA:#6366f1;--tB:#f59e0b}
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0}h
 body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:13px}
 header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-shadow:0 4px 20px rgba(151,27,47,.3)}
 .hi{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -827,6 +827,7 @@ const gapCard=`<div style="background:linear-gradient(135deg,#eff6ff,#f0fdf4);bo
 document.getElementById('gapCardArea').innerHTML=gapCard;}else{document.getElementById('gapCardArea').innerHTML='';}
 }
 document.getElementById('orgGrid').innerHTML=cards||'<div class="no-results">등록된 법인이 없습니다.</div>';
+}
 function openOrg(oid){ST.oid=oid;ST.sec=SECTIONS[0].id;ST.fStatus="all";ST.fImp="all";ST.fWho="all";ST.search="";go('checklist');}
 async function delOrg(oid){if(!confirm('이 법인을 삭제할까요?'))return;try{await db.collection("orgs").doc(oid).delete();try{await db.collection("responses").doc(oid).delete();}catch(e){}try{await db.collection("reviews").doc(oid).delete();}catch(e){}try{await db.collection("memos").doc(oid).delete();}catch(e){}orgsC=orgsC.filter(o=>o.id!==oid);delete respC[oid];delete reviewC[oid];delete memosC[oid];renderHome();}catch(e){alert("삭제 실패");}}
 
