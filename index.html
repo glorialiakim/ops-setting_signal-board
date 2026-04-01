@@ -660,7 +660,9 @@ auth.onAuthStateChanged(async u=>{if(u){try{const d=await db.collection('users')
     /* First time login - auto create user doc */
     const _em=u.email||'';const _nm=u.displayName||_em.split('@')[0];const _rl=ADMIN_EMAILS.includes(_em)?'admin':'user';
     await db.collection('users').doc(u.uid).set({email:_em,name:_nm,orgName:'',role:_rl,createdAt:TS()});
-    CU={uid:u.uid,email:_em,name:_nm,orgName:'',role:_rl};setupAfterLogin(CU);return;
+    CU={uid:u.uid,email:_em,name:_nm,orgName:'',role:_rl};
+    if(_rl==='admin'){setupAfterLogin(CU);}else{document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));document.getElementById('page-orgselect').classList.add('active');}
+    return;
 }const ud=d.data();
 const role=ADMIN_EMAILS.includes(ud.email)?'admin':(ud.role||'user');
 /* Update role in firestore if changed */
