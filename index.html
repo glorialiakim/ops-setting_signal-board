@@ -962,11 +962,13 @@ async function renderDashUsers(){
   }catch(e){document.getElementById('dashUsers').innerHTML='<div class="no-results">로드 실패</div>';}
 }
 async function changeUserOrg(uid,newOrg){
+  if(!isAdmin())return;
   if(!newOrg)return;
   if(newOrg==="__other__"){newOrg=prompt('새 법인명을 입력하세요:');if(!newOrg)return;}
   if(!confirm(`이 사용자의 소속을 "${newOrg}"(으)로 변경할까요?`))return;
   await db.collection("users").doc(uid).update({orgName:newOrg});
-  alert('변경되었습니다.');renderDashUsers();
+  alert('변경되었습니다.');
+  if(ST.page==='usermgmt')renderUserMgmt();else renderDashUsers();
 }
 async function deleteUser(uid,name){
   if(!confirm(`"${name}" 사용자를 삭제할까요?\n삭제 후 해당 사용자는 로그인이 차단됩니다.`))return;
@@ -1058,11 +1060,7 @@ async function changeUserRole(uid,newRole){
   renderUserMgmt();
 }
 
-    async function changeUserOrg(uid,newOrg){
-      if(!isAdmin())return;
-      await db.collection('users').doc(uid).update({orgName:newOrg});
-      renderUserMgmt();
-    }
+    /* changeUserOrg defined above (L962 area) — unified for both dashboard and usermgmt */
 </script>
 </body>
 </html>
