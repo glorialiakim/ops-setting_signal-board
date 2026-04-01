@@ -703,7 +703,7 @@ const role=ADMIN_EMAILS.includes(ud.email)?'admin':(ud.role||'user');
 /* Update role in firestore if changed */
 if(ud.role!==role) await db.collection('users').doc(u.uid).update({role});
 CU={uid:u.uid,email:ud.email,name:ud.name,orgName:ud.orgName,role};
-setupAfterLogin(CU);
+if(role!=='admin'&&!ud.orgName){   document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));   document.getElementById('page-orgselect').classList.add('active');   return; } setupAfterLogin(CU);
 }catch(e){console.error(e);}
 }else{CU=null;document.getElementById('mainNav').style.display='none';document.getElementById('headerSub').textContent='로그인이 필요합니다';go('auth');}});
 
