@@ -6,7 +6,7 @@
 <title>글로벌 CS 운영 함께 단계 올리기</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4444;--tA:#6366f1;--tB:#f59e0b}
+:root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4444;--tA:#101820;--tB:#971B2F}
 *{box-sizing:border-box;margin:0;padding:0}
 :focus-visible{outline:2px solid var(--ok);outline-offset:2px}
 body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px}
@@ -20,8 +20,8 @@ header{background:#5c1a27;padding:10px 20px;box-shadow:0 2px 12px rgba(0,0,0,.18
 .page{display:none;max-width:1200px;margin:0 auto;padding:20px 14px}.page.active{display:block}
 .btn{display:inline-flex;align-items:center;gap:4px;padding:8px 16px;border-radius:18px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
 .btn.green{background:#22c55e;color:#fff}.btn.ghost{background:#fff;border:1px solid var(--line);color:#555}
-.btn.red{background:var(--red);color:#fff}.btn.blue{background:#3b82f6;color:#fff}
-.btn.orange{background:#f59e0b;color:#fff}.btn.purple{background:#8b5cf6;color:#fff}
+.btn.red{background:var(--red);color:#fff}.btn.blue{background:#101820;color:#fff}
+.btn.orange{background:var(--red);color:#fff}.btn.purple{background:#101820;color:#fff}
 .btn.sm{padding:5px 12px;font-size:11px}.btn:disabled{opacity:.5;cursor:not-allowed}
 .auth-wrap{max-width:400px;margin:60px auto}
 .auth-card{background:#fff;border-radius:22px;padding:36px;border:1px solid var(--line);box-shadow:0 4px 24px rgba(0,0,0,.07);text-align:center}
@@ -29,11 +29,11 @@ header{background:#5c1a27;padding:10px 20px;box-shadow:0 2px 12px rgba(0,0,0,.18
 .auth-sub{font-size:12px;color:#64748b;font-weight:600;margin-bottom:24px;line-height:1.6}
 .fi{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:13px;font-family:inherit;outline:none;margin-bottom:10px}
 .fi:focus{border-color:var(--ok);box-shadow:0 0 0 3px rgba(34,197,94,.1)}
-.auth-toggle{font-size:12px;color:#3b82f6;font-weight:700;cursor:pointer;margin-top:12px;display:inline-block}
+.auth-toggle{font-size:12px;color:var(--red);font-weight:700;cursor:pointer;margin-top:12px;display:inline-block}
 .auth-toggle:hover{text-decoration:underline}
 .auth-error{font-size:11px;color:var(--no);font-weight:700;margin-top:8px;display:none}.auth-error.show{display:block}
 .role-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:800}
-.role-badge.admin{background:#ede9fe;color:#5b21b6}.role-badge.user{background:#e0f2fe;color:#0369a1}
+.role-badge.admin{background:#fde8ec;color:#971B2F}.role-badge.user{background:#f1f5f9;color:#374151}
 .gstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
 .gs{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid var(--line)}
 .gs-l{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px}
@@ -138,13 +138,13 @@ header{background:#5c1a27;padding:10px 20px;box-shadow:0 2px 12px rgba(0,0,0,.18
 .st-badge{padding:3px 10px;border-radius:8px;font-size:11px;font-weight:800}
 .st-badge.yes{background:#d1fae5;color:#065f46}.st-badge.no{background:#fee2e2;color:#991b1b}.st-badge.partial{background:#fef3c7;color:#92400e}.st-badge.none{background:#f1f5f9;color:#94a3b8}
 .st-badge.confirmed{background:#22c55e;color:#fff}.st-badge.rejected{background:#8b5cf6;color:#fff}
-.detail-toggle{font-size:11px;font-weight:700;color:#3b82f6;cursor:pointer;user-select:none;margin-bottom:6px;display:inline-block}
+.detail-toggle{font-size:11px;font-weight:700;color:var(--red);cursor:pointer;user-select:none;margin-bottom:6px;display:inline-block}
 .detail-toggle:hover{text-decoration:underline}
 .detail-box{display:none;margin-bottom:10px}.detail-box.open{display:block}
 .detail-section{margin-bottom:8px}
 .detail-label{font-size:10px;font-weight:800;color:#64748b;margin-bottom:3px}
 .detail-text{font-size:11px;color:#374151;line-height:1.6;background:#f8fafc;border-radius:8px;padding:8px 10px;border-left:3px solid var(--line)}
-.detail-text.why{border-left-color:#ef4444}.detail-text.how{border-left-color:#3b82f6}.detail-text.done-criteria{border-left-color:#22c55e}
+.detail-text.why{border-left-color:#ef4444}.detail-text.how{border-left-color:#101820}.detail-text.done-criteria{border-left-color:#22c55e}
 .item-btns{display:flex;gap:5px}
 .ib{flex:1;padding:10px;border-radius:10px;border:2px solid var(--line);background:#fff;font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:.15s}
 .ib.yes{border-color:#86efac;color:#16a34a}.ib.yes.on{background:var(--ok);color:#fff;border-color:var(--ok)}
@@ -184,7 +184,7 @@ header{background:#5c1a27;padding:10px 20px;box-shadow:0 2px 12px rgba(0,0,0,.18
 .rg-pct{font-size:40px;font-weight:800;color:var(--red);margin:6px 0}
 .track-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
 .ts-box{border-radius:14px;padding:16px;text-align:center;border:2px solid var(--line)}
-.ts-box.tA{border-color:var(--tA);background:#f5f3ff}.ts-box.tB{border-color:var(--tB);background:#fffbeb}
+.ts-box.tA{border-color:var(--tA);background:#f1f5f9}.ts-box.tB{border-color:var(--tB);background:#fde8ec}
 .ts-label{font-size:11px;font-weight:800;margin-bottom:4px}
 .ts-pct{font-size:28px;font-weight:800}
 .who-result-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
@@ -451,8 +451,8 @@ const ADMIN_EMAILS = [
 ];
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.firestore(),TS=firebase.firestore.FieldValue.serverTimestamp;
-const TRACKS=[{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#6366f1"},{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#f59e0b"}];
-const SECTIONS=[{id:"a1",track:"tA",label:"인증·인허가",emoji:"🛂",color:"#8b5cf6"},{id:"a2",track:"tA",label:"품질·규제 체계",emoji:"🔬",color:"#6366f1"},{id:"a3",track:"tA",label:"조직·인프라",emoji:"⚙️",color:"#0ea5e9"},{id:"a4",track:"tA",label:"법률·컴플라이언스",emoji:"⚖️",color:"#10b981"},{id:"a5",track:"tA",label:"거버넌스·정책 관리",emoji:"📋",color:"#64748b"},{id:"a6",track:"tA",label:"HR 체계",emoji:"👥",color:"#7c3aed"},{id:"a7",track:"tA",label:"회계·재무 체계",emoji:"📊",color:"#0891b2"},{id:"b1",track:"tB",label:"영업·수주",emoji:"💼",color:"#f59e0b"},{id:"b2",track:"tB",label:"대리점 관리",emoji:"🤝",color:"#d946ef"},{id:"b3",track:"tB",label:"공급망·출고",emoji:"📦",color:"#ec4899"},{id:"b4",track:"tB",label:"설치·고객경험",emoji:"🔧",color:"#f97316"},{id:"b5",track:"tB",label:"CS·사후서비스",emoji:"🛠️",color:"#14b8a6"},{id:"b6",track:"tB",label:"회계·수금",emoji:"💰",color:"#e11d48"},{id:"b7",track:"tB",label:"마케팅",emoji:"📣",color:"#059669"}];
+const TRACKS=[{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#101820"},{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#971B2F"}];
+const SECTIONS=[{id:"a1",track:"tA",label:"인증·인허가",emoji:"🛂",color:"#1e293b"},{id:"a2",track:"tA",label:"품질·규제 체계",emoji:"🔬",color:"#334155"},{id:"a3",track:"tA",label:"조직·인프라",emoji:"⚙️",color:"#0369a1"},{id:"a4",track:"tA",label:"법률·컴플라이언스",emoji:"⚖️",color:"#10b981"},{id:"a5",track:"tA",label:"거버넌스·정책 관리",emoji:"📋",color:"#64748b"},{id:"a6",track:"tA",label:"HR 체계",emoji:"👥",color:"#101820"},{id:"a7",track:"tA",label:"회계·재무 체계",emoji:"📊",color:"#0891b2"},{id:"b1",track:"tB",label:"영업·수주",emoji:"💼",color:"#971B2F"},{id:"b2",track:"tB",label:"대리점 관리",emoji:"🤝",color:"#9f1239"},{id:"b3",track:"tB",label:"공급망·출고",emoji:"📦",color:"#c0143c"},{id:"b4",track:"tB",label:"설치·고객경험",emoji:"🔧",color:"#b45309"},{id:"b5",track:"tB",label:"CS·사후서비스",emoji:"🛠️",color:"#0369a1"},{id:"b6",track:"tB",label:"회계·수금",emoji:"💰",color:"#7f1d1d"},{id:"b7",track:"tB",label:"마케팅",emoji:"📣",color:"#059669"}];
 const ALL=[
 {id:1,sec:"a1",imp:"H",who:"local",name:"현지 관세·세금 감면 제도 활용",why:"감면 제도를 놓치면 불필요한 비용이 지속 발생",how:"현지 세무사·업계 네트워크를 통해 감면 제도를 조사·문서화",done:"①감면 제도가 조사·문서화됨 ②통관 시 감면이 적용됨"},
 {id:2,sec:"a1",imp:"R",who:"both",name:"[경험공유] 의료기기 인증 프로세스",why:"각국 인증 기준·필수 서류가 상이하므로 타 법인 경험이 핵심 참고자료",how:"신생 법인은 외부 컨설팅 업체 도움으로 초기 인증 진행 후 자체 보완",done:"①인증 프로세스 및 활용 문서가 정리됨 ②타 법인에 경험이 공유됨"},
