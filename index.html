@@ -344,6 +344,7 @@ Microsoft로 로그인
 <button class="btn orange sm" id="btnTemplate" onclick="downloadTemplate()">📥 템플릿</button>
 <button class="btn purple sm" id="btnImport" onclick="document.getElementById('importFile').click()">📤 업로드</button>
 <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)"/>
+<button class="btn ghost sm" id="btnCompact" onclick="ST.compact=!ST.compact;renderCLBody()" style="display:none">📋 항목 펼치기</button>
 <button class="btn blue sm" onclick="go('result')">결과 →</button></div></div>
 <div class="import-result" id="importResult"></div>
 <div class="cl-tabs" id="clTabs"></div>
@@ -567,7 +568,7 @@ const ALL=[
 ];
 
 let CU=null,orgsC=[],respC={},reviewC={},memosC={},commC=[];
-const ST={page:"auth",oid:null,sec:null,fStatus:"all",fImp:"all",fWho:"all",search:""};
+const ST={page:"auth",oid:null,sec:null,fStatus:"all",fImp:"all",fWho:"all",search:"",compact:true,deepLinkItem:null};
 let __previewUser=false;
 function _h(s){return(s??"").toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function whoLabel(w){return{hq:"본사",local:"현지",both:"공통"}[w]||w;}
@@ -866,7 +867,7 @@ document.getElementById('gapCardArea').innerHTML=gapCard;}else{document.getEleme
 }
 document.getElementById('orgGrid').innerHTML=cards||'<div class="no-results">등록된 법인이 없습니다.</div>';
 }
-function openOrg(oid){ST.oid=oid;ST.sec=SECTIONS[0].id;ST.fStatus="all";ST.fImp="all";ST.fWho="all";ST.search="";go('checklist');}
+function openOrg(oid){ST.oid=oid;ST.sec="all";ST.compact=true;ST.fStatus="all";ST.fImp="all";ST.fWho="all";ST.search="";go('checklist');}
 function openToItem(oid,iid){const item=ALL.find(i=>i.id===iid);if(!item)return;ST.oid=oid;ST.sec=item.sec;ST.fStatus="all";ST.fImp="all";ST.fWho="all";ST.search="";ST.deepLinkItem=iid;go('checklist');}
 function toggleNotionRow(iid){const det=document.getElementById('det_'+iid);if(det)det.classList.toggle('open');}
 async function delOrg(oid){if(!confirm('이 법인을 삭제할까요?'))return;try{await db.collection("orgs").doc(oid).delete();try{await db.collection("responses").doc(oid).delete();}catch(e){}try{await db.collection("reviews").doc(oid).delete();}catch(e){}try{await db.collection("memos").doc(oid).delete();}catch(e){}orgsC=orgsC.filter(o=>o.id!==oid);delete respC[oid];delete reviewC[oid];delete memosC[oid];renderHome();}catch(e){alert("삭제 실패");}}
@@ -906,7 +907,7 @@ async function handleImport(ev){const file=ev.target.files[0];if(!file)return;co
 
 /* ══ CHECKLIST ══ */
 async function renderChecklist(){const org=orgsC.find(o=>o.id===ST.oid);document.getElementById('clOrg').textContent=org?.name||'';const ed=canEdit(ST.oid);document.getElementById('clReadonly').innerHTML=ed?'':`<span class="readonly-badge">읽기 전용</span>`;document.getElementById('btnTemplate').style.display=ed?'':'none';document.getElementById('btnImport').style.display=ed?'':'none';const si=document.getElementById('searchInput');if(si)si.value=ST.search;await loadItemComments(ST.oid);
-const allPct=calcOrg(ST.oid).pct,allOn=ST.sec==="all";let tabs=`<button class="cl-tab ${allOn?'on':''}" style="${allOn?'background:#971B2F;color:#fff;border-color:#971B2F':''}" onclick="ST.sec='all';renderChecklist()">📊 전체 ${allPct}%</button>`;tabs+=SECTIONS.map(s=>{const p=calcSec(ST.oid,s.id),on=s.id===ST.sec;return`<button class="cl-tab ${on?'on':''}" style="${on?`background:${s.color};color:#fff;border-color:${s.color}`:''}" onclick="ST.sec='${s.id}';renderChecklist()">${s.emoji} ${s.label} ${p}%</button>`;}).join('');document.getElementById('clTabs').innerHTML=tabs;
+const allPct=calcOrg(ST.oid).pct,allOn=ST.sec==="all";let tabs=`<button class="cl-tab ${allOn?'on':''}" style="${allOn?'background:#971B2F;color:#fff;border-color:#971B2F':''}" onclick="ST.sec='all';ST.compact=true;renderChecklist()">📊 전체 ${allPct}%</button>`;tabs+=SECTIONS.map(s=>{const p=calcSec(ST.oid,s.id),on=s.id===ST.sec;return`<button class="cl-tab ${on?'on':''}" style="${on?`background:${s.color};color:#fff;border-color:${s.color}`:''}" onclick="ST.sec='${s.id}';ST.compact=false;renderChecklist()">${s.emoji} ${s.label} ${p}%</button>`;}).join('');document.getElementById('clTabs').innerHTML=tabs;
 document.getElementById('fgStatus').innerHTML=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"pending",l:"검토대기"},{v:"confirmed",l:"확정"},{v:"rejected",l:"추가의견"},{v:"top_done",l:"🏆 상위법인 완료"}].map(f=>`<button class="f-btn st-${f.v} ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderCLBody()">${f.l}</button>`).join('');
 document.getElementById('fgImp').innerHTML=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"},{v:"R",l:"참고"}].map(f=>`<button class="f-btn imp-${f.v} ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderCLBody()">${f.l}</button>`).join('');
 document.getElementById('fgWho').innerHTML=[{v:"all",l:"전체"},{v:"local",l:"현지"},{v:"both",l:"공통"}].map(f=>`<button class="f-btn who-${f.v} ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderCLBody()">${f.l}</button>`).join('');
@@ -918,7 +919,12 @@ function highlightText(t,q){if(!q)return _h(t);let r=_h(t);q.split(/\s+/).filter
 function renderCLBody(){const q=ST.search,isS=!!q,ed=canEdit(ST.oid);
 document.getElementById('fgStatus').innerHTML=[{v:"all",l:"전체"},{v:"todo",l:"미완료"},{v:"pending",l:"검토대기"},{v:"confirmed",l:"확정"},{v:"rejected",l:"추가의견"}].map(f=>`<button class="f-btn st-${f.v} ${ST.fStatus===f.v?'on':''}" onclick="ST.fStatus='${f.v}';renderCLBody()">${f.l}</button>`).join('');
 document.getElementById('fgImp').innerHTML=[{v:"all",l:"전체"},{v:"H",l:"상"},{v:"M",l:"중"},{v:"L",l:"하"},{v:"R",l:"참고"}].map(f=>`<button class="f-btn imp-${f.v} ${ST.fImp===f.v?'on':''}" onclick="ST.fImp='${f.v}';renderCLBody()">${f.l}</button>`).join('');
-document.getElementById('fgWho').innerHTML=[{v:"all",l:"전체"},{v:"local",l:"현지"},{v:"both",l:"공통"}].map(f=>`<button class="f-btn who-${f.v} ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderCLBody()">${f.l}</button>`).join('');                  
+document.getElementById('fgWho').innerHTML=[{v:"all",l:"전체"},{v:"local",l:"현지"},{v:"both",l:"공통"}].map(f=>`<button class="f-btn who-${f.v} ${ST.fWho===f.v?'on':''}" onclick="ST.fWho='${f.v}';renderCLBody()">${f.l}</button>`).join('');
+// 섹션 요약 토글 버튼 표시 제어
+const compBtn=document.getElementById('btnCompact');
+if(compBtn){compBtn.style.display=ST.sec==="all"&&!isS?'':'none';compBtn.textContent=ST.compact?'📋 항목 펼치기':'📊 섹션 요약';}
+// 전체+compact 모드: 섹션 요약 카드 뷰
+if(ST.compact&&ST.sec==="all"&&!isS){let h='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:10px">';SECTIONS.forEach(sec=>{const si=ALL.filter(i=>i.sec===sec.id);const confirmed=si.filter(i=>getReview(ST.oid,i.id)==="confirmed").length;const pending=si.filter(i=>getResp(ST.oid,i.id)&&!getReview(ST.oid,i.id)).length;const responded=si.filter(i=>getResp(ST.oid,i.id)).length;const pct=si.length?Math.round(confirmed/si.length*100):0;const trk=TRACKS.find(t=>t.id===sec.track);const borderCol=confirmed===si.length?'#86efac':pending?'#fcd34d':sec.color+'44';h+=`<div style="background:#fff;border:1.5px solid ${borderCol};border-radius:12px;padding:14px;cursor:pointer;transition:.15s" onmouseover="this.style.borderColor='${sec.color}';this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'" onmouseout="this.style.borderColor='${borderCol}';this.style.boxShadow=''" onclick="ST.sec='${sec.id}';ST.compact=false;renderChecklist()"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:12px;font-weight:800;color:#1e293b;line-height:1.3">${sec.emoji} ${sec.label}</div><div style="font-size:13px;font-weight:800;color:${sec.color}">${pct}%</div></div><div style="font-size:9px;color:#94a3b8;margin-bottom:6px;font-weight:600">${trk.label}</div><div style="height:4px;background:#f1f5f9;border-radius:99px;margin-bottom:8px"><div style="height:4px;background:${sec.color};border-radius:99px;width:${pct}%;transition:.4s"></div></div><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:10px;color:#64748b">확정 <strong style="color:#1e293b">${confirmed}</strong>/${si.length}</div>${pending?`<span style="font-size:9px;background:#fef3c7;color:#92400e;font-weight:700;padding:1px 6px;border-radius:4px">${pending} 대기</span>`:confirmed===si.length?`<span style="font-size:9px;color:#16a34a;font-weight:700">✓ 완료</span>`:''}</div></div>`;});h+='</div>';document.getElementById('clBody').innerHTML=h;return;}
 let items=isS?ALL.filter(i=>matchSearch(i,q)):ST.sec==="all"?[...ALL]:ALL.filter(i=>i.sec===ST.sec);
 if(ST.fStatus==="todo")items=items.filter(i=>!getReview(ST.oid,i.id));
 else if(ST.fStatus==="pending")items=items.filter(i=>getResp(ST.oid,i.id)&&!getReview(ST.oid,i.id));
