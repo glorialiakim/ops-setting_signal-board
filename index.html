@@ -274,6 +274,7 @@ header{background:#101820;padding:10px 20px;border-bottom:none;box-shadow:0 2px 
 <button class="nav-btn" id="nav-csv" onclick="exportCSV()" style="display:none">CSV</button>
 <span class="nav-sep"></span>
 <span class="user-info" id="userInfoSpan"></span>
+<button class="nav-btn" id="previewBtn" onclick="togglePreviewUser()" style="display:none;color:#94a3b8;font-size:10px;border:1px dashed rgba(255,255,255,.15);border-radius:6px">👁 User 뷰</button>
 <button class="nav-btn" onclick="doLogout()" style="color:#94a3b8;font-size:10px">Logout</button>
 </div>
 </div></header>
@@ -567,12 +568,25 @@ const ALL=[
 
 let CU=null,orgsC=[],respC={},reviewC={},memosC={},commC=[];
 const ST={page:"auth",oid:null,sec:null,fStatus:"all",fImp:"all",fWho:"all",search:""};
+let __previewUser=false;
 function _h(s){return(s??"").toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function whoLabel(w){return{hq:"본사",local:"현지",both:"공통"}[w]||w;}
 function heat(p){if(p>=80)return"background:#d1fae5;color:#065f46";if(p>=50)return"background:#fef3c7;color:#92400e";return"background:#fee2e2;color:#991b1b";}
 const GROWTH=[{min:0,max:19,icon:"🌱",label:"씨앗"},{min:20,max:39,icon:"🌿",label:"새싹"},{min:40,max:59,icon:"🌳",label:"나무"},{min:60,max:79,icon:"🍃",label:"잎무성"},{min:80,max:100,icon:"🍎",label:"열매"}];
 function getG(p){return GROWTH.find(g=>p>=g.min&&p<=g.max)||GROWTH[0];}
-function isAdmin(){return CU&&CU.role==="admin";}
+function isAdmin(){return !__previewUser&&CU&&CU.role==="admin";}
+function togglePreviewUser(){
+  __previewUser=!__previewUser;
+  const btn=document.getElementById('previewBtn');
+  if(btn){btn.textContent=__previewUser?'⚡ Admin 뷰':'👁 User 뷰';btn.style.background=__previewUser?'rgba(34,197,94,.2)':'rgba(255,255,255,.08)';btn.style.color=__previewUser?'#22c55e':'#94a3b8';}
+  // sync admin-only nav visibility
+  ['nav-dashboard','nav-sales','nav-usermgmt','nav-csv','navSepAdmin','navSepSales'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=__previewUser?'none':'';});
+  const ab=document.getElementById('addOrgBtn');if(ab)ab.style.display=__previewUser?'none':'';
+  document.querySelectorAll('.guide-admin-only').forEach(e=>{e.style.display=__previewUser?'none':'';});
+  // if current page is admin-only, redirect to home
+  const adminPages=['dashboard','usermgmt','sales'];
+  go(adminPages.includes(ST.page)?'home':ST.page);
+}
 function canEdit(oid){if(isAdmin())return true;const o=orgsC.find(x=>x.id===oid);if(!o)return false;return o.createdBy===CU?.uid||(o.members||[]).includes(CU?.uid);}
 function getResp(oid,iid){return(respC[oid]||{})[iid]||"";}
 function getReview(oid,iid){return(reviewC[oid]||{})[iid]||"";}
@@ -665,6 +679,7 @@ async function setupAfterLogin(cu){
   document.getElementById('headerSub').textContent=cu.name+' ('+cu.orgName+') · '+(cu.role==='admin'?'본사 관리자':'법인 사용자');
   var _ini=cu.name?cu.name.trim().split(/\s+/).map(function(w){return w[0]}).slice(0,2).join('').toUpperCase():'?';document.getElementById('userInfoSpan').innerHTML='<span class="user-avatar">'+_ini+'</span><span class="user-name-wrap"><span class="uname">'+_h(cu.name||cu.email)+'</span><span class="uorg">'+_h(cu.orgName||'')+'<span class="role-badge '+cu.role+'">'+(cu.role==='admin'?'Admin':'User')+'</span></span></span>';
   document.getElementById('mainNav').style.display='flex';
+  if(cu.role==='admin'){const pb=document.getElementById('previewBtn');if(pb)pb.style.display='';}
   if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('nav-sales').style.display='';document.getElementById('nav-usermgmt').style.display='';document.getElementById('nav-csv').style.display='';var _sa=document.getElementById('navSepAdmin');if(_sa)_sa.style.display='';var _ss=document.getElementById('navSepSales');if(_ss)_ss.style.display='';var ab=document.getElementById('addOrgBtn');if(ab)ab.style.display='';document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='';});}else{document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='none';});}
   await loadAllData();await loadFxAndSales();
   if(cu.role!=='admin'){var myOrg=orgsC.find(function(o){return o.name===cu.orgName;});if(myOrg){if(myOrg.createdBy!==cu.uid){var members=myOrg.members||[];if(!members.includes(cu.uid)){members.push(cu.uid);await db.collection('orgs').doc(myOrg.id).update({members:members});myOrg.members=members;}}}else if(cu.orgName){var ref=await db.collection('orgs').add({name:cu.orgName,createdBy:cu.uid,createdAt:TS(),members:[cu.uid]});orgsC.push({id:ref.id,name:cu.orgName,createdBy:cu.uid,members:[cu.uid]});}}
