@@ -1017,7 +1017,7 @@ function selectMention(name,iid){const el=document.getElementById('ci_'+iid);con
 async function renderUserMgmt(){
   if(!isAdmin()){document.getElementById('userMgmtList').innerHTML='<p>권한이 없습니다.</p>';return;}
   const snap=await db.collection('users').orderBy('email').get();
-  let html='<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#f1f5f9"><th style="padding:10px;text-align:left">이메일</th><th style="padding:10px;text-align:left">이름</th><th style="padding:10px;text-align:left">법인</th><th style="padding:10px;text-align:left">권한</th><th style="padding:10px;text-align:left">변경</th></tr></thead><tbody>';
+  let html='<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#f1f5f9"><th style="padding:10px;text-align:left">이메일</th><th style="padding:10px;text-align:left">이름</th><th style="padding:10px;text-align:left">법인</th><th style="padding:10px;text-align:left">권한</th><th style="padding:10px;text-align:left">변경</th><th style="padding:10px;text-align:left">삭제</th></tr></thead><tbody>';
   snap.forEach(function(doc){
     var u=doc.data();
     var isAdminEmail=ADMIN_EMAILS.includes(u.email);
@@ -1050,6 +1050,12 @@ async function renderUserMgmt(){
       html+='<option value="admin"'+(currentRole==='admin'?' selected':'')+'>Admin</option>';
       html+='</select></td>';
     }
+    // 삭제 버튼: 기본 Admin 이메일이거나 자기 자신이면 비활성
+    if(isAdminEmail || doc.id===CU?.uid){
+      html+='<td style="padding:10px;color:#cbd5e1;font-size:11px">-</td>';
+    }else{
+      html+='<td style="padding:10px"><button onclick="deleteUser(\x27'+doc.id+'\x27,\x27'+u.email.replace(/'/g,"\\'")+'\x27,\x27'+(u.name||'').replace(/'/g,"\\'")+'\x27)" style="padding:5px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s" onmouseover="this.style.background=\x27#dc2626\x27" onmouseout="this.style.background=\x27#ef4444\x27">삭제</button></td>';
+    }
     html+='</tr>';
   });
   html+='</tbody></table>';
@@ -1058,6 +1064,14 @@ async function renderUserMgmt(){
 async function changeUserRole(uid,newRole){
   if(!isAdmin())return;
   await db.collection('users').doc(uid).update({role:newRole});
+  renderUserMgmt();
+}
+async function deleteUser(docId,email,name){
+  if(!isAdmin())return;
+  const label=name?`${name} (${email})`:email;
+  if(!confirm(`사용자를 삭제하시겠습니까?\n\n${label}\n\n삭제된 계정은 복구할 수 없습니다.\n(Firebase Auth 계정은 유지됩니다. 재로그인 시 다시 User로 등록됩니다.)`))return;
+  await db.collection('users').doc(docId).delete();
+  alert(`${label} 계정이 삭제되었습니다.`);
   renderUserMgmt();
 }
 
