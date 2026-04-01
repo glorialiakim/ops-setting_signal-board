@@ -151,11 +151,11 @@ header{background:#101820;padding:10px 20px;border-bottom:none;box-shadow:0 2px 
 .notion-th{padding:8px 8px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
 .notion-group-hd{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#f1f5f9;border-bottom:1px solid var(--line);border-top:2px solid var(--line);font-size:11px;font-weight:700}
 .notion-group-hd:first-of-type{border-top:none}
-.notion-row{display:grid;padding:0 4px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .1s}
+.notion-row{display:grid;padding:0 4px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .1s;border-left:3px solid transparent}
 .notion-row:last-child{border-bottom:none}.notion-row:hover{background:#f8fafc}
-.notion-row.confirmed{background:#f0fdf4}.notion-row.confirmed:hover{background:#dcfce7}
-.notion-row.rejected{background:#fff8f8}.notion-row.rejected:hover{background:#ffe4e6}
-.notion-row.pending{background:#fffbeb}.notion-row.pending:hover{background:#fef3c7}
+.notion-row.confirmed{background:#f0fdf4;border-left-color:#22c55e}.notion-row.confirmed:hover{background:#dcfce7}
+.notion-row.rejected{background:#fff8f8;border-left-color:var(--red)}.notion-row.rejected:hover{background:#ffe4e6}
+.notion-row.pending{background:#fffbeb;border-left-color:#f59e0b}.notion-row.pending:hover{background:#fef3c7}
 .notion-cell{padding:10px 8px;font-size:12px;display:flex;align-items:center;gap:4px;overflow:hidden;min-width:0}
 .notion-cell.name{font-weight:600;color:#101820;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .notion-detail{display:none;padding:16px 20px;background:#fafafa;border-bottom:1px solid var(--line)}
@@ -917,9 +917,9 @@ if(isS){infoEl.className='search-result-info show';infoEl.innerHTML=`🔍 "${_h(
 if(!items.length){document.getElementById('clBody').innerHTML=`<div class="no-results">해당 항목이 없습니다.</div>`;return;}
 const secG=isS||ST.sec==="all"?SECTIONS.filter(s=>items.some(i=>i.sec===s.id)):[SECTIONS.find(s=>s.id===ST.sec)].filter(Boolean);
 let h="";
-const cols=isAdmin()?'minmax(0,1fr) 130px 72px 80px 52px 68px':'minmax(0,1fr) 130px 80px 52px 68px';
+const cols=isAdmin()?'minmax(0,1fr) 52px 130px 72px 80px 68px':'minmax(0,1fr) 52px 130px 80px 68px';
 const thAdmin=isAdmin()?'<div class="notion-th">HQ검토</div>':'';
-h+=`<div class="notion-table"><div class="notion-thead" style="display:grid;grid-template-columns:${cols}"><div class="notion-th">항목명</div><div class="notion-th">섹션</div><div class="notion-th">응답</div>${thAdmin}<div class="notion-th">중요도</div><div class="notion-th">담당</div></div>`;
+h+=`<div class="notion-table"><div class="notion-thead" style="display:grid;grid-template-columns:${cols}"><div class="notion-th">항목명</div><div class="notion-th">중요도</div><div class="notion-th">섹션</div><div class="notion-th">응답</div>${thAdmin}<div class="notion-th">담당</div></div>`;
 secG.forEach(sec=>{const si=items.filter(i=>i.sec===sec.id);if(!si.length)return;const trk=TRACKS.find(t=>t.id===sec.track);
 h+=`<div class="notion-group-hd"><span style="font-size:14px">${sec.emoji}</span><span style="color:${sec.color};font-weight:800">${trk.short} › ${sec.label}</span><span style="color:#94a3b8;font-weight:400;margin-left:4px">${si.length}개 · 확정 ${si.filter(i=>getReview(ST.oid,i.id)==="confirmed").length}</span></div>`;
 si.forEach(it=>{const resp=getResp(ST.oid,it.id),rv=getReview(ST.oid,it.id),memo=getMemo(ST.oid,it.id);
@@ -927,7 +927,7 @@ const nm=isS?highlightText(it.name,q):_h(it.name);
 const cardClass=rv==="confirmed"?"confirmed":rv==="rejected"?"rejected":resp?"pending":"";
 const iCom=getItemComments(it.id);const hqMsgs=getHQMessages(it.id);const canSeeHQ=isAdmin()||canEdit(ST.oid);
 const rvCell=isAdmin()?`<div class="notion-cell"><span class="st-badge ${rv||'none'}">${{confirmed:"✅",rejected:"💬"}[rv]||"—"}</span></div>`:'';
-h+=`<div class="notion-row ${cardClass}" id="item_${it.id}" style="grid-template-columns:${cols}" onclick="toggleNotionRow('${it.id}')"><div class="notion-cell name" title="${_h(it.name)}">${nm}</div><div class="notion-cell"><span class="sec-tag" style="background:${sec.color}22;color:${sec.color}">${sec.emoji} ${sec.label}</span></div><div class="notion-cell"><span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span></div>${rvCell}<div class="notion-cell"><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하",R:"참"}[it.imp]}</span></div><div class="notion-cell"><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div></div>`;
+h+=`<div class="notion-row ${cardClass}" id="item_${it.id}" style="grid-template-columns:${cols}" onclick="toggleNotionRow('${it.id}')"><div class="notion-cell name" title="${_h(it.name)}">${nm}</div><div class="notion-cell"><span class="imp-badge ${it.imp}">${{H:"상",M:"중",L:"하",R:"참"}[it.imp]}</span></div><div class="notion-cell"><span class="sec-tag" style="background:${sec.color}22;color:${sec.color}">${sec.emoji} ${sec.label}</span></div><div class="notion-cell"><span class="st-badge ${resp||'none'}">${{yes:"O",no:"X",partial:"△"}[resp]||"—"}</span></div>${rvCell}<div class="notion-cell"><span class="who-tag ${it.who}">${whoLabel(it.who)}</span></div></div>`;
 h+=`<div class="notion-detail ${!resp?'open':''}" id="det_${it.id}" onclick="event.stopPropagation()">`;
 h+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px"><div class="detail-section"><div class="detail-label">🔴 Why</div><div class="detail-text why">${_h(it.why)}</div></div><div class="detail-section"><div class="detail-label">🔵 How</div><div class="detail-text how">${_h(it.how)}</div></div><div class="detail-section"><div class="detail-label">🟢 Done 기준</div><div class="detail-text done-criteria">${_h(it.done)}</div></div></div>`;
 if(ed&&!isAdmin()){h+=`<div class="item-btns" style="margin-bottom:10px"><button class="ib yes ${resp==="yes"?"on":""}" onclick="setResp(${it.id},'yes')">O</button><button class="ib partial ${resp==="partial"?"on":""}" onclick="setResp(${it.id},'partial')">△</button><button class="ib no ${resp==="no"?"on":""}" onclick="setResp(${it.id},'no')">X</button></div>`;}
