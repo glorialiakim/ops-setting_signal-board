@@ -665,6 +665,7 @@ auth.onAuthStateChanged(async u=>{if(u){try{const d=await db.collection('users')
     if(_rl==='admin'){setupAfterLogin(CU);}else{document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));document.getElementById('page-orgselect').classList.add('active');}
     return;
 }const ud=d.data();
+if(ud.disabled===true){await auth.signOut();showAuthError('이 계정은 차단되었습니다. 관리자에게 문의하세요.');return;}
 const role=ADMIN_EMAILS.includes(ud.email)?'admin':(ud.role||'user');
 /* Update role in firestore if changed */
 if(ud.role!==role) await db.collection('users').doc(u.uid).update({role});
@@ -971,10 +972,6 @@ async function changeUserOrg(uid,newOrg){
   alert('변경되었습니다.');
   if(ST.page==='usermgmt')renderUserMgmt();else renderDashUsers();
 }
-async function deleteUser(uid,name){
-  if(!confirm(`"${name}" 사용자를 삭제할까요?\n삭제 후 해당 사용자는 로그인이 차단됩니다.`))return;
-  try{await db.collection("users").doc(uid).delete();alert('삭제되었습니다. 해당 사용자는 더 이상 로그인할 수 없습니다.');renderDashUsers();}catch(e){alert('삭제 실패: '+e.message);}
-}
 
 /* ══ RESULT ══ */
 function renderResult(){const org=orgsC.find(o=>o.id===ST.oid),ov=calcOrg(ST.oid),g=getG(ov.pct);const tA=calcTrack(ST.oid,"tA"),tB=calcTrack(ST.oid,"tB");const wH=calcWhoExact(ST.oid,"hq"),wL=calcWhoExact(ST.oid,"local"),wB=calcWhoExact(ST.oid,"both");const minis=SECTIONS.map(s=>`<div class="sec-mini"><div class="sec-mini-pct" style="color:${s.color}">${calcSec(ST.oid,s.id)}%</div><div class="sec-mini-lbl">${s.emoji} ${s.label}</div></div>`).join('');
@@ -1017,7 +1014,7 @@ function selectMention(name,iid){const el=document.getElementById('ci_'+iid);con
 async function renderUserMgmt(){
   if(!isAdmin()){document.getElementById('userMgmtList').innerHTML='<p>권한이 없습니다.</p>';return;}
   const snap=await db.collection('users').orderBy('email').get();
-  let html='<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#f1f5f9"><th style="padding:10px;text-align:left">이메일</th><th style="padding:10px;text-align:left">이름</th><th style="padding:10px;text-align:left">법인</th><th style="padding:10px;text-align:left">권한</th><th style="padding:10px;text-align:left">변경</th><th style="padding:10px;text-align:left">삭제</th></tr></thead><tbody>';
+  let html='<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#f1f5f9"><th style="padding:10px;text-align:left">이메일</th><th style="padding:10px;text-align:left">이름</th><th style="padding:10px;text-align:left">법인</th><th style="padding:10px;text-align:left">권한</th><th style="padding:10px;text-align:left">역할 변경</th><th style="padding:10px;text-align:left">계정 관리</th></tr></thead><tbody>';
   snap.forEach(function(doc){
     var u=doc.data();
     var isAdminEmail=ADMIN_EMAILS.includes(u.email);
@@ -1050,11 +1047,13 @@ async function renderUserMgmt(){
       html+='<option value="admin"'+(currentRole==='admin'?' selected':'')+'>Admin</option>';
       html+='</select></td>';
     }
-    // 삭제 버튼: 기본 Admin 이메일이거나 자기 자신이면 비활성
+    // 계정 관리 버튼: 기본 Admin 이메일이거나 자기 자신이면 비활성
     if(isAdminEmail || doc.id===CU?.uid){
       html+='<td style="padding:10px;color:#cbd5e1;font-size:11px">-</td>';
+    }else if(u.disabled){
+      html+='<td style="padding:10px"><span style="font-size:10px;font-weight:700;color:#94a3b8;margin-right:6px">차단됨</span><button onclick="unbanUser(\x27'+doc.id+'\x27,\x27'+u.email.replace(/'/g,"\\'")+'\x27,\x27'+(u.name||'').replace(/'/g,"\\'")+'\x27)" style="padding:5px 10px;background:#22c55e;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">해제</button></td>';
     }else{
-      html+='<td style="padding:10px"><button onclick="deleteUser(\x27'+doc.id+'\x27,\x27'+u.email.replace(/'/g,"\\'")+'\x27,\x27'+(u.name||'').replace(/'/g,"\\'")+'\x27)" style="padding:5px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s" onmouseover="this.style.background=\x27#dc2626\x27" onmouseout="this.style.background=\x27#ef4444\x27">삭제</button></td>';
+      html+='<td style="padding:10px"><button onclick="banUser(\x27'+doc.id+'\x27,\x27'+u.email.replace(/'/g,"\\'")+'\x27,\x27'+(u.name||'').replace(/'/g,"\\'")+'\x27)" style="padding:5px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s" onmouseover="this.style.background=\x27#dc2626\x27" onmouseout="this.style.background=\x27#ef4444\x27">차단</button></td>';
     }
     html+='</tr>';
   });
@@ -1066,12 +1065,20 @@ async function changeUserRole(uid,newRole){
   await db.collection('users').doc(uid).update({role:newRole});
   renderUserMgmt();
 }
-async function deleteUser(docId,email,name){
+async function banUser(docId,email,name){
   if(!isAdmin())return;
   const label=name?`${name} (${email})`:email;
-  if(!confirm(`사용자를 삭제하시겠습니까?\n\n${label}\n\n삭제된 계정은 복구할 수 없습니다.\n(Firebase Auth 계정은 유지됩니다. 재로그인 시 다시 User로 등록됩니다.)`))return;
-  await db.collection('users').doc(docId).delete();
-  alert(`${label} 계정이 삭제되었습니다.`);
+  if(!confirm(`"${label}" 계정을 차단하시겠습니까?\n\n차단된 계정은 즉시 로그인할 수 없게 됩니다.\n(언제든지 해제할 수 있습니다.)`))return;
+  await db.collection('users').doc(docId).update({disabled:true});
+  alert(`${label} 계정이 차단되었습니다.`);
+  renderUserMgmt();
+}
+async function unbanUser(docId,email,name){
+  if(!isAdmin())return;
+  const label=name?`${name} (${email})`:email;
+  if(!confirm(`"${label}" 계정 차단을 해제하시겠습니까?`))return;
+  await db.collection('users').doc(docId).update({disabled:false});
+  alert(`${label} 계정 차단이 해제되었습니다.`);
   renderUserMgmt();
 }
 
