@@ -100,16 +100,16 @@ header{background:#fff;padding:10px 20px;border-bottom:2px solid #e2e8f0;box-sha
 .f-btn.st-todo.on     { background:#64748b; color:#fff; border-color:#64748b }
 .f-btn.st-pending.on  { background:#f59e0b; color:#fff; border-color:#f59e0b }
 .f-btn.st-confirmed.on{ background:#22c55e; color:#fff; border-color:#22c55e }
-.f-btn.st-rejected.on { background:#8b5cf6; color:#fff; border-color:#8b5cf6 }
+.f-btn.st-rejected.on { background:#101820; color:#fff; border-color:#101820 }
 
 /* 중요도 필터 */
 .f-btn.imp-H.on { background:#dc2626; color:#fff; border-color:#dc2626 }
 .f-btn.imp-M.on { background:#f59e0b; color:#fff; border-color:#f59e0b }
 .f-btn.imp-L.on { background:#64748b; color:#fff; border-color:#64748b }
-.f-btn.imp-R.on { background:#6366f1; color:#fff; border-color:#6366f1 }
+.f-btn.imp-R.on { background:#64748b; color:#fff; border-color:#64748b }
 
 /* 담당 필터 */
-.f-btn.who-local.on { background:#0ea5e9; color:#fff; border-color:#0ea5e9 }
+.f-btn.who-local.on { background:#101820; color:#fff; border-color:#101820 }
 .f-btn.who-both.on  { background:#f59e0b; color:#fff; border-color:#f59e0b }
 
 /* 호버 + 트랜지션 */
@@ -126,18 +126,18 @@ header{background:#fff;padding:10px 20px;border-bottom:2px solid #e2e8f0;box-sha
 .item-card{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;margin-bottom:7px;transition:.2s}
 .item-card.confirmed{border-color:#86efac;background:#f0fdf4}
 .item-card.pending{border-color:#fcd34d;background:#fffbeb}
-.item-card.rejected{border-color:#c4b5fd;background:#faf5ff}
+.item-card.rejected{border-color:#e2e8f0;background:#f8fafc}
 .item-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .item-name{font-size:13px;font-weight:800;color:#1e293b;line-height:1.5;flex:1;min-width:200px}
 .imp-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;flex-shrink:0}
 .imp-badge.H{background:#fee2e2;color:#991b1b}.imp-badge.M{background:#fef3c7;color:#92400e}.imp-badge.L{background:#f1f5f9;color:#475569}.imp-badge.R{background:#e0e7ff;color:#3730a3}
 .who-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;flex-shrink:0}
-.who-tag.hq{background:#ede9fe;color:#5b21b6}.who-tag.local{background:#e0f2fe;color:#0369a1}.who-tag.both{background:#fef3c7;color:#92400e}
+.who-tag.hq{background:#fde8ec;color:#971B2F}.who-tag.local{background:#f1f5f9;color:#374151}.who-tag.both{background:#fef3c7;color:#92400e}
 .status-row{display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap}
 .status-label{font-size:10px;font-weight:700;color:#64748b}
 .st-badge{padding:3px 10px;border-radius:8px;font-size:11px;font-weight:800}
 .st-badge.yes{background:#d1fae5;color:#065f46}.st-badge.no{background:#fee2e2;color:#991b1b}.st-badge.partial{background:#fef3c7;color:#92400e}.st-badge.none{background:#f1f5f9;color:#94a3b8}
-.st-badge.confirmed{background:#22c55e;color:#fff}.st-badge.rejected{background:#8b5cf6;color:#fff}
+.st-badge.confirmed{background:#22c55e;color:#fff}.st-badge.rejected{background:#101820;color:#fff}
 .detail-toggle{font-size:11px;font-weight:700;color:var(--red);cursor:pointer;user-select:none;margin-bottom:6px;display:inline-block}
 .detail-toggle:hover{text-decoration:underline}
 .detail-box{display:none;margin-bottom:10px}.detail-box.open{display:block}
@@ -154,13 +154,13 @@ header{background:#fff;padding:10px 20px;border-bottom:2px solid #e2e8f0;box-sha
 .review-btns{display:flex;gap:5px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
 .rb{padding:5px 12px;border-radius:8px;border:2px solid var(--line);background:#fff;font-size:10px;font-weight:800;cursor:pointer;transition:.15s}
 .rb.confirm{border-color:#22c55e;color:#16a34a}.rb.confirm.on{background:#22c55e;color:#fff}
-.rb.reject{border-color:#8b5cf6;color:#7c3aed}.rb.reject.on{background:#8b5cf6;color:#fff}
+.rb.reject{border-color:#101820;color:#101820}.rb.reject.on{background:#101820;color:#fff}
 .memo-row{margin-top:6px}
 .memo-box{margin-top:5px}
 .memo-area{width:100%;height:48px;border:1px solid #e2e8f0;border-radius:8px;padding:7px;resize:none;font-size:11px;font-family:inherit;outline:none}
 .memo-save{margin-top:3px;padding:4px 10px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;float:right}
 .item-comments{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
-.ic-toggle{font-size:10px;font-weight:700;color:#8b5cf6;cursor:pointer}
+.ic-toggle{font-size:10px;font-weight:700;color:var(--red);cursor:pointer}
 .ic-list{display:none;margin-top:6px}.ic-list.open{display:block}
 .ic-item{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:4px}
 .ic-meta{font-size:9px;color:#94a3b8;font-weight:600;margin-bottom:2px}
@@ -169,17 +169,17 @@ header{background:#fff;padding:10px 20px;border-bottom:2px solid #e2e8f0;box-sha
 .ic-input{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-family:inherit;outline:none}
 .ic-del{font-size:9px;color:#94a3b8;cursor:pointer;font-weight:700;float:right}.ic-del:hover{color:#ef4444}
 /* 멘션 */
-.mention{background:#ede9fe;color:#5b21b6;font-weight:700;border-radius:4px;padding:0 3px}
+.mention{background:#fde8ec;color:#971B2F;font-weight:700;border-radius:4px;padding:0 3px}
 .mention-dropdown{position:absolute;bottom:100%;left:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.1);max-height:160px;overflow-y:auto;display:none;z-index:50;min-width:180px}
 .mention-dropdown.open{display:block}
 .mention-opt{padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;color:#374151}
-.mention-opt:hover{background:#f5f3ff;color:#5b21b6}
-.mention-badge{position:absolute;top:-4px;right:-4px;background:#8b5cf6;color:#fff;font-size:8px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.mention-opt:hover{background:#fde8ec;color:#971B2F}
+.mention-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:8px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .nav-btn-wrap{position:relative;display:inline-block}
   /* Contact HQ */
-.hq-msg{background:#faf5ff;border:1px solid #c4b5fd;border-radius:8px;padding:8px;margin-bottom:4px}
-.hq-msg .ic-meta{color:#7c3aed}
-.hq-private{font-size:9px;color:#8b5cf6;font-style:italic;margin-top:4px}
+.hq-msg{background:#fde8ec;border:1px solid #fca5a5;border-radius:8px;padding:8px;margin-bottom:4px}
+.hq-msg .ic-meta{color:#971B2F}
+.hq-private{font-size:9px;color:#971B2F;font-style:italic;margin-top:4px}
 .result-hero{background:#fff;border-radius:18px;border:1px solid var(--line);padding:22px;margin-bottom:14px;text-align:center}
 .rg-pct{font-size:40px;font-weight:800;color:var(--red);margin:6px 0}
 .track-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
@@ -230,8 +230,8 @@ header{background:#fff;padding:10px 20px;border-bottom:2px solid #e2e8f0;box-sha
 .inq-subject{font-size:12px;font-weight:800;color:#1e293b}
 .inq-time{font-size:9px;color:#94a3b8}
 .inq-body{font-size:11px;color:#374151;line-height:1.6;background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:6px}
-.inq-reply{font-size:11px;color:#5b21b6;line-height:1.6;background:#faf5ff;border-radius:8px;padding:8px;border-left:3px solid #8b5cf6}
-.inq-private-note{font-size:10px;color:#8b5cf6;font-weight:600;text-align:center;margin:12px 0;padding:8px;background:#faf5ff;border-radius:8px;border:1px dashed #c4b5fd}
+.inq-reply{font-size:11px;color:#101820;line-height:1.6;background:#f8fafc;border-radius:8px;padding:8px;border-left:3px solid var(--red)}
+.inq-private-note{font-size:10px;color:#971B2F;font-weight:600;text-align:center;margin:12px 0;padding:8px;background:#fde8ec;border-radius:8px;border:1px dashed #fca5a5}
 
 #msLoginBtn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .user-mgmt-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -855,7 +855,7 @@ function renderDashOpinion(){let h='';orgsC.forEach(o=>{
   const items=ALL.filter(i=>getReview(o.id,i.id)==="rejected");if(!items.length)return;
   h+=`<div style="font-size:12px;font-weight:800;margin:12px 0 6px">${_h(o.name)} (${items.length}건)</div>`;
   items.forEach(it=>{const sec=SECTIONS.find(s=>s.id===it.sec);
-    h+=`<div class="weak-item"><div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700">${sec.emoji} ${_h(it.name)}</div><div style="font-size:10px;color:#8b5cf6;font-weight:700;margin-top:2px">💬 추가 의견</div></div>${isAdmin()?`<button class="btn purple sm" onclick="ST.oid='${o.id}';ST.sec='${it.sec}';go('checklist')">바로가기 →</button>`:''}</div>`;
+    h+=`<div class="weak-item"><div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700">${sec.emoji} ${_h(it.name)}</div><div style="font-size:10px;color:#971B2F;font-weight:700;margin-top:2px">💬 추가 의견</div></div>${isAdmin()?`<button class="btn red sm" onclick="ST.oid='${o.id}';ST.sec='${it.sec}';go('checklist')">바로가기 →</button>`:''}</div>`;
   });});document.getElementById('dashOpinion').innerHTML=h||'<div class="no-results">추가 의견 건이 없습니다.</div>';}
 
 async function renderDashComments(){try{const snap=await db.collection("comments").get();const all=[];snap.forEach(d=>{const dd=d.data();if(!dd.isHQ)all.push({id:d.id,...dd});});let filtered=all; if(!isAdmin()){const myOrg=orgsC.find(o=>o.name===CU?.orgName||o.createdBy===CU?.uid||(o.members||[]).includes(CU?.uid));if(myOrg)filtered=all.filter(c=>c.orgId===myOrg.id);} filtered.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));const recent=filtered.slice(0,30);let h='';recent.forEach(c=>{const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';const org=orgsC.find(o=>o.id===c.orgId);const item=ALL.find(i=>i.id===c.itemId);h+=`<div class="log-item"><div style="display:flex;justify-content:space-between;align-items:center"><div class="log-time">${t}</div><div style="display:flex;gap:6px;align-items:center"><span class="ic-del" onclick="dashDelComment('${c.id}')">삭제</span><button class="btn ghost sm" onclick="ST.oid='${c.orgId}';ST.sec='${item?.sec||SECTIONS[0].id}';go('checklist')">바로가기 →</button></div></div><div class="log-text"><span class="log-badge" style="background:#ede9fe;color:#5b21b6">${_h(org?.name||'')}</span><span class="log-badge" style="background:#e0f2fe;color:#0369a1">${_h(c.authorName)}</span>${item?`<strong>#${item.id} ${_h(item.name).substring(0,25)}...</strong>`:''}</div><div style="font-size:12px;color:#374151;margin-top:4px;padding:6px 8px;background:#f8fafc;border-radius:6px">${_h(c.text)}</div><div style="margin-top:6px"><div class="ic-input-row"><input class="ic-input" id="dcr_${c.id}" placeholder="바로 답변..." onkeydown="if(event.key==='Enter')dashReplyComment('${c.orgId}',${c.itemId},'dcr_${c.id}')"/><button class="btn blue sm" onclick="dashReplyComment('${c.orgId}',${c.itemId},'dcr_${c.id}')">답변</button></div></div></div>`;});document.getElementById('dashComments').innerHTML=h||'<div class="no-results">Comment가 없습니다.</div>';}catch(e){document.getElementById('dashComments').innerHTML='<div class="no-results">로드 실패</div>';}}
@@ -923,7 +923,7 @@ iCom.forEach(c=>{const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocale
 h+=`<div class="ic-input-row" style="position:relative"><div class="mention-dropdown" id="md_${it.id}"></div><input class="ic-input" id="ci_${it.id}" placeholder="Comment... (@로 법인 멘션)" oninput="onMentionInput(this,${it.id})" onkeydown="if(event.key==='Enter')addCmt(${it.id})"/><button class="btn blue sm" onclick="addCmt(${it.id})">등록</button></div></div></div>`;
 // Contact HQ (비공개)
 if(canSeeHQ){
-h+=`<div class="item-comments" style="border-top-color:#c4b5fd"><span class="ic-toggle" onclick="document.getElementById('hq_${it.id}')?.classList.toggle('open')" style="color:#7c3aed">📨 Contact HQ (${hqMsgs.length}) <span style="font-size:8px;color:#94a3b8">비공개</span></span><div class="ic-list" id="hq_${it.id}">`;
+h+=`<div class="item-comments" style="border-top-color:#fca5a5"><span class="ic-toggle" onclick="document.getElementById('hq_${it.id}')?.classList.toggle('open')" style="color:#971B2F">📨 Contact HQ (${hqMsgs.length}) <span style="font-size:8px;color:#94a3b8">비공개</span></span><div class="ic-list" id="hq_${it.id}">`;
 hqMsgs.forEach(c=>{const t=c.createdAt?new Date(c.createdAt.seconds*1000).toLocaleString('ko-KR'):'';const canDel=CU&&(CU.uid===c.uid||isAdmin());h+=`<div class="hq-msg"><div class="ic-meta">${_h(c.authorName)} (${_h(c.orgName||'')}) · ${t}${canDel?` <span class="ic-del" onclick="delCmt('${c.id}')">삭제</span>`:''}</div><div class="ic-text">${highlightMentions(c.text)}</div></div>`;});
 h+=`<div class="hq-private">🔒 이 내용은 해당 법인과 본사만 볼 수 있습니다.</div>`;
 h+=`<div class="ic-input-row"><input class="ic-input" id="hqi_${it.id}" placeholder="본사에 문의..." onkeydown="if(event.key==='Enter')addHQMsg(${it.id})"/><button class="btn purple sm" onclick="addHQMsg(${it.id})">보내기</button></div></div></div>`;}
