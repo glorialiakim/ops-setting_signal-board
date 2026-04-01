@@ -6,16 +6,16 @@
 <title>글로벌 CS 운영 함께 단계 올리기</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ehf4h444;--tA:#6366f1;--tB:#f59e0b}
+:root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ehhhf4h444;--tA:#6366f1;--tB:#f59e0b}
 *{box-sizing:border-box;margin:0;padding:0}h
 body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:13px}
-header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-shadow:0 4px 20px rgba(151,27,47,.3)}
+header{background:#5c1a27;padding:10px 20px;box-shadow:0 2px 12px rgba(0,0,0,.18)}
 .hi{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.logo h1{font-size:15px;font-weight:800;color:#fff}.logo p{font-size:10px;color:rgba(255,255,255,.6);font-weight:600;margin-top:1px}
-.nav{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-.nav-btn{padding:6px 13px;border-radius:18px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:.15s}
-.nav-btn:hover,.nav-btn.on{background:rgba(255,255,255,.25)}
-.user-info{color:rgba(255,255,255,.8);font-size:10px;font-weight:600}
+.logo{display:flex;flex-direction:column;justify-content:center}.logo h1{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.3px}.logo p{font-size:9px;color:rgba(255,255,255,.5);font-weight:500;margin-top:2px}
+.nav{display:flex;gap:2px;flex-wrap:nowrap;align-items:center}
+.nav-btn{padding:5px 11px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,.78);font-size:11px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.nav-btn:hover{background:rgba(255,255,255,.1);color:#fff}.nav-btn.on{background:rgba(255,255,255,.2);color:#fff;font-weight:700}
+.user-info{display:flex;align-items:center;gap:7px}.user-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid rgba(255,255,255,.35)}.user-name-wrap{display:flex;flex-direction:column}.user-name-wrap .uname{font-size:11px;font-weight:700;color:#fff;line-height:1.3}.user-name-wrap .uorg{font-size:9px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px}.nav-sep{width:1px;height:14px;background:rgba(255,255,255,.2);margin:0 3px;flex-shrink:0}
 .page{display:none;max-width:1200px;margin:0 auto;padding:20px 14px}.page.active{display:block}
 .btn{display:inline-flex;align-items:center;gap:4px;padding:8px 16px;border-radius:18px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
 .btn.green{background:#22c55e;color:#fff}.btn.ghost{background:#fff;border:1px solid var(--line);color:#555}
@@ -243,16 +243,21 @@ header{background:linear-gradient(135deg,#971B2F,#c0392b);padding:14px 20px;box-
 <header><div class="hi">
 <div class="logo"><h1 onclick="go('home')" style="cursor:pointer">🌱 글로벌 CS 운영 함께 단계 올리기</h1><p id="headerSub">로그인이 필요합니다</p></div>
 <div class="nav" id="mainNav" style="display:none">
-<span class="nav-btn-wrap"><span class="nav-btn-wrap"><button class="nav-btn" id="nav-home" onclick="go('home')">Overview</button><span class="mention-badge" id="mentionBadge" style="display:none">0</span></span><span class="mention-badge" id="mentionBadge" style="display:none">0</span></span>
-<button class="nav-btn" id="nav-dashboard" onclick="go('dashboard')" style="display:none">📊 Dashboard</button>
-<button class="nav-btn" id="nav-sales" onclick="go('sales')" style="display:none">💰 매출 비교</button>
+<span class="nav-btn-wrap"><button class="nav-btn" id="nav-home" onclick="go('home')">Overview</button><span class="mention-badge" id="mentionBadge" style="display:none">0</span></span>
+<button class="nav-btn" id="nav-dashboard" onclick="go('dashboard')" style="display:none">Dashboard</button>
+<span class="nav-sep" id="navSepSales" style="display:none"></span>
+<button class="nav-btn" id="nav-sales" onclick="go('sales')" style="display:none">매출 비교</button>
+<span class="nav-sep"></span>
 <button class="nav-btn" id="nav-compare" onclick="go('compare')">Compare</button>
-<button class="nav-btn" id="nav-inquiry" onclick="go('inquiry')">📩 1:1 문의</button>
-<button class="nav-btn" onclick="go('guide')">📖 Guide</button>
-<button class="nav-btn" id="nav-usermgmt" onclick="go('usermgmt')" style="display:none">👥 사용자관리</button>
-<button class="nav-btn" onclick="exportCSV()">CSV</button>
+<span class="nav-sep"></span>
+<button class="nav-btn" id="nav-inquiry" onclick="go('inquiry')">1:1 문의</button>
+<button class="nav-btn" onclick="go('guide')">Guide</button>
+<span class="nav-sep" id="navSepAdmin" style="display:none"></span>
+<button class="nav-btn" id="nav-usermgmt" onclick="go('usermgmt')" style="display:none">사용자관리</button>
+<button class="nav-btn" id="nav-csv" onclick="exportCSV()" style="display:none">CSV</button>
+<span class="nav-sep"></span>
 <span class="user-info" id="userInfoSpan"></span>
-<button class="nav-btn" onclick="doLogout()">로그아웃</button>
+<button class="nav-btn" onclick="doLogout()" style="color:rgba(255,255,255,.45);font-size:10px">로그아웃</button>
 </div>
 </div></header>
 
@@ -643,9 +648,9 @@ async function confirmOrg(){
 
 async function setupAfterLogin(cu){
   document.getElementById('headerSub').textContent=cu.name+' ('+cu.orgName+') · '+(cu.role==='admin'?'본사 관리자':'법인 사용자');
-  document.getElementById('userInfoSpan').innerHTML=_h(cu.email)+' <span class="role-badge '+cu.role+'">'+(cu.role==='admin'?'Admin':'User')+'</span>';
+  var _ini=cu.name?cu.name.trim().split(/\s+/).map(function(w){return w[0]}).slice(0,2).join('').toUpperCase():'?';document.getElementById('userInfoSpan').innerHTML='<span class="user-avatar">'+_ini+'</span><span class="user-name-wrap"><span class="uname">'+_h(cu.name||cu.email)+'</span><span class="uorg">'+_h(cu.orgName||'')+'<span class="role-badge '+cu.role+'">'+(cu.role==='admin'?'Admin':'User')+'</span></span></span>';
   document.getElementById('mainNav').style.display='flex';
-  if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('nav-sales').style.display='';document.getElementById('nav-usermgmt').style.display='';var ab=document.getElementById('addOrgBtn');if(ab)ab.style.display='';document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='';});}else{document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='none';});}
+  if(isAdmin()){document.getElementById('nav-dashboard').style.display='';document.getElementById('nav-sales').style.display='';document.getElementById('nav-usermgmt').style.display='';document.getElementById('nav-csv').style.display='';var _sa=document.getElementById('navSepAdmin');if(_sa)_sa.style.display='';var _ss=document.getElementById('navSepSales');if(_ss)_ss.style.display='';var ab=document.getElementById('addOrgBtn');if(ab)ab.style.display='';document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='';});}else{document.querySelectorAll('.guide-admin-only').forEach(function(e){e.style.display='none';});}
   await loadAllData();await loadFxAndSales();
   if(cu.role!=='admin'){var myOrg=orgsC.find(function(o){return o.name===cu.orgName;});if(myOrg){if(myOrg.createdBy!==cu.uid){var members=myOrg.members||[];if(!members.includes(cu.uid)){members.push(cu.uid);await db.collection('orgs').doc(myOrg.id).update({members:members});myOrg.members=members;}}}else if(cu.orgName){var ref=await db.collection('orgs').add({name:cu.orgName,createdBy:cu.uid,createdAt:TS(),members:[cu.uid]});orgsC.push({id:ref.id,name:cu.orgName,createdBy:cu.uid,members:[cu.uid]});}}
   go('home');
