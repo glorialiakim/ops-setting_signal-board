@@ -4,7 +4,6 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>글로벌 CS 운영 함께 단계 올리기</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--red:#971B2F;--bg:#f0f2f7;--line:#e2e8f0;--ok:#22c55e;--no:#ef4444;--tA:#101820;--tB:#971B2F}
@@ -13,7 +12,7 @@
 body{background:var(--bg);color:#101820;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px}
 header{background:#fff;padding:0 20px;border-bottom:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .hi{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;height:52px}
-.logo{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}.logo-brand{font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;color:#971B2F;letter-spacing:-.3px;font-style:normal;line-height:1}.logo-divider{width:1px;height:16px;background:#e5e7eb}.logo-text{display:flex;flex-direction:column}.logo-text h1{font-size:12px;font-weight:700;color:#374151;letter-spacing:-.1px;line-height:1.2}.logo-text p{font-size:10px;color:#9ca3af;font-weight:400;margin-top:1px}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}.logo-brand{display:block;height:22px;width:auto}.logo-divider{width:1px;height:16px;background:#e5e7eb}.logo-text{display:flex;flex-direction:column}.logo-text h1{font-size:12px;font-weight:700;color:#374151;letter-spacing:-.1px;line-height:1.2}.logo-text p{font-size:10px;color:#9ca3af;font-weight:400;margin-top:1px}
 .nav{display:flex;gap:0px;flex-wrap:nowrap;align-items:center;height:100%}
 .nav-btn{padding:6px 13px;border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:#6b7280;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap;height:100%;display:flex;align-items:center}
 .nav-btn:hover{color:#111827;border-bottom-color:#d1d5db}.nav-btn.on{color:#971B2F;border-bottom-color:#971B2F;font-weight:700}
@@ -259,7 +258,7 @@ header{background:#fff;padding:0 20px;border-bottom:1px solid #e5e7eb;box-shadow
 </head>
 <body>
 <header><div class="hi">
-<div class="logo" onclick="go('home')"><span class="logo-brand">InBody</span><div class="logo-divider"></div><div class="logo-text"><h1>글로벌 운영 함께 단계 올리기</h1><p id="headerSub">로그인이 필요합니다</p></div></div>
+<div class="logo" onclick="go('home')"><img class="logo-brand" src="inbody-logo.png" alt="InBody"/><div class="logo-divider"></div><div class="logo-text"><h1>글로벌 운영 함께 단계 올리기</h1><p id="headerSub">로그인이 필요합니다</p></div></div>
 <div class="nav" id="mainNav" style="display:none">
 <span class="nav-btn-wrap"><button class="nav-btn" id="nav-home" onclick="go('home')">Overview</button><span class="mention-badge" id="mentionBadge" style="display:none">0</span></span>
 <button class="nav-btn" id="nav-dashboard" onclick="go('dashboard')" style="display:none">Dashboard</button>
