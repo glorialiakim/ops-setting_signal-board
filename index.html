@@ -1131,15 +1131,10 @@ async function changeUserRole(uid,newRole){
 async function deleteUserAccount(docId,email,name){
   if(!isAdmin())return;
   const label=name?`${name} (${email})`:email;
-  if(!confirm(`"${label}" 계정을 삭제하시겠습니까?\n\n삭제된 계정은 복구할 수 없습니다.`))return;
-  try{
-    const deleteFn=fns.httpsCallable('deleteUserAccount');
-    await deleteFn({uid:docId});
-    alert(`${label} 계정이 삭제되었습니다.`);
-    renderUserMgmt();
-  }catch(e){
-    alert('삭제 실패: '+e.message);
-  }
+  if(!confirm(`"${label}" 계정을 삭제하시겠습니까?\n\n삭제된 계정은 목록에서 제거됩니다.`))return;
+  await db.collection('users').doc(docId).delete();
+  alert(`${label} 계정이 삭제되었습니다.`);
+  renderUserMgmt();
 }
 
     /* changeUserOrg defined above (L962 area) — unified for both dashboard and usermgmt */
