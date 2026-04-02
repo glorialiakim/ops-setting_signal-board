@@ -453,6 +453,7 @@ Microsoft로 로그인
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAnrQKqg_NWgewQLMSorN4wV0Tniw_T2UE",
@@ -468,7 +469,7 @@ const ADMIN_EMAILS = [
   "glorialiakim@inbody.com"
 ];
 firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(),db=firebase.firestore(),TS=firebase.firestore.FieldValue.serverTimestamp;
+const auth=firebase.auth(),db=firebase.firestore(),TS=firebase.firestore.FieldValue.serverTimestamp,fns=firebase.functions();
 const TRACKS=[{id:"tA",label:"Track A. 조직 운영 기반",short:"조직기반",color:"#101820"},{id:"tB",label:"Track B. 제품 판매 사이클",short:"판매사이클",color:"#971B2F"}];
 const SECTIONS=[{id:"a1",track:"tA",label:"인증·인허가",emoji:"🛂",color:"#1e293b"},{id:"a2",track:"tA",label:"품질·규제 체계",emoji:"🔬",color:"#334155"},{id:"a3",track:"tA",label:"조직·인프라",emoji:"⚙️",color:"#0369a1"},{id:"a4",track:"tA",label:"법률·컴플라이언스",emoji:"⚖️",color:"#10b981"},{id:"a5",track:"tA",label:"거버넌스·정책 관리",emoji:"📋",color:"#64748b"},{id:"a6",track:"tA",label:"HR 체계",emoji:"👥",color:"#101820"},{id:"a7",track:"tA",label:"회계·재무 체계",emoji:"📊",color:"#0891b2"},{id:"b1",track:"tB",label:"영업·수주",emoji:"💼",color:"#971B2F"},{id:"b2",track:"tB",label:"대리점 관리",emoji:"🤝",color:"#9f1239"},{id:"b3",track:"tB",label:"공급망·출고",emoji:"📦",color:"#c0143c"},{id:"b4",track:"tB",label:"설치·고객경험",emoji:"🔧",color:"#b45309"},{id:"b5",track:"tB",label:"CS·사후서비스",emoji:"🛠️",color:"#0369a1"},{id:"b6",track:"tB",label:"회계·수금",emoji:"💰",color:"#7f1d1d"},{id:"b7",track:"tB",label:"마케팅",emoji:"📣",color:"#059669"}];
 const ALL=[
@@ -1114,10 +1115,8 @@ async function renderUserMgmt(){
     // 계정 관리 버튼: 기본 Admin 이메일이거나 자기 자신이면 비활성
     if(isAdminEmail || doc.id===CU?.uid){
       html+='<td style="padding:10px;color:#cbd5e1;font-size:11px">-</td>';
-    }else if(u.disabled){
-      html+='<td style="padding:10px"><span style="font-size:10px;font-weight:700;color:#94a3b8;margin-right:6px">차단됨</span><button onclick="unbanUser(\x27'+doc.id+'\x27,\x27'+u.email.replace(/'/g,"\\'")+'\x27,\x27'+(u.name||'').replace(/'/g,"\\'")+'\x27)" style="padding:5px 10px;background:#22c55e;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">해제</button></td>';
     }else{
-      html+='<td style="padding:10px"><button onclick="banUser(\x27'+doc.id+'\x27,\x27'+u.email.replace(/'/g,"\\'")+'\x27,\x27'+(u.name||'').replace(/'/g,"\\'")+'\x27)" style="padding:5px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s" onmouseover="this.style.background=\x27#dc2626\x27" onmouseout="this.style.background=\x27#ef4444\x27">차단</button></td>';
+      html+='<td style="padding:10px"><button onclick="deleteUserAccount(\x27'+doc.id+'\x27,\x27'+u.email.replace(/'/g,"\\'")+'\x27,\x27'+(u.name||'').replace(/'/g,"\\'")+'\x27)" style="padding:5px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s" onmouseover="this.style.background=\x27#dc2626\x27" onmouseout="this.style.background=\x27#ef4444\x27">삭제</button></td>';
     }
     html+='</tr>';
   });
@@ -1129,21 +1128,18 @@ async function changeUserRole(uid,newRole){
   await db.collection('users').doc(uid).update({role:newRole});
   renderUserMgmt();
 }
-async function banUser(docId,email,name){
+async function deleteUserAccount(docId,email,name){
   if(!isAdmin())return;
   const label=name?`${name} (${email})`:email;
-  if(!confirm(`"${label}" 계정을 차단하시겠습니까?\n\n차단된 계정은 즉시 로그인할 수 없게 됩니다.\n(언제든지 해제할 수 있습니다.)`))return;
-  await db.collection('users').doc(docId).update({disabled:true});
-  alert(`${label} 계정이 차단되었습니다.`);
-  renderUserMgmt();
-}
-async function unbanUser(docId,email,name){
-  if(!isAdmin())return;
-  const label=name?`${name} (${email})`:email;
-  if(!confirm(`"${label}" 계정 차단을 해제하시겠습니까?`))return;
-  await db.collection('users').doc(docId).update({disabled:false});
-  alert(`${label} 계정 차단이 해제되었습니다.`);
-  renderUserMgmt();
+  if(!confirm(`"${label}" 계정을 삭제하시겠습니까?\n\n삭제된 계정은 복구할 수 없습니다.`))return;
+  try{
+    const deleteFn=fns.httpsCallable('deleteUserAccount');
+    await deleteFn({uid:docId});
+    alert(`${label} 계정이 삭제되었습니다.`);
+    renderUserMgmt();
+  }catch(e){
+    alert('삭제 실패: '+e.message);
+  }
 }
 
     /* changeUserOrg defined above (L962 area) — unified for both dashboard and usermgmt */
